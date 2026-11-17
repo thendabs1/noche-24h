@@ -1,0 +1,76 @@
+name: vigilar
+
+# Temporal (issue #2): cada hora de la noche y de la mañana siguiente mide si RTVE ya ha
+# publicado los subtítulos del episodio y cuánto deja rebobinar el directo de YouTube.
+# Añade una fila a la descripción de la issue, que no avisa a nadie. Borrar cuando haya datos.
+on:
+  schedule:
+    - cron: '47 20-23 * * 1-4'  # 21:47–00:47 en Madrid (invierno), de lunes a jueves
+    - cron: '47 0-10 * * 2-5'   # madrugada y mañana siguiente, hasta las 11:47
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  medir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ISSUE: '2'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: pip install --quiet yt-dlp
+      - name: Medir
+        run: |
+          python - > fila.txt <<'PY'
+          import json, re, subprocess, urllib.error, urllib.request
+          from datetime import datetime, timedelta
+          import noche24h as n
+
+          ahora = datetime.now(n.MADRID)
+          episodio = subs = rebobinado = "—"
+          try:
+              items = n.json_url(f"{n.API}/programas/{n.PROGRAMA}/videos.json?size=20&page=1")["page"]["items"]
+              recientes = [i for i in items if n.tipo_item(i) == "Completo"
+                           and ahora - n.fecha_item(i) < timedelta(hours=16)]
+              if recientes:
+                  i = recientes[0]
+                  episodio = f"{i['id']} ({n.fecha_item(i):%H:%M})"
+                  try:
+                      lenguas = [s.get("lang") for s in n.json_url(n.url_subtitulos(i["id"]))["page"]["items"]]
+                      subs = "sí" if "es" in lenguas else "no"
+                  except urllib.error.HTTPError as e:
+                      subs = f"no ({e.code})"
+              else:
+                  episodio = "aún no está en la API"
+          except Exception as e:  # noqa: BLE001
+              episodio = f"error API: {type(e).__name__}"
+          try:
+              vivos = n.listar_directos_24h()
+              r = subprocess.run(["yt-dlp", "--no-warnings", "-j",
+                                  f"https://www.youtube.com/watch?v={vivos[0][0]}"],
+                                 capture_output=True, text=True, timeout=180)
+              formatos = json.loads(r.stdout)["formats"]
+              maestra = next(f["manifest_url"] for f in formatos if f.get("manifest_url"))
+              variante = next(l for l in n.descargar(maestra).decode().splitlines() if l.startswith("http"))
+              lista = n.descargar(variante).decode()
+              horas = sum(float(x) for x in re.findall(r"#EXTINF:([\d.]+)", lista)) / 3600
+              desde = re.search(r"#EXT-X-PROGRAM-DATE-TIME:(\S+)", lista)
+              desde = datetime.fromisoformat(desde[1]).astimezone(n.MADRID) if desde else None
+              rebobinado = f"{horas:.1f} h" + (f" (desde las {desde:%H:%M})" if desde else "")
+          except Exception as e:  # noqa: BLE001
+              rebobinado = f"error: {type(e).__name__}"
+          print(f"| {ahora:%d/%m %H:%M} | {episodio} | {subs} | {rebobinado} |")
+          PY
+          cat fila.txt
+      - name: Anotar en la issue
+        run: |
+          # Sin líneas en blanco entre filas, o la tabla se corta.
+          { gh issue view "$ISSUE" --json body -q .body | sed -e '/^$/{$d}' -e '$a\'; cat fila.txt; } > cuerpo.md
+          gh issue edit "$ISSUE" --body-file cuerpo.md

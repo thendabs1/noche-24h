@@ -54,7 +54,7 @@ Todo va a `datos/noche24h.sqlite` y se exporta a `docs/datos.json`, que lee la p
 - Las presentaciones salen de subtítulos automáticos: hay ruido y los nombres pueden venir mal escritos («Feristeza» por Félix Tezanos). El tipo es aproximado: en una revisión a ojo de 14 episodios casi todas las mesas, platós y conexiones salían bien, pero alguna mesa trae un nombre de más o partido. Un saludo suelto puede ser una entrevista a distancia, un tertuliano nuevo o una despedida.
 - Los tramos de elecciones cuentan palabras clave, no distinguen qué elecciones: también salen las de Brasil o las de mitad de mandato de EE. UU.
 - Solo hay marcas de entrevista cuando RTVE publica el fragmento, uno o dos por semana.
-- YouTube deja rebobinar un directo unas horas como mucho (la página supone 12, sin verificar en este canal). Para noches anteriores, el episodio en RTVE Play.
+- El directo de Canal 24h en YouTube solo deja rebobinar 4 horas (medido el 17/11/2026 en su lista HLS). Para noches anteriores, RTVE Play: cada marca enlaza al episodio en su segundo (`?t=`).
 - El fin de una sesión del directo es aproximado: como tarde, el inicio de la siguiente.
 - GitHub retrasa a veces los cron y los desactiva tras 60 días sin actividad en el repo (los commits de datos cuentan como actividad).
 
