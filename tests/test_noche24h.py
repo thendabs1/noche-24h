@@ -70,14 +70,38 @@ class TestSubtitulos(unittest.TestCase):
         fragmento = [(i, t) for i, t in enumerate(frases(5, "ep") + frases(40, "otro"))]
         self.assertIsNone(n.alinear(fragmento, episodio))
 
-    def test_presentaciones(self):
-        cues = [(10, "Esta noche nos acompañan en la"), (12, "mesa de análisis varios"),
-                (40, "Antonio Sara, buenas noches."), (300, "ayer hablamos de esto"),
-                (400, "Muy buenas noches, Pablo Montesinos."), (900, "Buenas noches, Xavi."),
-                (1200, "Marcos Fernández, buenas noches, cuéntanos")]
-        marcas = n.presentaciones(cues)
-        self.assertEqual([s for s, _ in marcas], [10, 400, 1200])
-        self.assertEqual(marcas[0][1], "Esta noche nos acompañan en la mesa de análisis varios")
+    def test_presentaciones_por_tipo(self):
+        frases_ = [(5, "Hoy precisamente nos acompañará en unos minutos el presidente del CIS"),
+                   (12, "Comenzamos. Hoy nos acompañan en la"), (14, "mesa de análisis Lucía Méndez."),
+                   (16, "Buenas noches, Javier Casqueiro."), (20, "Hola, buenas noches."),
+                   (300, "Vamos con el turno de preguntas de los miembros de la mesa"),
+                   (900, "Como les decía, nos acompaña Arcadi España, ministro de Hacienda."),
+                   (1500, "Olivia Guillén, buenas noches, cuéntanos."),
+                   (2100, "Volvemos en directo hasta Moncloa,"),
+                   (2700, "Pablo Simón, buenas noches."),
+                   (3000, "Muy buenas noches desde Nueva York,"),
+                   (9000, "Estefanía Molina, muy buenas noches."), (9010, "Así acabamos por hoy")]
+        # Entre frase y frase, conversación que no presenta a nadie.
+        cues = sorted(frases_ + [(s + 1, "y seguimos con la actualidad del día") for s, _ in frases_])
+        marcas = n.presentaciones(cues, duracion=9100)
+        self.assertEqual([(s, t) for s, t, _ in marcas],
+                         [(5, "anuncio"), (12, "mesa"), (900, "plato"), (1500, "conexion"),
+                          (2100, "conexion"), (2700, "presentacion"), (3000, "conexion")])
+        self.assertEqual(marcas[1][2], "Lucía Méndez · Javier Casqueiro")
+
+    def test_nombres(self):
+        texto = ("Hola, buenas noches, Javier Casqueiro. Entre Ejerique. Consejo General del Poder "
+                 "Judicial. Paloma Esteban. Javier Casqueiro.")
+        self.assertEqual(n.nombres(texto), ["Javier Casqueiro", "Paloma Esteban"])
+
+    def test_tramos(self):
+        cues = [(m * 60 + 5, "seguimos con la actualidad") for m in range(16)]
+        cues += [(m * 60 + 10, "la campaña electoral y las encuestas") for m in (2, 3, 5, 8, 9, 14)]
+        cues += [(4 * 60 + 20, "una mención a la campaña")]
+        # El minuto 4 (una mención) no corta; 2–5 y 8–9 están a dos minutos y se unen;
+        # el 14 queda a cuatro y, con un minuto, no llega a tramo.
+        self.assertEqual(n.tramos(sorted(cues)), [(120, 600)])
+        self.assertEqual(n.tramos([]), [])
 
 
 class TestRTVE(unittest.TestCase):
@@ -111,11 +135,42 @@ class TestRTVE(unittest.TestCase):
         self.assertEqual(self.conn.execute("SELECT episodio_id, seg, estado FROM fragmentos")
                          .fetchall(), [(2, 600, "ok")])
         self.assertEqual(self.conn.execute("SELECT seg, tipo FROM marcas").fetchall(),
-                         [(1300, "presentacion")])
+                         [(1300, "plato")])
         datos = n.datos_pagina(self.conn)["episodios"][0]["marcas"]
         self.assertEqual([(m["seg"], m["tipo"]) for m in datos],
-                         [(600, "entrevista"), (1300, "presentacion")])
+                         [(600, "entrevista"), (1300, "plato")])
         self.assertEqual(datos[0]["seg_fin"], 720)
+
+    def test_presentacion_y_fragmento_son_una_linea(self):
+        api = self.api()
+        api.subtitulos[2][203] = (609, "Como les decía, nos acompaña Mengana, ministra")
+        n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar)
+        marcas = n.datos_pagina(self.conn)["episodios"][0]["marcas"]
+        self.assertEqual([(m["seg"], m["tipo"], m.get("lugar")) for m in marcas],
+                         [(600, "entrevista", "plato"), (1300, "plato", None)])
+        self.assertTrue(marcas[0]["presenta"].startswith("Como les decía, nos acompaña Mengana"))
+
+    def test_cambio_de_version_rehace_las_marcas(self):
+        api = self.api(con_fragmento=False)
+        n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar)
+        # Base de antes del cambio: marcas sin clasificar y sin versión.
+        self.conn.execute("UPDATE marcas SET tipo='presentacion'")
+        self.conn.execute("PRAGMA user_version=1")
+        self.conn.commit()
+        self.assertEqual(n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar), 1)
+        self.assertEqual(self.conn.execute("SELECT seg, tipo FROM marcas").fetchall(),
+                         [(1300, "plato")])
+        self.assertEqual(self.conn.execute("PRAGMA user_version").fetchone(),
+                         (n.VERSION_MARCAS,))
+        self.assertEqual(n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar), 0)
+
+    def test_tramos_en_la_pagina(self):
+        api = self.api(con_fragmento=False)
+        texto = "las encuestas de la campaña electoral"
+        api.subtitulos[2] = sorted(api.subtitulos[2] + [(m * 60 + 1, texto) for m in range(3, 6)])
+        n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar)
+        self.assertEqual(n.datos_pagina(self.conn)["episodios"][0]["tramos"],
+                         [{"tema": "elecciones", "seg": 180, "seg_fin": 360}])
 
     def test_segunda_pasada_no_escribe_ni_toca_el_fichero(self):
         api = self.api()
@@ -237,7 +292,8 @@ class TestDatosPublicados(unittest.TestCase):
         for ep in datos["episodios"]:
             self.assertTrue(ep["url"] and ep["inicio"])
             for m in ep["marcas"]:
-                self.assertIn(m["tipo"], {"entrevista", "presentacion"})
+                self.assertIn(m["tipo"], {"entrevista", "presentacion", "mesa", "plato",
+                                          "conexion", "anuncio"})
                 self.assertLessEqual(0, m["seg"])
 
 

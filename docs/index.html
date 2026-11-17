@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>La noche en 24h</title>
-<meta name="description" content="Índice de entrevistas y presentaciones de «La noche en 24h» (RTVE) con su hora, para verla a tu ritmo.">
+<meta name="description" content="Índice de «La noche en 24h» (RTVE): mesa de análisis, entrevistas y conexiones con su hora, para verla a tu ritmo.">
 <style>
 :root {
   --fondo: #f6f5f2; --tarjeta: #ffffff; --texto: #1d1d1f; --suave: #5f6368; --borde: #dedbd4;
@@ -58,9 +58,14 @@ ol.marcas li { display: grid; grid-template-columns: 3.4rem 1fr; gap: 0 10px; pa
 .pos { grid-column: 1; font-size: .75rem; color: var(--suave); font-variant-numeric: tabular-nums; }
 .cuerpo { grid-column: 2; grid-row: 1 / span 2; }
 .tipo { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; margin-right: 6px; }
-.entrevista .tipo { color: var(--entrevista); }
-.presentacion .tipo { color: var(--presentacion); }
-.presentacion .texto { color: var(--suave); font-style: italic; }
+.entrevista .tipo, .plato .tipo { color: var(--entrevista); }
+.mesa .tipo, .conexion .tipo { color: var(--texto); }
+.presentacion .tipo, .anuncio .tipo { color: var(--presentacion); }
+.tramo .tipo { color: var(--acento); }
+/* Frases sacadas de los subtítulos: se distinguen de los títulos que pone RTVE. */
+.plato .texto, .conexion .texto, .presentacion .texto, .anuncio .texto, .presenta {
+  color: var(--suave); font-style: italic; }
+.presenta { display: block; font-size: .9rem; }
 .yt { display: inline-block; margin-left: 6px; font-size: .85rem; white-space: nowrap; }
 .aviso { color: var(--suave); font-size: .9rem; margin: 6px 0 0; }
 mark { background: var(--resalte); color: inherit; }
@@ -71,11 +76,12 @@ footer .error { color: var(--acento); }
 <body>
 <div class="contenedor">
   <h1>La noche en 24h</h1>
-  <p class="sub">Entrevistas y presentaciones de cada noche con su hora, para verla a tu ritmo. Lunes a jueves, hacia las 22:00–00:30 en Canal 24h.</p>
+  <p class="sub">Mesa de análisis, entrevistas y conexiones de cada noche con su hora, para verla a tu ritmo. Lunes a jueves, hacia las 22:00–00:30 en Canal 24h.</p>
   <div id="directo" class="directo">Cargando…</div>
   <div class="herramientas">
     <input id="buscar" type="search" placeholder="Buscar invitado o tema…" aria-label="Buscar invitado o tema">
     <label><input type="checkbox" id="solo-pendientes"> Solo pendientes</label>
+    <label title="Tramos en que se habla de elecciones, deducidos de los subtítulos"><input type="checkbox" id="solo-elecciones"> Solo elecciones</label>
   </div>
   <main id="lista"></main>
   <footer id="pie"></footer>
@@ -162,6 +168,11 @@ function resaltar(texto, consulta) {
   return [texto.slice(0, i), el("mark", {}, texto.slice(i, i + consulta.length)), texto.slice(i + consulta.length)];
 }
 
+const TIPOS = { entrevista: "Entrevista", mesa: "Mesa", plato: "Plató", conexion: "Conexión",
+  anuncio: "Avance", presentacion: "Presenta", tramo: "Elecciones" };
+const etiqueta = m => m.tipo === "entrevista" && m.lugar === "plato" ? "Entrevista en plató" : TIPOS[m.tipo] || "Presenta";
+const coincide = (m, consulta) => sinAcentos(`${m.texto} ${m.presenta || ""}`).includes(consulta);
+
 function pintarMarca(ep, m, consulta) {
   const t = Date.parse(ep.inicio) + m.seg * 1000;
   const yt = enlaceYoutube(t);
@@ -171,14 +182,25 @@ function pintarMarca(ep, m, consulta) {
     el("span", { class: "hora" }, fmtHora.format(t)),
     el("span", { class: "pos", title: "Minuto dentro del episodio" }, pos),
     el("div", { class: "cuerpo" },
-      el("span", { class: "tipo" }, m.tipo === "entrevista" ? "Entrevista" : "Presenta"),
+      el("span", { class: "tipo" }, etiqueta(m)),
       m.url ? enlace(m.url, texto) : el("span", { class: "texto" }, texto),
-      yt && enlace(yt.url, yt.texto, "yt")));
+      yt && enlace(yt.url, yt.texto, "yt"),
+      m.presenta && el("span", { class: "presenta" }, resaltar(m.presenta, consulta))));
+}
+
+// Con «Solo elecciones»: los tramos del episodio y lo que cae dentro de ellos.
+function marcasElecciones(ep) {
+  const tramos = (ep.tramos || []).filter(t => t.tema === "elecciones");
+  const dentro = m => tramos.some(t => m.seg >= t.seg && m.seg < t.seg_fin);
+  return [...tramos.map(t => ({ seg: t.seg, seg_fin: t.seg_fin, tipo: "tramo", texto: "Se habla de elecciones" })),
+    ...ep.marcas.filter(dentro)].sort((a, b) => a.seg - b.seg || (b.tipo === "tramo") - (a.tipo === "tramo"));
 }
 
 function pintarLista() {
   const consulta = sinAcentos(document.getElementById("buscar").value.trim());
   const soloPendientes = document.getElementById("solo-pendientes").checked;
+  const soloElecciones = document.getElementById("solo-elecciones").checked;
+  const filtrando = consulta || soloElecciones;
   const episodios = datos.episodios || [];
   // El siguiente pendiente es el más antiguo sin ver.
   const siguiente = [...episodios].reverse().find(e => !vistos.has(e.id));
@@ -188,8 +210,9 @@ function pintarLista() {
   for (const ep of episodios) {
     const visto = vistos.has(ep.id);
     if (soloPendientes && visto) continue;
-    const marcas = consulta ? ep.marcas.filter(m => sinAcentos(m.texto).includes(consulta)) : ep.marcas;
-    if (consulta && !marcas.length) continue;
+    let marcas = soloElecciones ? marcasElecciones(ep) : ep.marcas;
+    if (consulta) marcas = marcas.filter(m => coincide(m, consulta));
+    if (filtrando && !marcas.length) continue;
     mostrados++;
     const inicio = Date.parse(ep.inicio);
     const casilla = el("input", { type: "checkbox", checked: visto });
@@ -214,7 +237,7 @@ function pintarLista() {
       ep.estado !== "ok" && el("p", { class: "aviso" }, "RTVE aún no ha publicado los subtítulos: las marcas llegarán con ellos."),
       marcas.length ? el("ol", { class: "marcas" }, marcas.map(m => pintarMarca(ep, m, consulta))) : null));
   }
-  if (!mostrados) lista.append(el("p", { class: "aviso" }, consulta ? "Nada coincide con la búsqueda." : "No hay episodios que mostrar."));
+  if (!mostrados) lista.append(el("p", { class: "aviso" }, filtrando ? "Nada coincide con la búsqueda o el filtro." : "No hay episodios que mostrar."));
 }
 
 function pintarPie() {
@@ -222,7 +245,7 @@ function pintarPie() {
   document.getElementById("pie").replaceChildren(
     el("p", {}, `Datos actualizados el ${fmtFecha.format(Date.parse(datos.generado))}. `,
       "Fuentes: API pública de RTVE y directo de RTVE Noticias en YouTube. ",
-      "Las presentaciones salen de los subtítulos automáticos: los nombres pueden venir mal escritos. ",
+      "Mesa, plató, conexiones y tramos de elecciones se deducen de los subtítulos automáticos: puede haber errores y nombres mal escritos. ",
       "Lo marcado como visto se guarda solo en este navegador. ",
       enlace("https://github.com/thendabs1/noche-24h", "Código")),
     errores.map(([paso, e]) => el("p", { class: "error" },
@@ -243,6 +266,7 @@ async function iniciar() {
   pintarPie();
   document.getElementById("buscar").addEventListener("input", pintarLista);
   document.getElementById("solo-pendientes").addEventListener("change", pintarLista);
+  document.getElementById("solo-elecciones").addEventListener("change", pintarLista);
   setInterval(pintarDirecto, 60e3);
 }
 iniciar();

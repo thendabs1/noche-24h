@@ -2,8 +2,9 @@
 """Índice de «La noche en 24h» (RTVE) para verla a tu ritmo.
 
 - Episodios del programa con las entrevistas (fragmentos que RTVE publica aparte, situados
-  por su texto dentro del episodio completo) y las presentaciones de invitados (frases tipo
-  «nos acompaña…» en los subtítulos), cada una con su minuto y su hora de reloj.
+  por su texto dentro del episodio completo) y lo que se ve en los subtítulos: la mesa de
+  análisis, los invitados en el plató, las conexiones en directo y los tramos en que se
+  habla de elecciones, cada cosa con su minuto y su hora de reloj.
 - Registro de las sesiones del directo de Canal 24h en YouTube: cuando YouTube reinicia el
   directo cambia de vídeo y se pierde el rebobinado; aquí queda qué vídeo cubría cada hora.
 
@@ -57,7 +58,14 @@ CREATE TABLE IF NOT EXISTS fragmentos(
 CREATE TABLE IF NOT EXISTS directos(
   video_id TEXT PRIMARY KEY, titulo TEXT, inicio TEXT, primera_vez TEXT, fin_detectado TEXT);
 CREATE TABLE IF NOT EXISTS estado(clave TEXT PRIMARY KEY, valor TEXT, desde TEXT);
+CREATE TABLE IF NOT EXISTS tramos(
+  episodio_id INTEGER, tema TEXT, seg INTEGER, seg_fin INTEGER,
+  PRIMARY KEY(episodio_id, tema, seg));
 """
+# Sube cuando cambia cómo se sacan marcas o tramos: se rehacen los de todos los episodios.
+# Se guarda en PRAGMA user_version de la base.
+VERSION_MARCAS = 2
+CERCA = 90  # segundos: una presentación tan cerca de un fragmento es la de esa entrevista
 
 
 # --- utilidades -----------------------------------------------------------------------
@@ -179,31 +187,135 @@ def alinear(fragmento, episodio, minimo=10, proporcion=0.2):
 
 NOMBRE = (r"[A-ZÁÉÍÓÚÑ][a-záéíóúñü]+"
           r"(?:\s+(?:de\s+(?:la\s+)?|del\s+)?[A-ZÁÉÍÓÚÑ][a-záéíóúñü]+){1,3}")
-PRESENTACION = [
-    re.compile(r"\bnos acompañ(?:a|an|ará|arán)\b", re.I),
-    re.compile(r"\best(?:á|án) con nosotros\b", re.I),
-    re.compile(r"\bmesa de análisis\b", re.I),
-    re.compile(r"\bconectamos con\b", re.I),
-    re.compile(rf"{NOMBRE},?\s+(?i:(?:muy\s+)?buenas\s+noches)"),
-    re.compile(rf"(?i:buenas\s+noches),\s+{NOMBRE}"),
-]
+# Mesa de análisis: al empezar («Comenzamos. Hoy nos acompañan en la mesa…») y al renovarla.
+MESA = re.compile(r"(?i:\b(?:nos acompañan|se incorporan?|renovamos)\b[^.?]{0,40}\bmesa\b"
+                  r"|\bmesa\b[^.?]{0,25}\b(?:nos acompañan|se incorporan?)\b)")
+APERTURA = re.compile(r"(?i:^(?:comenzamos[.,]?\s*)?(?:hoy\s+)?nos acompañan\b)")
+# Invitado en el plató: «nos acompaña X, cargo», «X, bienvenido».
+PLATO = re.compile(rf"(?i:\bnos acompaña\b)(?!n)|(?i:\bnos visita\b)|{NOMBRE},?\s+(?i:bienvenid[oa])")
+# Conexión en directo: redacción, reporteros, corresponsales y entrevistas a distancia.
+CONEXION = re.compile(
+    r"(?i:redacción de informativos|\bvolvemos en directo\b|\bconectamos con\b"
+    r"|\bnuestr[ao] (?:corresponsal|enviad[ao] especial)\b)"
+    r"|(?i:\b(?:volvemos|vamos|nos vamos)\b(?: en directo)? hasta) [A-ZÁÉÍÓÚ]"
+    r"|(?i:buenas noches) (?:en|desde) [A-ZÁÉÍÓÚ]"
+    r"|(?i:\bcuént(?:anos|enos|anosla)\b)(?=.*(?i:buenas noches))"
+    r"|(?i:buenas noches)(?=.*(?i:\bcuént(?:anos|enos)\b))")
+SALUDO = [re.compile(rf"{NOMBRE},?\s+(?i:(?:muy\s+)?buenas\s+noches)"),
+          re.compile(rf"(?i:buenas\s+noches),\s+{NOMBRE}")]
+ANUNCIO = re.compile(r"(?i:\bnos acompañar[áa]n?\b)")
+RUIDO = re.compile(r"(?i:miembros de la mesa|turno de preguntas)")
+DESPEDIDA = re.compile(r"(?i:acabamos|despedir|hasta mañana|volvemos mañana|nos vemos mañana)")
+CONECTORES = {"de", "del", "la"}
+# Palabras con mayúscula que no son nombre: las de relleno se recortan por los bordes y las
+# de instituciones descartan el candidato entero («Consejo General del Poder Judicial»).
+RELLENO = set("""Buenas Muy Hola Comenzamos Hoy Nos Mesa Análisis Gracias Bueno Pues Sí Y
+Bienvenido Bienvenida Empiezo Empieza El La Los Las Un Una Este Esta Esto Ese Esa Entre Para Con
+Por En Desde Ahí Usted Yo Te Le Lo Pero Ahora Luego Bien""".split())
+INSTITUCION = set("""Partido Popular Socialista Gobierno España Congreso Senado Redacción
+Informativos Junta Electoral Comunidad Presidente Ministro Ministerio Estados Unidos Unión
+Europea Canal Horas Radio Televisión Española Universidad Departamento Consejo General Poder
+Judicial Fundación Generalitat Ciencia Política Internacional Oriente Próximo""".split())
+ELECCIONES = re.compile(
+    r"(?i:\b(?:elecciones|electoral(?:es)?|campaña|29 de noviembre|29N|candidat[oa]s?"
+    r"|cabeza de lista|número uno|mitin(?:es)?|mítines|encuestas?|sondeos?|CIS|cara a cara"
+    r"|escaños?|mayoría absoluta|urnas?|votantes?|papeletas?)\b)")
 
 
-def presentaciones(cues, separacion=90, largo=160):
-    """Momentos en que se presenta a alguien: [(segundo, frase)]. Aproximado: los nombres
-    vienen de subtítulos automáticos y pueden estar mal escritos."""
+def nombres(texto):
+    """Nombres propios de un texto, en orden y sin repetir. Se descartan los que llevan
+    palabras de saludo o de instituciones («Consejo General del Poder Judicial»)."""
+    vistos = []
+    for m in re.finditer(NOMBRE, texto):
+        palabras = m.group(0).split()
+        if any(p in INSTITUCION for p in palabras):
+            continue
+        while palabras and (palabras[0] in RELLENO or palabras[0] in CONECTORES):
+            palabras.pop(0)
+        while palabras and (palabras[-1] in RELLENO or palabras[-1] in CONECTORES):
+            palabras.pop()
+        nombre = " ".join(palabras)
+        if (sum(p not in CONECTORES for p in palabras) >= 2 and nombre not in vistos
+                and not any(p in RELLENO for p in palabras)):
+            vistos.append(nombre)
+    return vistos
+
+
+def presentaciones(cues, duracion=None, separacion=60, largo=160, ventana_mesa=35,
+                   inicio=600, final=420):
+    """Momentos en que se presenta a alguien: [(segundo, tipo, texto)].
+
+    Tipos: «mesa» (los tertulianos, con sus nombres si se reconocen), «plato» (invitado en
+    el estudio), «conexion» (redacción, reporteros, corresponsales, entrevistas a distancia),
+    «anuncio» (al empezar, quién vendrá luego) y «presentacion» (un saludo sin más pistas).
+    Se descartan las preguntas «a los miembros de la mesa» y las despedidas del final.
+    Aproximado: sale de subtítulos automáticos y los nombres pueden venir mal escritos."""
+    if duracion is None:
+        duracion = cues[-1][0] if cues else 0
     marcas = []
     for n, (seg, txt) in enumerate(cues):
-        if not any(p.search(txt) for p in PRESENTACION):
-            continue
-        if marcas and seg - marcas[-1][0] < separacion:
+        # Un anuncio no tapa lo que venga detrás («nos acompañará…» y enseguida la mesa).
+        ultima = next((s for s, t, _ in reversed(marcas) if t != "anuncio"), None)
+        if ultima is not None and seg - ultima < separacion:
             continue
         siguiente = cues[n + 1][1] if n + 1 < len(cues) else ""
         frase = f"{txt} {siguiente}".strip()
-        if len(frase) > largo:
-            frase = frase[:largo].rsplit(" ", 1)[0] + "…"
-        marcas.append((seg, frase))
+        if RUIDO.search(frase):
+            continue
+        if MESA.search(frase) or (seg < inicio and APERTURA.search(txt)):
+            tipo = "mesa"
+        elif ANUNCIO.search(txt):
+            if seg >= inicio:
+                continue
+            tipo = "anuncio"
+        elif CONEXION.search(frase):
+            tipo = "conexion"
+        elif PLATO.search(txt):
+            tipo = "plato"
+        elif any(p.search(txt) for p in SALUDO):
+            tipo = "presentacion"
+        else:
+            continue
+        if seg > duracion - final and DESPEDIDA.search(" ".join(t for _, t in cues[n:n + 4])):
+            continue
+        texto = frase
+        if tipo == "mesa":
+            bloque = " ".join(t for s, t in cues[n:n + 40] if s - seg <= ventana_mesa)
+            texto = " · ".join(nombres(bloque)) or frase
+        if len(texto) > largo:
+            texto = texto[:largo].rsplit(" ", 1)[0] + "…"
+        marcas.append((seg, tipo, texto))
     return marcas
+
+
+def tramos(cues, patron=ELECCIONES, tam=60, minimo=2, largo_min=2, hueco=3):
+    """Tramos en que se habla de un tema: [(segundo inicial, segundo final)].
+
+    Cuenta las palabras clave de cada minuto. Entra el minuto con `minimo` o más; uno con
+    alguna mención no corta el tramo si el siguiente vuelve a entrar. Solo cuentan los de
+    `largo_min` minutos o más, y dos separados por `hueco` minutos o menos son uno (los
+    minutos sueltos se descartan antes de unir: si no, menciones aisladas encadenan tramos)."""
+    if not cues:
+        return []
+    cubos = [0] * (cues[-1][0] // tam + 1)
+    for seg, txt in cues:
+        cubos[seg // tam] += len(patron.findall(txt))
+    dentro = []
+    for i, c in enumerate(cubos):
+        sigue = (c > 0 and i and dentro[-1] and i + 1 < len(cubos) and cubos[i + 1] >= minimo)
+        dentro.append(c >= minimo or bool(sigue))
+    rachas, ini = [], None
+    for i, d in enumerate(dentro + [False]):
+        if d and ini is None:
+            ini = i
+        elif not d and ini is not None:
+            if i - ini >= largo_min:
+                if rachas and ini - rachas[-1][1] <= hueco:
+                    rachas[-1][1] = i
+                else:
+                    rachas.append([ini, i])
+            ini = None
+    return [(a * tam, min(b * tam, cues[-1][0])) for a, b in rachas]
 
 
 # --- RTVE ------------------------------------------------------------------------------
@@ -220,6 +332,18 @@ def listar_videos(hasta, obtener=json_url, tam=60, max_paginas=20):
     return [i for i in items if fecha_item(i) >= hasta]
 
 
+def guardar_marcas(conn, episodio_id, cues, duracion):
+    """Rehace las marcas y los tramos de un episodio a partir de sus subtítulos."""
+    conn.execute("DELETE FROM marcas WHERE episodio_id=?", (episodio_id,))
+    conn.execute("DELETE FROM tramos WHERE episodio_id=?", (episodio_id,))
+    conn.executemany(
+        "INSERT OR IGNORE INTO marcas VALUES(?,?,?,?)",
+        [(episodio_id, seg, tipo, txt) for seg, tipo, txt in presentaciones(cues, duracion)])
+    conn.executemany(
+        "INSERT INTO tramos VALUES(?,?,?,?)",
+        [(episodio_id, "elecciones", ini, fin) for ini, fin in tramos(cues)])
+
+
 def paso_rtve(conn, momento, dias=DIAS_INICIALES, obtener=json_url, bajar=descargar):
     """Añade episodios y fragmentos nuevos. Devuelve cuántas filas ha escrito."""
     hay = conn.execute("SELECT count(*) FROM episodios").fetchone()[0]
@@ -232,6 +356,17 @@ def paso_rtve(conn, momento, dias=DIAS_INICIALES, obtener=json_url, bajar=descar
         return cache[video_id]
 
     escritas = 0
+    if conn.execute("PRAGMA user_version").fetchone()[0] < VERSION_MARCAS:
+        # Si RTVE ya no da los subtítulos de un episodio, se quedan sus marcas de antes.
+        for id_, dur in conn.execute(
+                "SELECT id, duracion_s FROM episodios WHERE estado='ok'").fetchall():
+            cues = cues_de(id_)
+            if cues:
+                guardar_marcas(conn, id_, cues, dur)
+                escritas += 1
+        conn.execute(f"PRAGMA user_version={VERSION_MARCAS}")
+        conn.commit()
+
     for item in (i for i in items if tipo_item(i) == "Completo"):
         fila = conn.execute("SELECT estado FROM episodios WHERE id=?", (item["id"],)).fetchone()
         if fila and (fila[0] == "ok" or fecha_item(item) < momento - REINTENTO):
@@ -240,14 +375,12 @@ def paso_rtve(conn, momento, dias=DIAS_INICIALES, obtener=json_url, bajar=descar
         estado = "ok" if cues else "sin_subtitulos"
         if fila and fila[0] == estado:
             continue
+        duracion = (item.get("duration") or 0) // 1000
         conn.execute(
             "INSERT OR REPLACE INTO episodios VALUES(?,?,?,?,?,?,?,?)",
-            (item["id"], item.get("title"), iso(fecha_item(item)), (item.get("duration") or 0) // 1000,
+            (item["id"], item.get("title"), iso(fecha_item(item)), duracion,
              item.get("htmlUrl"), url_subtitulos(item["id"]), estado, iso(momento)))
-        conn.execute("DELETE FROM marcas WHERE episodio_id=?", (item["id"],))
-        conn.executemany(
-            "INSERT OR IGNORE INTO marcas VALUES(?,?,?,?)",
-            [(item["id"], seg, "presentacion", txt) for seg, txt in presentaciones(cues or [])])
+        guardar_marcas(conn, item["id"], cues or [], duracion)
         conn.commit()
         escritas += 1
 
@@ -366,13 +499,26 @@ def datos_pagina(conn):
             "ORDER BY inicio DESC"):
         marcas = [{"seg": s, "tipo": t, "texto": x} for s, t, x in conn.execute(
             "SELECT seg, tipo, texto FROM marcas WHERE episodio_id=?", (id_,))]
-        marcas += [{"seg": s, "seg_fin": s + d, "tipo": "entrevista", "texto": x, "url": u}
-                   for s, d, x, u in conn.execute(
-                       "SELECT seg, duracion_s, titulo, url FROM fragmentos "
-                       "WHERE episodio_id=? AND estado='ok'", (id_,))]
+        for s, d, x, u in conn.execute(
+                "SELECT seg, duracion_s, titulo, url FROM fragmentos "
+                "WHERE episodio_id=? AND estado='ok' ORDER BY seg", (id_,)):
+            entrevista = {"seg": s, "seg_fin": s + d, "tipo": "entrevista", "texto": x, "url": u}
+            # La presentación del invitado y el fragmento son el mismo momento: una sola línea.
+            cerca = [m for m in marcas if m["tipo"] in ("plato", "presentacion")
+                     and abs(m["seg"] - s) <= CERCA]
+            if cerca:
+                m = min(cerca, key=lambda m: abs(m["seg"] - s))
+                marcas.remove(m)
+                entrevista["presenta"] = m["texto"]
+                if m["tipo"] == "plato":
+                    entrevista["lugar"] = "plato"
+            marcas.append(entrevista)
         marcas.sort(key=lambda m: (m["seg"], m["tipo"]))
+        tramos_ep = [{"tema": t, "seg": s, "seg_fin": f} for t, s, f in conn.execute(
+            "SELECT tema, seg, seg_fin FROM tramos WHERE episodio_id=? ORDER BY seg", (id_,))]
         episodios.append({"id": id_, "titulo": titulo, "inicio": inicio, "duracion_s": dur,
-                          "url": url, "subtitulos": subs, "estado": estado, "marcas": marcas})
+                          "url": url, "subtitulos": subs, "estado": estado, "marcas": marcas,
+                          "tramos": tramos_ep})
     directos = [dict(zip(("video_id", "titulo", "inicio", "primera_vez", "fin_detectado"), f))
                 for f in conn.execute("SELECT * FROM directos ORDER BY primera_vez DESC")]
     estado = {c: {"valor": v, "desde": d} for c, v, d in conn.execute("SELECT * FROM estado")}
