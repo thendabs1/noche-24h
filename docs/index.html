@@ -88,8 +88,8 @@ footer .error { color: var(--acento); }
 </div>
 <script>
 "use strict";
-// Rebobinado máximo de YouTube en un directo (sin verificar en este canal).
-const VENTANA_DVR_H = 12;
+// Rebobinado máximo del directo de Canal 24h en YouTube: 4 h (lista HLS medida el 17/11/2026).
+const VENTANA_DVR_H = 4;
 const ZONA = "Europe/Madrid";
 const fmtHora = new Intl.DateTimeFormat("es-ES", { timeZone: ZONA, hour: "2-digit", minute: "2-digit" });
 const fmtDia = new Intl.DateTimeFormat("es-ES", { timeZone: ZONA, weekday: "long", day: "numeric", month: "long" });
@@ -173,6 +173,11 @@ const TIPOS = { entrevista: "Entrevista", mesa: "Mesa", plato: "Plató", conexio
 const etiqueta = m => m.tipo === "entrevista" && m.lugar === "plato" ? "Entrevista en plató" : TIPOS[m.tipo] || "Presenta";
 const coincide = (m, consulta) => sinAcentos(`${m.texto} ${m.presenta || ""}`).includes(consulta);
 
+// RTVE Play arranca el episodio en el segundo que se le pide con ?t= (probado el 17/11/2026).
+function urlRtveEn(ep, seg) {
+  try { const u = new URL(ep.url); u.searchParams.set("t", seg); return u.href; } catch { return ep.url; }
+}
+
 function pintarMarca(ep, m, consulta) {
   const t = Date.parse(ep.inicio) + m.seg * 1000;
   const yt = enlaceYoutube(t);
@@ -184,6 +189,7 @@ function pintarMarca(ep, m, consulta) {
     el("div", { class: "cuerpo" },
       el("span", { class: "tipo" }, etiqueta(m)),
       m.url ? enlace(m.url, texto) : el("span", { class: "texto" }, texto),
+      ep.url && enlace(urlRtveEn(ep, m.seg), "RTVE Play ▶", "yt"),
       yt && enlace(yt.url, yt.texto, "yt"),
       m.presenta && el("span", { class: "presenta" }, resaltar(m.presenta, consulta))));
 }
