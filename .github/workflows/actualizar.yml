@@ -1,0 +1,64 @@
+name: actualizar
+
+on:
+  schedule:
+    - cron: '17 * * * *'  # cada hora (UTC); GitHub puede retrasarlo unos minutos
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ['docs/index.html', 'noche24h.py', '.github/workflows/actualizar.yml']
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: actualizar
+  cancel-in-progress: false
+
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: github-pages
+      url: ${{ steps.publicar.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main  # la punta de main al empezar, no la del disparo (puede ir en cola)
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: pip install --quiet yt-dlp
+      - name: Actualizar índice
+        id: script
+        continue-on-error: true
+        run: python noche24h.py actualizar
+      - name: Guardar cambios
+        id: guardar
+        run: |
+          git add datos docs/datos.json
+          if git diff --cached --quiet; then
+            echo "cambios=no" >> "$GITHUB_OUTPUT"
+          else
+            git -c user.name="github-actions[bot]" \
+                -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+                commit -m "datos: actualización automática"
+            git push
+            echo "cambios=si" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.guardar.outputs.cambios == 'si' || github.event_name != 'schedule'
+        uses: actions/configure-pages@v5
+      - if: steps.guardar.outputs.cambios == 'si' || github.event_name != 'schedule'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: docs
+      - if: steps.guardar.outputs.cambios == 'si' || github.event_name != 'schedule'
+        id: publicar
+        uses: actions/deploy-pages@v4
+      # El script sale con 1 solo cuando un paso pasa de ir bien a fallar: un aviso por avería.
+      - name: Avisar de un fallo nuevo
+        if: steps.script.outcome == 'failure'
+        run: exit 1

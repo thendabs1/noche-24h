@@ -1,0 +1,520 @@
+{
+ "generado": "2026-11-17T21:28:37+01:00",
+ "estado": {
+  "rtve": {
+   "valor": "ok",
+   "desde": "2026-11-17T21:28:37+01:00"
+  },
+  "youtube": {
+   "valor": "ok",
+   "desde": "2026-11-17T21:28:37+01:00"
+  }
+ },
+ "directos": [
+  {
+   "video_id": "b4tE5aKhtlg",
+   "titulo": "🔴DIRECTO | CANAL 24H | TODA LA ACTUALIDAD NACIONAL E INTERNACIONAL | RTVE Noticias",
+   "inicio": "2026-03-16T20:01:38+01:00",
+   "primera_vez": "2026-11-17T21:28:37+01:00",
+   "fin_detectado": null
+  }
+ ],
+ "episodios": [
+  {
+   "id": 17317229,
+   "titulo": "La noche en 24 horas - 16/11/26",
+   "inicio": "2026-11-16T22:00:00+01:00",
+   "duracion_s": 9457,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/16-11-26/17317229/",
+   "subtitulos": "https://api.rtve.es/api/videos/17317229/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 70,
+     "tipo": "presentacion",
+     "texto": "Hoy nos acompañan en la mesa de análisis Lourdes Pérez, Gabón."
+    },
+    {
+     "seg": 2362,
+     "tipo": "presentacion",
+     "texto": "Como les decía, nos acompaña Nicolás Artorius, cofundador de Comisiones Obreras, presidente del Consejo"
+    },
+    {
+     "seg": 8235,
+     "tipo": "presentacion",
+     "texto": "pues nos acompaña juanjo fernández ingeniero escritor y analista de defensa que acaba de publicar este libro muy recomendable"
+    },
+    {
+     "seg": 9405,
+     "tipo": "presentacion",
+     "texto": "Manuel Rico, buenas noches. Buenas noches. Gabón."
+    }
+   ]
+  },
+  {
+   "id": 17311874,
+   "titulo": "Comienza la campaña electoral del 29N",
+   "inicio": "2026-11-13T00:32:39+01:00",
+   "duracion_s": 1004,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/elecciones-generales-29n-comienza-campana-electoral/17311874/",
+   "subtitulos": "https://api.rtve.es/api/videos/17311874/subtitulos.json",
+   "estado": "ok",
+   "marcas": []
+  },
+  {
+   "id": 17311880,
+   "titulo": "La noche en 24 horas - 12/11/26",
+   "inicio": "2026-11-12T21:45:00+01:00",
+   "duracion_s": 9094,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/12-11-26/17311880/",
+   "subtitulos": "https://api.rtve.es/api/videos/17311880/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 74,
+     "tipo": "presentacion",
+     "texto": "Fijo. Hoy precisamente nos acompañará en unos minutos para comentar estos resultados el presidente del CIS, José Feristeza."
+    },
+    {
+     "seg": 1658,
+     "tipo": "presentacion",
+     "texto": "angelitos que las que nos acompañan y en fin es que es tremendo es que esto asusta asusta pero a mí me ha puesto los pelos de punta"
+    },
+    {
+     "seg": 2199,
+     "seg_fin": 4083,
+     "tipo": "entrevista",
+     "texto": "Tezanos defiende la encuesta del CIS",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/entrevista-tezanos-defiende-cis/17311892/"
+    },
+    {
+     "seg": 3647,
+     "tipo": "presentacion",
+     "texto": "miembros de la mesa de análisis. Empieza por Gloria Lomar"
+    },
+    {
+     "seg": 3775,
+     "tipo": "presentacion",
+     "texto": "Antón Lozada. Hola, buenas noches, José Félix se llena españa de estadísticos tenemos el país en los estadísticos esta tarde"
+    },
+    {
+     "seg": 6069,
+     "tipo": "presentacion",
+     "texto": "Marcos Fernández, buenas noches, cuéntanos. ¿Qué tal?"
+    }
+   ]
+  },
+  {
+   "id": 17310031,
+   "titulo": "La noche en 24 horas - 11/11/26",
+   "inicio": "2026-11-11T21:55:00+01:00",
+   "duracion_s": 9373,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/11-11-26/17310031/",
+   "subtitulos": "https://api.rtve.es/api/videos/17310031/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 191,
+     "tipo": "presentacion",
+     "texto": "Nos acompaña Anche Chema Crespo. Buenas noches."
+    }
+   ]
+  },
+  {
+   "id": 17308921,
+   "titulo": "La noche en 24 horas - 10/11/26",
+   "inicio": "2026-11-10T21:55:00+01:00",
+   "duracion_s": 9402,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/10-11-26/17308921/",
+   "subtitulos": "https://api.rtve.es/api/videos/17308921/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 54,
+     "tipo": "presentacion",
+     "texto": "...comenzamos, hoy nos acompañan.. en la mesa de análisis Isaias Lafuente."
+    },
+    {
+     "seg": 2721,
+     "tipo": "presentacion",
+     "texto": "humano. Y como les decíamos, hoy nos acompaña Félix Bolaños, ministro de Presidencia"
+    },
+    {
+     "seg": 2723,
+     "seg_fin": 4580,
+     "tipo": "entrevista",
+     "texto": "Bolaños, ministro de Justicia: \"La derecha no cree en que haya políticas para la vivienda\"",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/bolanos-derecha-no-cree-haya-politicas-vivienda/17308895/"
+    },
+    {
+     "seg": 4001,
+     "tipo": "presentacion",
+     "texto": "Pues vamos con el turno de preguntas de los miembros de la mesa de análisis, con"
+    },
+    {
+     "seg": 4612,
+     "tipo": "presentacion",
+     "texto": "Álvaro Jiménez, buenas noches. ¿Cómo está ahora mismo ahí el"
+    },
+    {
+     "seg": 8036,
+     "tipo": "presentacion",
+     "texto": "traslado inmediatamente a los miembros de la mesa de análisis. Llevamos 7 minutos 45 segundos para ser preciso"
+    },
+    {
+     "seg": 9375,
+     "tipo": "presentacion",
+     "texto": "Buenas noches. Lucía Méndez, muy buenas noches. Así acabamos por hoy a las doce"
+    }
+   ]
+  },
+  {
+   "id": 17307191,
+   "titulo": "La noche en 24 horas - 09/11/26",
+   "inicio": "2026-11-09T22:00:00+01:00",
+   "duracion_s": 9536,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/09-11-26/17307191/",
+   "subtitulos": "https://api.rtve.es/api/videos/17307191/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 33,
+     "tipo": "presentacion",
+     "texto": "Comenzamos. Hoy nos acompañan en la mesa de actual"
+    },
+    {
+     "seg": 1459,
+     "tipo": "presentacion",
+     "texto": "Semana. Hoy nos acompaña en el plató de la noche Miguel Pardeza, que acaba de publicar su última novela"
+    },
+    {
+     "seg": 2055,
+     "tipo": "presentacion",
+     "texto": "José Aurelio, muy buenas noches Hola, buenas noches."
+    },
+    {
+     "seg": 3245,
+     "tipo": "presentacion",
+     "texto": "Nos acompaña su director, el director de esta película, Daniel Manzomi."
+    },
+    {
+     "seg": 5437,
+     "tipo": "presentacion",
+     "texto": "Marcos Fernández, Redacción de Informativos, buenas noches, cuéntanos. ¿Qué tal? Buenas noches,"
+    },
+    {
+     "seg": 7020,
+     "tipo": "presentacion",
+     "texto": "Relación de informativos, Estés Moreno, buenas noches, cuéntanos. Si en la agenda de Leire Díez aparecen anotaciones"
+    },
+    {
+     "seg": 9494,
+     "tipo": "presentacion",
+     "texto": "Estefanía Molina, muy buenas noches. Carlos de los Riquem, muy buenas noches."
+    }
+   ]
+  },
+  {
+   "id": 17302445,
+   "titulo": "La noche en 24 horas - 05/11/26",
+   "inicio": "2026-11-05T22:00:00+01:00",
+   "duracion_s": 9365,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/05-11-26/17302445/",
+   "subtitulos": "https://api.rtve.es/api/videos/17302445/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 123,
+     "tipo": "presentacion",
+     "texto": "Comenzamos. Hoy nos acompañan en la mesa de análisis"
+    },
+    {
+     "seg": 1231,
+     "tipo": "presentacion",
+     "texto": "Guillermo, desde algún pueblo cercano a Nueva York, muy buenas noches desde España"
+    },
+    {
+     "seg": 2657,
+     "seg_fin": 2716,
+     "tipo": "entrevista",
+     "texto": "Dimite el presidente de Paraguay tras el colapso de un banco",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/dimite-presidente-paraguay-colapso-banco/17302398/"
+    },
+    {
+     "seg": 3100,
+     "tipo": "presentacion",
+     "texto": "Hoy nos acompaña el periodista José María Izquierdo, acaba de publicar, está calentito de la imprenta, el libro Los 300"
+    }
+   ]
+  },
+  {
+   "id": 17300599,
+   "titulo": "La noche en 24 horas - 04/11/26",
+   "inicio": "2026-11-04T21:45:00+01:00",
+   "duracion_s": 9471,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/04-11-26/17300599/",
+   "subtitulos": "https://api.rtve.es/api/videos/17300599/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 113,
+     "tipo": "presentacion",
+     "texto": "Comenzamos hoy, nos acompañan en la mesa de análisis, Carmelo Encinas Buenas noches. Javier García Vila, muy buenas noches."
+    },
+    {
+     "seg": 2243,
+     "tipo": "presentacion",
+     "texto": "Nos acompaña Alejandro Pérez Polo, que es politólogo y acaba de publicar este libro."
+    },
+    {
+     "seg": 2566,
+     "tipo": "presentacion",
+     "texto": "Esther Moreno, buenas noches, cuéntanos ¿Qué tal? Muy buenas noches a todos."
+    },
+    {
+     "seg": 3209,
+     "tipo": "presentacion",
+     "texto": "Pues nos acompaña Raul Incertis, médico de la Organización Médicos Sin Frontera, que acaba de publicar este libro, Ojalá"
+    },
+    {
+     "seg": 4038,
+     "tipo": "presentacion",
+     "texto": "Marina Rivel, buenas noches, cuéntanos qué tal sabe muy buenas noches bueno y aquellos que no están"
+    },
+    {
+     "seg": 7516,
+     "tipo": "presentacion",
+     "texto": "Cristina Olea, buenas noches, frente a quienes como su vicepresidente atribuyen la derrota a"
+    }
+   ]
+  },
+  {
+   "id": 17298692,
+   "titulo": "La noche en 24 horas - 03/11/26",
+   "inicio": "2026-11-03T22:00:00+01:00",
+   "duracion_s": 10040,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/03-11-26/17298692/",
+   "subtitulos": "https://api.rtve.es/api/videos/17298692/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 219,
+     "tipo": "presentacion",
+     "texto": "Comenzamos. Hoy nos acompañan en la mesa de análisis"
+    },
+    {
+     "seg": 1680,
+     "tipo": "presentacion",
+     "texto": "vosotros. Se incorpora a la mesa de análisis con Gracias a"
+    },
+    {
+     "seg": 2213,
+     "seg_fin": 2589,
+     "tipo": "entrevista",
+     "texto": "Ada Colau: \"Hay que agradecer a Puente el gesto que ha hecho. Ya no hay que hablar de cargos, ni de dimisiones sino de gestión\"",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/ada-colau-hay-agradecer-puente-gesto-hecho-ya-no-hay-hablar-cargos-ni-dimisiones-sino-gestion/17298661/"
+    },
+    {
+     "seg": 3263,
+     "tipo": "presentacion",
+     "texto": "Alejandra Arraz, buenas noches en Washington. Desde España, aunque los primeros"
+    },
+    {
+     "seg": 4559,
+     "tipo": "presentacion",
+     "texto": "esta. Pablo Simón, buenas noches. Hola, ¿qué tal? Muy buenas noches."
+    },
+    {
+     "seg": 4755,
+     "tipo": "presentacion",
+     "texto": "todos los miembros de la mesa de análisis esa posibilidad de girar el eje de la campaña. En el PSOE ya estamos viendo reacciones"
+    },
+    {
+     "seg": 9536,
+     "tipo": "presentacion",
+     "texto": "Buenas noches. Eima Lucas, buenas noches. Hacemos antes de ir ya con el programa especial"
+    }
+   ]
+  },
+  {
+   "id": 17289402,
+   "titulo": "La noche en 24 horas - 29/10/26",
+   "inicio": "2026-10-29T21:50:00+01:00",
+   "duracion_s": 9222,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/29-10-26/17289402/",
+   "subtitulos": "https://api.rtve.es/api/videos/17289402/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 111,
+     "tipo": "presentacion",
+     "texto": "Buenas noches. Muy buenas noches, Pablo Montesina. Un placer, buenas noches."
+    },
+    {
+     "seg": 2212,
+     "tipo": "presentacion",
+     "texto": "Marta Lobera, buenas noches. ¿Cómo avanzan sus trabajos?"
+    },
+    {
+     "seg": 5169,
+     "tipo": "presentacion",
+     "texto": "Nos acompaña Miriam Jiménez, que es socióloga. Buenas noches, bienvenida"
+    },
+    {
+     "seg": 6151,
+     "tipo": "presentacion",
+     "texto": "Sonia López, buenas noches Son horas decisivas para saber su evolución"
+    }
+   ]
+  },
+  {
+   "id": 17286509,
+   "titulo": "La noche en 24 horas - 27/10/26",
+   "inicio": "2026-10-27T22:00:00+01:00",
+   "duracion_s": 9911,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/27-10-26/17286509/",
+   "subtitulos": "https://api.rtve.es/api/videos/17286509/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 1006,
+     "tipo": "presentacion",
+     "texto": "Pues nos acompañan en la mesa de análisis Leila Nachawati, profesora de Departamento de Comunicación de la Universidad Carlos III, especialista en"
+    },
+    {
+     "seg": 1676,
+     "tipo": "presentacion",
+     "texto": "Mark Campbell Acreu, buenas noches, ha sembrado dudas tenemos además los primeros sondeos a pie de urna, que suelen ser muy"
+    },
+    {
+     "seg": 8670,
+     "tipo": "presentacion",
+     "texto": "Como les decía, nos acompaña Rubén Sánchez, portavoz de FACUA, que esta tarde ha presentado en Madrid el libro."
+    }
+   ]
+  },
+  {
+   "id": 17284588,
+   "titulo": "La noche en 24 horas - 26/10/26",
+   "inicio": "2026-10-26T22:00:00+01:00",
+   "duracion_s": 10057,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/26-10-26/17284588/",
+   "subtitulos": "https://api.rtve.es/api/videos/17284588/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 78,
+     "tipo": "presentacion",
+     "texto": "Comenzamos. Hoy nos acompañan en la mesa de análisis Pedro Ballín."
+    },
+    {
+     "seg": 873,
+     "tipo": "presentacion",
+     "texto": "Un resultado que, Ana Jiménez, buenas noches, no da por bueno su rival, el ultra Flavio Bolsonaro"
+    },
+    {
+     "seg": 3456,
+     "tipo": "presentacion",
+     "texto": "Olivia Guillén, buenas noches, cuéntanos. Sí, como bien has explicado, las cuatro encuestas"
+    },
+    {
+     "seg": 3838,
+     "seg_fin": 5022,
+     "tipo": "entrevista",
+     "texto": "Arcadi España: \"Hoy PP y Vox han decidido casarse, ha nacido un nuevo partido\"",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/arcadi-espana-hoy-pp-vox-han-decidido-casarse-nacido-nuevo-partido/17284560/"
+    },
+    {
+     "seg": 3838,
+     "tipo": "presentacion",
+     "texto": "Como les decíamos, nos acompaña Arcadi España, ministro de Hacienda."
+    }
+   ]
+  },
+  {
+   "id": 17279546,
+   "titulo": "La noche en 24 horas - 22/10/26",
+   "inicio": "2026-10-22T22:00:00+02:00",
+   "duracion_s": 9941,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/22-10-26/17279546/",
+   "subtitulos": "https://api.rtve.es/api/videos/17279546/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 77,
+     "tipo": "presentacion",
+     "texto": "Hoy nos acompañan en la mesa de análisis Chema Crespo."
+    },
+    {
+     "seg": 5004,
+     "tipo": "presentacion",
+     "texto": "Renovamos la mesa de análisis, se incorporan a la mesa de la noche Antonio Papel,"
+    },
+    {
+     "seg": 7852,
+     "tipo": "presentacion",
+     "texto": "Estel Moreno, buenas noches, cuéntanos cómo están ahora mismo las cosas. Pues había tres semanas para que"
+    }
+   ]
+  },
+  {
+   "id": 17277755,
+   "titulo": "La noche en 24 horas - 21/10/26",
+   "inicio": "2026-10-21T22:00:00+02:00",
+   "duracion_s": 10339,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/21-10-26/17277755/",
+   "subtitulos": "https://api.rtve.es/api/videos/17277755/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 82,
+     "tipo": "presentacion",
+     "texto": "Hoy nos acompañan en la mesa de análisis Luis Arroyo. ¿Qué tal? Buenas noches."
+    },
+    {
+     "seg": 3342,
+     "tipo": "presentacion",
+     "texto": "Pues ahora sí, nos acompaña José Mota, que debuta como director en largometrajes con esta película,"
+    },
+    {
+     "seg": 5113,
+     "tipo": "presentacion",
+     "texto": "renovamos la mesa de análisis, se incorporan Gerardo Lorenzo, Carmelo Encinas, Juan Romero y Estefanía Molina."
+    }
+   ]
+  },
+  {
+   "id": 17275904,
+   "titulo": "La noche en 24 horas - 20/10/26",
+   "inicio": "2026-10-20T22:00:00+02:00",
+   "duracion_s": 10300,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/20-10-26/17275904/",
+   "subtitulos": "https://api.rtve.es/api/videos/17275904/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 90,
+     "tipo": "presentacion",
+     "texto": "Comenzamos. Hoy nos acompañan en la Mesa Análisis Javier Casqueiro, buenas noches."
+    },
+    {
+     "seg": 3812,
+     "seg_fin": 5122,
+     "tipo": "entrevista",
+     "texto": "Delgado pide salir del \"culebrón\" con Podemos y unir a la gente contra la \"involución democrática\"",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/delgado-culebron-podemos-unir-involucion-democratica/17275865/"
+    },
+    {
+     "seg": 3812,
+     "tipo": "presentacion",
+     "texto": "Nos acompaña ahora Emilio Delgado, número uno del Frente Amplio por Madrid."
+    },
+    {
+     "seg": 5268,
+     "tipo": "presentacion",
+     "texto": "He emorronado a la mesa de análisis, nos acompañan a los centros de quejo Alejandro, decía. Un poco en las palabras del"
+    }
+   ]
+  }
+ ]
+}

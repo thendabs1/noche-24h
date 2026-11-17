@@ -1,0 +1,245 @@
+import hashlib
+import json
+import sys
+import tempfile
+import unittest
+import urllib.error
+from datetime import datetime, timedelta
+from pathlib import Path
+from types import SimpleNamespace
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+import noche24h as n  # noqa: E402
+
+AHORA = datetime(2026, 11, 17, 12, 0, tzinfo=n.MADRID)
+
+
+def vtt(cues):
+    partes = ["WEBVTT", ""]
+    for i, (seg, txt) in enumerate(cues, 1):
+        h, m, s = seg // 3600, seg % 3600 // 60, seg % 60
+        partes += [str(i), f"{h:02d}:{m:02d}:{s:02d}.000 --> {h:02d}:{m:02d}:{s:02d}.900", txt, ""]
+    return "\n".join(partes)
+
+
+def frases(n_, prefijo):
+    return [f"{prefijo} frase número {i} con texto suficiente para casar bien" for i in range(n_)]
+
+
+def item(id_, tipo, fecha, titulo="t", dur_s=60):
+    return {"id": id_, "title": titulo, "type": {"name": tipo},
+            "dateOfEmission": fecha.strftime("%d-%m-%Y %H:%M:%S"),
+            "publicationDate": fecha.strftime("%d-%m-%Y %H:%M:%S"),
+            "duration": dur_s * 1000, "htmlUrl": f"https://rtve/{id_}"}
+
+
+class FalsaRTVE:
+    """API de RTVE en memoria: listado del programa y subtítulos por vídeo."""
+
+    def __init__(self, items, subtitulos):
+        self.items, self.subtitulos, self.pedidas = items, subtitulos, []
+
+    def obtener(self, url):
+        self.pedidas.append(url)
+        if "/programas/" in url:
+            pagina = int(url.rsplit("page=", 1)[1])
+            lote = self.items[(pagina - 1) * 2:pagina * 2]
+            return {"page": {"items": lote, "totalPages": (len(self.items) + 1) // 2}}
+        vid = int(url.split("/videos/")[1].split("/")[0])
+        if vid not in self.subtitulos:
+            raise urllib.error.HTTPError(url, 404, "no", {}, None)
+        return {"page": {"items": [{"lang": "es", "src": f"vtt:{vid}"}]}}
+
+    def bajar(self, src):
+        return vtt(self.subtitulos[int(src.split(":")[1])]).encode()
+
+
+class TestSubtitulos(unittest.TestCase):
+    def test_leer_vtt(self):
+        texto = ("WEBVTT\r\n\r\n1\r\n00:00:01.000 --> 00:00:02.000\r\nhola <i>qué</i>\r\ntal\r\n\r\n"
+                 "01:02.500 --> 01:03.000\nsin horas\n\n2\n01:00:00.000 --> 01:00:01.000\n\n")
+        self.assertEqual(n.leer_vtt(texto), [(1, "hola qué tal"), (62, "sin horas")])
+
+    def test_alinear_encuentra_el_desfase(self):
+        episodio = [(i * 3, t) for i, t in enumerate(frases(300, "ep"))]
+        fragmento = [(i * 3, t) for i, t in enumerate(frases(300, "ep")[100:160])]
+        self.assertEqual(n.alinear(fragmento, episodio), (300, 60))
+
+    def test_alinear_rechaza_pocas_coincidencias(self):
+        episodio = [(i, t) for i, t in enumerate(frases(50, "ep"))]
+        fragmento = [(i, t) for i, t in enumerate(frases(5, "ep") + frases(40, "otro"))]
+        self.assertIsNone(n.alinear(fragmento, episodio))
+
+    def test_presentaciones(self):
+        cues = [(10, "Esta noche nos acompañan en la"), (12, "mesa de análisis varios"),
+                (40, "Antonio Sara, buenas noches."), (300, "ayer hablamos de esto"),
+                (400, "Muy buenas noches, Pablo Montesinos."), (900, "Buenas noches, Xavi."),
+                (1200, "Marcos Fernández, buenas noches, cuéntanos")]
+        marcas = n.presentaciones(cues)
+        self.assertEqual([s for s, _ in marcas], [10, 400, 1200])
+        self.assertEqual(marcas[0][1], "Esta noche nos acompañan en la mesa de análisis varios")
+
+
+class TestRTVE(unittest.TestCase):
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.ruta = Path(self.tmp.name) / "d.sqlite"
+        self.conn = n.abrir(self.ruta)
+
+    def tearDown(self):
+        self.conn.close()
+        self.tmp.cleanup()
+
+    def api(self, con_fragmento=True, subs_episodio=True):
+        ep_ini = datetime(2026, 11, 16, 21, 50, tzinfo=n.MADRID)
+        texto = frases(400, "ep")
+        items = [item(3, "Fragmento", ep_ini + timedelta(hours=3), "Entrevista a Fulano", 120),
+                 item(2, "Completo", ep_ini, "La noche en 24 horas - 16/11/26", 9000),
+                 item(1, "Completo", datetime(2026, 9, 1, 22, tzinfo=n.MADRID))]
+        if not con_fragmento:
+            items = items[1:]
+        subs = {3: [(i * 3, t) for i, t in enumerate(texto[200:240])]}
+        if subs_episodio:
+            subs[2] = [(i * 3, t) for i, t in enumerate(texto)] + [(1300, "nos acompaña Mengana")]
+        return FalsaRTVE(items, subs)
+
+    def test_episodio_fragmento_y_marcas(self):
+        api = self.api()
+        self.assertEqual(n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar), 2)
+        ep = self.conn.execute("SELECT id, inicio, duracion_s, estado FROM episodios").fetchall()
+        self.assertEqual(ep, [(2, "2026-11-16T21:50:00+01:00", 9000, "ok")])  # el 1 queda fuera
+        self.assertEqual(self.conn.execute("SELECT episodio_id, seg, estado FROM fragmentos")
+                         .fetchall(), [(2, 600, "ok")])
+        self.assertEqual(self.conn.execute("SELECT seg, tipo FROM marcas").fetchall(),
+                         [(1300, "presentacion")])
+        datos = n.datos_pagina(self.conn)["episodios"][0]["marcas"]
+        self.assertEqual([(m["seg"], m["tipo"]) for m in datos],
+                         [(600, "entrevista"), (1300, "presentacion")])
+        self.assertEqual(datos[0]["seg_fin"], 720)
+
+    def test_segunda_pasada_no_escribe_ni_toca_el_fichero(self):
+        api = self.api()
+        n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar)
+        n.anotar(self.conn, "rtve", None, AHORA)
+        antes = hashlib.sha256(self.ruta.read_bytes()).hexdigest()
+        # Sin novedades no cambia ni un byte: así git no hace commit cada hora.
+        self.assertEqual(n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar), 0)
+        n.anotar(self.conn, "rtve", None, AHORA)
+        self.assertEqual(hashlib.sha256(self.ruta.read_bytes()).hexdigest(), antes)
+
+    def test_sin_subtitulos_se_reintenta(self):
+        api = self.api(con_fragmento=False, subs_episodio=False)
+        n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar)
+        self.assertEqual(self.conn.execute("SELECT estado FROM episodios").fetchone(),
+                         ("sin_subtitulos",))
+        self.assertEqual(n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar), 0)
+        api2 = self.api(con_fragmento=False)
+        self.assertEqual(n.paso_rtve(self.conn, AHORA, 28, api2.obtener, api2.bajar), 1)
+        self.assertEqual(self.conn.execute("SELECT estado FROM episodios").fetchone(), ("ok",))
+
+    def test_fragmento_sin_episodio_espera_y_luego_se_cierra(self):
+        frag = item(9, "Fragmento", AHORA - timedelta(hours=2))
+        api = FalsaRTVE([frag], {})
+        n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar)
+        self.assertEqual(self.conn.execute("SELECT count(*) FROM fragmentos").fetchone(), (0,))
+        n.paso_rtve(self.conn, AHORA + timedelta(days=4), 28, api.obtener, api.bajar)
+        self.assertEqual(self.conn.execute("SELECT estado FROM fragmentos").fetchone(),
+                         ("sin_episodio",))
+
+    def test_listar_videos_pagina_hasta_la_fecha(self):
+        fechas = [AHORA - timedelta(days=d) for d in (0, 5, 10, 20, 40, 50)]
+        api = FalsaRTVE([item(i, "Completo", f) for i, f in enumerate(fechas)], {})
+        vistos = n.listar_videos(AHORA - timedelta(days=28), api.obtener)
+        self.assertEqual([i["id"] for i in vistos], [0, 1, 2, 3])
+        self.assertEqual(len(api.pedidas), 3)  # la tercera página cruza la fecha y para
+
+
+def memoria(caso):
+    conn = n.abrir(":memory:")
+    caso.addCleanup(conn.close)
+    return conn
+
+
+class TestYouTube(unittest.TestCase):
+    def setUp(self):
+        self.conn = memoria(self)
+
+    def filas(self):
+        return self.conn.execute(
+            "SELECT video_id, inicio, fin_detectado FROM directos ORDER BY video_id").fetchall()
+
+    def test_sesiones(self):
+        inicios = {"A": "2026-03-16T20:01:38+01:00", "B": "2026-11-17T23:10:00+01:00"}
+        t1 = AHORA
+        self.assertEqual(n.paso_youtube(self.conn, t1, [("A", "CANAL 24H")], inicios.get), 1)
+        self.assertEqual(n.paso_youtube(self.conn, t1, [("A", "CANAL 24H")], inicios.get), 0)
+        self.assertEqual(n.paso_youtube(self.conn, t1, [], inicios.get), 0)  # vacía: no cierra
+        t2 = datetime(2026, 11, 18, 0, 5, tzinfo=n.MADRID)
+        n.paso_youtube(self.conn, t2, [("B", "CANAL 24H")], inicios.get)
+        self.assertEqual(self.filas(), [("A", inicios["A"], inicios["B"]),
+                                        ("B", inicios["B"], None)])
+
+    def test_sin_hora_de_inicio_se_reintenta_y_se_cierra_al_detectar(self):
+        n.paso_youtube(self.conn, AHORA, [("A", "x")], lambda v: None)
+        self.assertEqual(n.paso_youtube(self.conn, AHORA, [("A", "x")], lambda v: "2026-01-01T00:00:00+01:00"), 1)
+        n.paso_youtube(self.conn, AHORA, [("B", "x")], lambda v: None)
+        self.assertEqual(self.filas()[0][2], n.iso(AHORA))
+
+    def test_listar_directos_24h(self):
+        salida = {"entries": [
+            {"id": "c", "title": "🔴DIRECTO | Congreso", "duration": None},
+            {"id": "v", "title": "🔴DIRECTO | CANAL 24H | TODA LA ACTUALIDAD", "duration": None},
+            {"id": "x", "title": "CANAL 24H resumen", "duration": 300.0}]}
+        falso = lambda *a, **k: SimpleNamespace(returncode=0, stdout=json.dumps(salida), stderr="")
+        self.assertEqual(n.listar_directos_24h(falso), [("v", salida["entries"][1]["title"])])
+        roto = lambda *a, **k: SimpleNamespace(returncode=1, stdout="", stderr="Sign in")
+        with self.assertRaises(RuntimeError):
+            n.listar_directos_24h(roto)
+
+    def test_inicio_directo(self):
+        falso = lambda *a, **k: SimpleNamespace(returncode=0, stdout='{"release_timestamp": 1773687698}')
+        self.assertEqual(n.inicio_directo("v", falso), "2026-03-16T20:01:38+01:00")
+        roto = lambda *a, **k: SimpleNamespace(returncode=1, stdout="")
+        self.assertIsNone(n.inicio_directo("v", roto))
+
+
+class TestEstadoYExportar(unittest.TestCase):
+    def test_anotar_solo_avisa_del_error_nuevo(self):
+        conn = memoria(self)
+        self.assertFalse(n.anotar(conn, "rtve", None, AHORA))
+        self.assertTrue(n.anotar(conn, "rtve", "403", AHORA))
+        self.assertFalse(n.anotar(conn, "rtve", "403", AHORA))
+        self.assertFalse(n.anotar(conn, "rtve", "500", AHORA))
+        self.assertFalse(n.anotar(conn, "rtve", None, AHORA))
+        self.assertEqual(conn.execute("SELECT valor FROM estado").fetchone(), ("ok",))
+
+    def test_exportar_solo_si_cambia(self):
+        conn = memoria(self)
+        n.paso_youtube(conn, AHORA, [("A", "CANAL 24H")], lambda v: None)
+        with tempfile.TemporaryDirectory() as d:
+            destino = Path(d) / "docs" / "datos.json"
+            self.assertTrue(n.exportar(conn, destino, AHORA))
+            self.assertFalse(n.exportar(conn, destino, AHORA + timedelta(hours=1)))
+            datos = json.loads(destino.read_text())
+            self.assertEqual(datos["generado"], n.iso(AHORA))
+            self.assertEqual(datos["directos"][0]["video_id"], "A")
+            n.anotar(conn, "youtube", None, AHORA)
+            self.assertTrue(n.exportar(conn, destino, AHORA))
+
+
+class TestDatosPublicados(unittest.TestCase):
+    def test_datos_json_del_repo_es_valido(self):
+        ruta = n.SALIDA
+        if not ruta.exists():
+            self.skipTest("sin datos.json todavía")
+        datos = json.loads(ruta.read_text(encoding="utf-8"))
+        self.assertEqual(set(datos), {"generado", "estado", "directos", "episodios"})
+        for ep in datos["episodios"]:
+            self.assertTrue(ep["url"] and ep["inicio"])
+            for m in ep["marcas"]:
+                self.assertIn(m["tipo"], {"entrevista", "presentacion"})
+                self.assertLessEqual(0, m["seg"])
+
+
+if __name__ == "__main__":
+    unittest.main()

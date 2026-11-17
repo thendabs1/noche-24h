@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>La noche en 24h</title>
+<meta name="description" content="Índice de entrevistas y presentaciones de «La noche en 24h» (RTVE) con su hora, para verla a tu ritmo.">
+<style>
+:root {
+  --fondo: #f6f5f2; --tarjeta: #ffffff; --texto: #1d1d1f; --suave: #5f6368; --borde: #dedbd4;
+  --acento: #b3261e; --acento-texto: #ffffff; --entrevista: #0b57d0; --presentacion: #6b6b6b;
+  --resalte: #fff4d6; --hecho: #9aa0a6;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --fondo: #141414; --tarjeta: #1f1f1f; --texto: #ececec; --suave: #a8abaf; --borde: #333;
+    --acento: #ff6b5e; --acento-texto: #141414; --entrevista: #8ab4f8; --presentacion: #9aa0a6;
+    --resalte: #3a3220; --hecho: #6f7378;
+  }
+}
+:root[data-theme="dark"] {
+  --fondo: #141414; --tarjeta: #1f1f1f; --texto: #ececec; --suave: #a8abaf; --borde: #333;
+  --acento: #ff6b5e; --acento-texto: #141414; --entrevista: #8ab4f8; --presentacion: #9aa0a6;
+  --resalte: #3a3220; --hecho: #6f7378;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--fondo); color: var(--texto);
+  font: 16px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.contenedor { max-width: 860px; margin: 0 auto; padding: 16px; }
+h1 { font-size: 1.6rem; margin: 8px 0 2px; }
+.sub { color: var(--suave); margin: 0 0 12px; }
+a { color: var(--entrevista); }
+.directo { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px;
+  padding: 12px; display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: center; }
+.directo.en-emision { border-color: var(--acento); }
+.directo strong { flex: 1 1 220px; }
+.boton { display: inline-block; padding: 8px 12px; border-radius: 8px; text-decoration: none;
+  border: 1px solid var(--borde); color: var(--texto); background: var(--fondo); font-weight: 600; }
+.boton.principal { background: var(--acento); border-color: var(--acento); color: var(--acento-texto); }
+.herramientas { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; margin: 14px 0; }
+.herramientas input[type=search] { flex: 1 1 240px; padding: 9px 10px; border-radius: 8px;
+  border: 1px solid var(--borde); background: var(--tarjeta); color: var(--texto); font: inherit; }
+.ep { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px;
+  padding: 12px; margin: 0 0 12px; }
+.ep.siguiente { border-color: var(--acento); box-shadow: 0 0 0 1px var(--acento); }
+.ep.visto { opacity: .6; }
+.ep-cab { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: baseline; }
+.ep-cab h2 { font-size: 1.1rem; margin: 0; }
+.ep-cab .meta { color: var(--suave); font-size: .9rem; }
+.etiqueta { font-size: .75rem; font-weight: 700; padding: 1px 7px; border-radius: 99px;
+  background: var(--acento); color: var(--acento-texto); }
+.ep-cab label { margin-left: auto; font-size: .9rem; color: var(--suave); cursor: pointer; }
+.enlaces { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .9rem; margin: 6px 0 4px; }
+ol.marcas { list-style: none; margin: 8px 0 0; padding: 0; }
+ol.marcas li { display: grid; grid-template-columns: 3.4rem 1fr; gap: 0 10px; padding: 6px 0;
+  border-top: 1px solid var(--borde); }
+.hora { font-variant-numeric: tabular-nums; font-weight: 700; }
+.pos { grid-column: 1; font-size: .75rem; color: var(--suave); font-variant-numeric: tabular-nums; }
+.cuerpo { grid-column: 2; grid-row: 1 / span 2; }
+.tipo { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; margin-right: 6px; }
+.entrevista .tipo { color: var(--entrevista); }
+.presentacion .tipo { color: var(--presentacion); }
+.presentacion .texto { color: var(--suave); font-style: italic; }
+.yt { display: inline-block; margin-left: 6px; font-size: .85rem; white-space: nowrap; }
+.aviso { color: var(--suave); font-size: .9rem; margin: 6px 0 0; }
+mark { background: var(--resalte); color: inherit; }
+footer { color: var(--suave); font-size: .85rem; margin: 24px 0 8px; }
+footer .error { color: var(--acento); }
+</style>
+</head>
+<body>
+<div class="contenedor">
+  <h1>La noche en 24h</h1>
+  <p class="sub">Entrevistas y presentaciones de cada noche con su hora, para verla a tu ritmo. Lunes a jueves, hacia las 22:00–00:30 en Canal 24h.</p>
+  <div id="directo" class="directo">Cargando…</div>
+  <div class="herramientas">
+    <input id="buscar" type="search" placeholder="Buscar invitado o tema…" aria-label="Buscar invitado o tema">
+    <label><input type="checkbox" id="solo-pendientes"> Solo pendientes</label>
+  </div>
+  <main id="lista"></main>
+  <footer id="pie"></footer>
+</div>
+<script>
+"use strict";
+// Rebobinado máximo de YouTube en un directo (sin verificar en este canal).
+const VENTANA_DVR_H = 12;
+const ZONA = "Europe/Madrid";
+const fmtHora = new Intl.DateTimeFormat("es-ES", { timeZone: ZONA, hour: "2-digit", minute: "2-digit" });
+const fmtDia = new Intl.DateTimeFormat("es-ES", { timeZone: ZONA, weekday: "long", day: "numeric", month: "long" });
+const fmtFecha = new Intl.DateTimeFormat("es-ES", { timeZone: ZONA, dateStyle: "short", timeStyle: "short" });
+let datos = null;
+
+function el(etiqueta, attrs, ...hijos) {
+  const n = document.createElement(etiqueta);
+  for (const [k, v] of Object.entries(attrs || {})) {
+    if (v === null || v === undefined || v === false) continue;
+    if (k === "class") n.className = v; else n.setAttribute(k, v === true ? "" : v);
+  }
+  for (const h of hijos.flat()) if (h !== null && h !== undefined && h !== false) n.append(h);
+  return n;
+}
+const enlace = (url, texto, clase) => el("a", { href: url, target: "_blank", rel: "noopener", class: clase }, texto);
+const duracion = s => `${Math.floor(s / 3600)}:${String(Math.floor(s % 3600 / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`;
+const mayuscula = t => t.charAt(0).toUpperCase() + t.slice(1);
+const sinAcentos = t => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+
+function leerVistos() { try { return new Set(JSON.parse(localStorage.getItem("noche24h:vistos") || "[]")); } catch { return new Set(); } }
+function guardarVistos(s) { try { localStorage.setItem("noche24h:vistos", JSON.stringify([...s])); } catch { /* sin almacenamiento */ } }
+let vistos = leerVistos();
+
+// Día de la semana y minuto del día en hora de Madrid.
+function relojMadrid(fecha) {
+  const p = Object.fromEntries(new Intl.DateTimeFormat("en-GB", { timeZone: ZONA, weekday: "short",
+    hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).formatToParts(fecha).map(x => [x.type, x.value]));
+  return { dia: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"].indexOf(p.weekday), min: +p.hour * 60 + +p.minute };
+}
+// Lunes a jueves de 21:30 a 00:45 (se resta una hora para que la madrugada cuente como la noche anterior).
+function probablementeEnEmision(ahora) {
+  const { dia, min } = relojMadrid(new Date(ahora.getTime() - 3600e3));
+  return dia >= 1 && dia <= 4 && min >= 20 * 60 + 30 && min <= 23 * 60 + 45;
+}
+
+function directoActual() {
+  return (datos.directos || []).find(d => !d.fin_detectado) || null;
+}
+const urlYoutube = (id, t) => `https://www.youtube.com/watch?v=${encodeURIComponent(id)}${t ? `&t=${t}s` : ""}`;
+
+// Enlace de YouTube para una hora de reloj, si alguna sesión del directo aún la conserva.
+function enlaceYoutube(t) {
+  for (const d of datos.directos || []) {
+    const ini = d.inicio ? Date.parse(d.inicio) : Date.parse(d.primera_vez);
+    const fin = d.fin_detectado ? Date.parse(d.fin_detectado) : null;
+    if (t < ini || (fin !== null && t >= fin)) continue;
+    if (fin === null) {
+      return Date.now() - t < VENTANA_DVR_H * 3600e3
+        ? { url: urlYoutube(d.video_id), texto: `YouTube · rebobina a ${fmtHora.format(t)}` } : null;
+    }
+    // YouTube solo archiva los directos de menos de 12 h.
+    return d.inicio && fin - ini <= 12 * 3600e3
+      ? { url: urlYoutube(d.video_id, Math.floor((t - ini) / 1000)), texto: "YouTube (archivo)" } : null;
+  }
+  return null;
+}
+
+function pintarDirecto() {
+  const caja = document.getElementById("directo");
+  const actual = directoActual();
+  const yt = actual ? urlYoutube(actual.video_id) : "https://www.youtube.com/@rtvenoticias/live";
+  const rtve = "https://www.rtve.es/play/videos/directo/canales-lineales/24h/";
+  const enEmision = probablementeEnEmision(new Date());
+  caja.className = "directo" + (enEmision ? " en-emision" : "");
+  caja.replaceChildren(
+    el("strong", {}, enEmision ? "Probablemente en emisión ahora" : "Directo de Canal 24h"),
+    enlace(yt, "Ver en YouTube", "boton" + (enEmision ? " principal" : "")),
+    enlace(rtve, "RTVE Play", "boton"));
+}
+
+function resaltar(texto, consulta) {
+  if (!consulta) return texto;
+  const plano = sinAcentos(texto), i = plano.indexOf(consulta);
+  if (i < 0) return texto;
+  return [texto.slice(0, i), el("mark", {}, texto.slice(i, i + consulta.length)), texto.slice(i + consulta.length)];
+}
+
+function pintarMarca(ep, m, consulta) {
+  const t = Date.parse(ep.inicio) + m.seg * 1000;
+  const yt = enlaceYoutube(t);
+  const texto = resaltar(m.texto, consulta);
+  const pos = duracion(m.seg) + (m.seg_fin ? `–${duracion(m.seg_fin)}` : "");
+  return el("li", { class: m.tipo },
+    el("span", { class: "hora" }, fmtHora.format(t)),
+    el("span", { class: "pos", title: "Minuto dentro del episodio" }, pos),
+    el("div", { class: "cuerpo" },
+      el("span", { class: "tipo" }, m.tipo === "entrevista" ? "Entrevista" : "Presenta"),
+      m.url ? enlace(m.url, texto) : el("span", { class: "texto" }, texto),
+      yt && enlace(yt.url, yt.texto, "yt")));
+}
+
+function pintarLista() {
+  const consulta = sinAcentos(document.getElementById("buscar").value.trim());
+  const soloPendientes = document.getElementById("solo-pendientes").checked;
+  const episodios = datos.episodios || [];
+  // El siguiente pendiente es el más antiguo sin ver.
+  const siguiente = [...episodios].reverse().find(e => !vistos.has(e.id));
+  const lista = document.getElementById("lista");
+  lista.replaceChildren();
+  let mostrados = 0;
+  for (const ep of episodios) {
+    const visto = vistos.has(ep.id);
+    if (soloPendientes && visto) continue;
+    const marcas = consulta ? ep.marcas.filter(m => sinAcentos(m.texto).includes(consulta)) : ep.marcas;
+    if (consulta && !marcas.length) continue;
+    mostrados++;
+    const inicio = Date.parse(ep.inicio);
+    const casilla = el("input", { type: "checkbox", checked: visto });
+    casilla.addEventListener("change", () => {
+      casilla.checked ? vistos.add(ep.id) : vistos.delete(ep.id);
+      guardarVistos(vistos);
+      pintarLista();
+    });
+    const titulo = /^La noche en 24 horas/i.test(ep.titulo || "") ? null : el("span", { class: "meta" }, ep.titulo);
+    const ytInicio = enlaceYoutube(inicio);
+    lista.append(el("article", { class: "ep" + (visto ? " visto" : "") + (ep === siguiente ? " siguiente" : "") },
+      el("div", { class: "ep-cab" },
+        el("h2", {}, mayuscula(fmtDia.format(inicio))),
+        el("span", { class: "meta" }, `${fmtHora.format(inicio)} · ${duracion(ep.duracion_s)}`),
+        ep === siguiente && el("span", { class: "etiqueta" }, "Siguiente"),
+        titulo,
+        el("label", {}, casilla, " visto")),
+      el("div", { class: "enlaces" },
+        enlace(ep.url, "Episodio en RTVE Play"),
+        ytInicio && enlace(ytInicio.url, ytInicio.texto),
+        enlace(ep.subtitulos, "Subtítulos (API RTVE)")),
+      ep.estado !== "ok" && el("p", { class: "aviso" }, "RTVE aún no ha publicado los subtítulos: las marcas llegarán con ellos."),
+      marcas.length ? el("ol", { class: "marcas" }, marcas.map(m => pintarMarca(ep, m, consulta))) : null));
+  }
+  if (!mostrados) lista.append(el("p", { class: "aviso" }, consulta ? "Nada coincide con la búsqueda." : "No hay episodios que mostrar."));
+}
+
+function pintarPie() {
+  const errores = Object.entries(datos.estado || {}).filter(([, e]) => e.valor !== "ok");
+  document.getElementById("pie").replaceChildren(
+    el("p", {}, `Datos actualizados el ${fmtFecha.format(Date.parse(datos.generado))}. `,
+      "Fuentes: API pública de RTVE y directo de RTVE Noticias en YouTube. ",
+      "Las presentaciones salen de los subtítulos automáticos: los nombres pueden venir mal escritos. ",
+      "Lo marcado como visto se guarda solo en este navegador. ",
+      enlace("https://github.com/thendabs1/noche-24h", "Código")),
+    errores.map(([paso, e]) => el("p", { class: "error" },
+      `Fallo en ${paso} desde el ${fmtFecha.format(Date.parse(e.desde))}: ${e.valor}`)));
+}
+
+async function iniciar() {
+  try {
+    const r = await fetch("datos.json", { cache: "no-store" });
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    datos = await r.json();
+  } catch (e) {
+    document.getElementById("directo").textContent = `No se han podido cargar los datos (${e.message}).`;
+    return;
+  }
+  pintarDirecto();
+  pintarLista();
+  pintarPie();
+  document.getElementById("buscar").addEventListener("input", pintarLista);
+  document.getElementById("solo-pendientes").addEventListener("change", pintarLista);
+  setInterval(pintarDirecto, 60e3);
+}
+iniciar();
+</script>
+</body>
+</html>
