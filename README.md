@@ -17,6 +17,7 @@ Contenido de la página:
 - **Horas:** cada marca lleva la hora de reloj (22:36) y el minuto del episodio (0:36:38).
 - **Enlace a YouTube:** aparece cuando alguna sesión del directo aún conserva ese momento.
 - **Buscador** de invitados y temas, y casilla de visto/pendiente (se guarda en tu navegador).
+- **Analistas** (otra pestaña): cada tertuliano con sus noches en la mesa, enlace al minuto, con quién coincide más y cuándo salió por última vez. Con la estrella lo sigues: sus noches se destacan en la lista de episodios (se guarda en tu navegador).
 
 No guarda transcripciones: enlaza a los subtítulos de la API oficial de RTVE.
 
@@ -35,7 +36,11 @@ No guarda transcripciones: enlaza a los subtítulos de la API oficial de RTVE.
    - Cuando YouTube reinicia el directo aparece otro vídeo: la sesión anterior se da por cortada cuando empezó la nueva.
    - Así queda registrado qué vídeo cubría cada hora.
 
-Todo va a `datos/noche24h.sqlite` y se exporta a `docs/datos.json`, que lee la página. Solo hay commit cuando algo cambia. Si un paso empieza a fallar, la ejecución sale en rojo una vez (aviso por correo de GitHub) y el fallo aparece al pie de la página hasta que se arregla.
+Todo va a `datos/noche24h.sqlite` y se exporta a `docs/datos.json`, que lee la página.
+
+Al exportar, los nombres de la mesa se cambian por los de `analistas.json` (nombre bien escrito → variantes de los subtítulos; también casan las variantes muy parecidas). Solo los de esa lista tienen ficha. Los que no casan se guardan en `sin_ficha` y salen al pie de la pestaña de analistas, para ir completando la lista. Al tocar `analistas.json` en `main` se vuelve a exportar sin reprocesar nada.
+
+Para cargar noches antiguas: en Actions, «actualizar» → *Run workflow* con el campo `historico` (días que repasar). Solo hay commit cuando algo cambia. Si un paso empieza a fallar, la ejecución sale en rojo una vez (aviso por correo de GitHub) y el fallo aparece al pie de la página hasta que se arregla.
 
 ### Tablas
 
@@ -61,6 +66,7 @@ Todo va a `datos/noche24h.sqlite` y se exporta a `docs/datos.json`, que lee la p
 pip install yt-dlp                      # solo para el paso de YouTube
 python noche24h.py actualizar           # la primera vez trae 28 días (--dias N para cambiarlo)
 python noche24h.py actualizar --sin-youtube
+python noche24h.py actualizar --historico 80   # repasa 80 días aunque la base ya tenga episodios
 python -m unittest discover -s tests -v
 python -m http.server -d docs           # y abrir http://localhost:8000
 ```

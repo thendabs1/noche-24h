@@ -24,9 +24,11 @@ import statistics
 import subprocess
 import sys
 import time
+import unicodedata
 import urllib.error
 import urllib.request
 from datetime import datetime, timedelta
+from difflib import SequenceMatcher
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -40,6 +42,8 @@ UA = "noche-24h/1.0"
 RAIZ = Path(__file__).resolve().parent
 BD = RAIZ / "datos" / "noche24h.sqlite"
 SALIDA = RAIZ / "docs" / "datos.json"
+# Tertulianos con ficha en la página: nombre bien escrito → variantes de los subtítulos.
+ANALISTAS = RAIZ / "analistas.json"
 DIAS_INICIALES = 28  # histórico en la primera ejecución
 DIAS_HABITUALES = 14  # lo que se repasa en cada ejecución
 REINTENTO = timedelta(days=3)  # cuánto se reintenta lo que aún no tiene subtítulos o episodio
@@ -420,10 +424,13 @@ def guardar_marcas(conn, episodio_id, cues, duracion):
         [(episodio_id, seg, tipo, txt) for seg, tipo, txt in presentaciones(cues, duracion)])
 
 
-def paso_rtve(conn, momento, dias=DIAS_INICIALES, obtener=json_url, bajar=descargar):
+def paso_rtve(conn, momento, dias=DIAS_INICIALES, obtener=json_url, bajar=descargar,
+              historico=None):
     """Añade episodios y fragmentos nuevos. Devuelve cuántas filas ha escrito."""
     hay = conn.execute("SELECT count(*) FROM episodios").fetchone()[0]
-    items = listar_videos(momento - timedelta(days=dias if not hay else DIAS_HABITUALES), obtener)
+    # `historico` repasa más días aunque la base ya tenga episodios (carga de histórico).
+    dias = historico or (dias if not hay else DIAS_HABITUALES)
+    items = listar_videos(momento - timedelta(days=dias), obtener)
     cache = {}
 
     def cues_de(video_id):
@@ -568,13 +575,54 @@ def anotar(conn, paso, error, momento):
     return error is not None and (previo is None or previo[0] == "ok")
 
 
-def datos_pagina(conn):
+def plano(texto):
+    """Minúsculas y sin acentos, para comparar nombres."""
+    return " ".join(unicodedata.normalize("NFKD", texto).encode("ascii", "ignore")
+                    .decode().lower().split())
+
+
+def leer_analistas(ruta=ANALISTAS):
+    """{variante en plano: nombre bien escrito}, de analistas.json (nombre → variantes)."""
+    try:
+        lista = json.loads(Path(ruta).read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        return {}
+    return {plano(v): nombre for nombre, variantes in lista.items() for v in [nombre, *variantes]}
+
+
+def analista(nombre, variantes, parecido=0.85):
+    """El analista de la lista que corresponde a un nombre de mesa, o None. Vale una variante
+    de la lista o una parecida («Pedro Abellín» por «Pedro Aballín»)."""
+    p = plano(nombre)
+    if p in variantes:
+        return variantes[p]
+    mejor = max(variantes, key=lambda v: SequenceMatcher(None, p, v).ratio(), default=None)
+    if mejor and SequenceMatcher(None, p, mejor).ratio() >= parecido:
+        return variantes[mejor]
+    return None
+
+
+def datos_pagina(conn, variantes=None):
+    """Lo que lee la página. Los nombres de la mesa salen como en la lista de analistas, y
+    los que no están en ella se cuentan en «sin_ficha» para ir completándola."""
+    if variantes is None:
+        variantes = leer_analistas()
+    sin_ficha = {}
     episodios = []
     for id_, titulo, inicio, dur, url, subs, estado in conn.execute(
             "SELECT id, titulo, inicio, duracion_s, url, subtitulos, estado FROM episodios "
             "ORDER BY inicio DESC"):
         marcas = [{"seg": s, "tipo": t, "texto": x} for s, t, x in conn.execute(
             "SELECT seg, tipo, texto FROM marcas WHERE episodio_id=?", (id_,))]
+        for m in marcas:
+            if m["tipo"] != "mesa" or "no reconocidos" in m["texto"]:
+                continue
+            nombres_ = [(x, analista(x, variantes)) for x in m["texto"].split(" · ")]
+            m["texto"] = " · ".join(a or x for x, a in nombres_)
+            m["analistas"] = [a for _, a in nombres_ if a]
+            for x, a in nombres_:
+                if not a:
+                    sin_ficha[x] = sin_ficha.get(x, 0) + 1
         for s, d, x, u in conn.execute(
                 "SELECT seg, duracion_s, titulo, url FROM fragmentos "
                 "WHERE episodio_id=? AND estado='ok' ORDER BY seg", (id_,)):
@@ -595,7 +643,9 @@ def datos_pagina(conn):
     directos = [dict(zip(("video_id", "titulo", "inicio", "primera_vez", "fin_detectado"), f))
                 for f in conn.execute("SELECT * FROM directos ORDER BY primera_vez DESC")]
     estado = {c: {"valor": v, "desde": d} for c, v, d in conn.execute("SELECT * FROM estado")}
-    return {"estado": estado, "directos": directos, "episodios": episodios}
+    sin_ficha = [{"nombre": x, "veces": v}
+                 for x, v in sorted(sin_ficha.items(), key=lambda kv: (-kv[1], kv[0]))]
+    return {"estado": estado, "directos": directos, "episodios": episodios, "sin_ficha": sin_ficha}
 
 
 def exportar(conn, destino, momento):
@@ -625,7 +675,8 @@ def _actualizar(conn, args, momento):
     errores_nuevos = []
     pasos = []
     if not args.sin_rtve:
-        pasos.append(("rtve", lambda: paso_rtve(conn, momento, args.dias)))
+        pasos.append(("rtve", lambda: paso_rtve(conn, momento, args.dias,
+                                                historico=args.historico)))
     if not args.sin_youtube:
         def youtube():
             vivos = listar_directos_24h()
@@ -655,6 +706,8 @@ def main(argv=None):
     a = sub.add_parser("actualizar", help="trae episodios, fragmentos y directos nuevos")
     a.add_argument("--dias", type=int, default=DIAS_INICIALES,
                    help="histórico si la base está vacía (por defecto 28)")
+    a.add_argument("--historico", type=int,
+                   help="repasa N días aunque la base ya tenga episodios (cargar histórico)")
     a.add_argument("--sin-rtve", action="store_true")
     a.add_argument("--sin-youtube", action="store_true")
     sub.add_parser("exportar", help="regenera el JSON de la página")

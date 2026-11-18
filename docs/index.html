@@ -68,6 +68,26 @@ ol.marcas li { display: grid; grid-template-columns: 3.4rem 1fr; gap: 0 10px; pa
 .yt { display: inline-block; margin-left: 6px; font-size: .85rem; white-space: nowrap; }
 .aviso { color: var(--suave); font-size: .9rem; margin: 6px 0 0; }
 mark { background: var(--resalte); color: inherit; }
+.pestanas { display: flex; gap: 4px; margin: 14px 0 0; border-bottom: 1px solid var(--borde); }
+.pestanas a { padding: 8px 14px; margin-bottom: -1px; text-decoration: none; color: var(--suave);
+  font-weight: 600; border-bottom: 2px solid transparent; }
+.pestanas a[aria-current="page"] { color: var(--texto); border-bottom-color: var(--acento); }
+.etiqueta.seguido { background: var(--resalte); color: var(--texto); }
+a.nombre-mesa { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; }
+.nombre-mesa.seguido { font-weight: 700; }
+.estrella { background: none; border: 0; padding: 0 2px; font: inherit; font-size: 1.15rem; line-height: 1;
+  cursor: pointer; color: var(--suave); }
+.estrella[aria-pressed="true"] { color: var(--acento); }
+ol.analistas { list-style: none; margin: 10px 0 0; padding: 0; }
+ol.analistas li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; padding: 8px 0;
+  border-top: 1px solid var(--borde); }
+ol.analistas .meta, .ficha .meta { color: var(--suave); font-size: .9rem; }
+.ficha { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; padding: 12px; margin: 12px 0; }
+.ficha h2 { display: flex; gap: 6px; align-items: baseline; margin: 0; font-size: 1.3rem; }
+.ficha p { margin: 6px 0; }
+ol.marcas.noches li { grid-template-columns: 5.2rem 1fr; }
+ol.marcas.noches li.visto { opacity: .6; }
+.sin-ficha { color: var(--suave); font-size: .85rem; margin: 20px 0 0; }
 footer { color: var(--suave); font-size: .85rem; margin: 24px 0 8px; }
 footer .error { color: var(--acento); }
 </style>
@@ -77,11 +97,18 @@ footer .error { color: var(--acento); }
   <h1>La noche en 24h</h1>
   <p class="sub">Mesa de análisis, entrevistas y conexiones de cada noche con su hora, para verla a tu ritmo. Lunes a jueves, hacia las 22:00–00:30 en Canal 24h.</p>
   <div id="directo" class="directo">Cargando…</div>
-  <div class="herramientas">
-    <input id="buscar" type="search" placeholder="Buscar invitado o tema…" aria-label="Buscar invitado o tema">
-    <label><input type="checkbox" id="solo-pendientes"> Solo pendientes</label>
-  </div>
-  <main id="lista"></main>
+  <nav class="pestanas" aria-label="Vistas">
+    <a href="#" id="pestana-episodios">Episodios</a>
+    <a href="#analistas" id="pestana-analistas">Analistas</a>
+  </nav>
+  <section id="vista-episodios">
+    <div class="herramientas">
+      <input id="buscar" type="search" placeholder="Buscar invitado o tema…" aria-label="Buscar invitado o tema">
+      <label><input type="checkbox" id="solo-pendientes"> Solo pendientes</label>
+    </div>
+    <main id="lista"></main>
+  </section>
+  <section id="vista-analistas" hidden></section>
   <footer id="pie"></footer>
 </div>
 <script>
@@ -111,6 +138,12 @@ const sinAcentos = t => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
 function leerVistos() { try { return new Set(JSON.parse(localStorage.getItem("noche24h:vistos") || "[]")); } catch { return new Set(); } }
 function guardarVistos(s) { try { localStorage.setItem("noche24h:vistos", JSON.stringify([...s])); } catch { /* sin almacenamiento */ } }
 let vistos = leerVistos();
+// Analistas seguidos: sus noches se destacan en la lista de episodios.
+function leerSeguidos() { try { return new Set(JSON.parse(localStorage.getItem("noche24h:seguidos") || "[]")); } catch { return new Set(); } }
+function guardarSeguidos(s) { try { localStorage.setItem("noche24h:seguidos", JSON.stringify([...s])); } catch { /* sin almacenamiento */ } }
+let seguidos = leerSeguidos();
+const fmtFechaCorta = new Intl.DateTimeFormat("es-ES", { timeZone: ZONA, day: "numeric", month: "short", year: "2-digit" });
+const urlFicha = nombre => `#analista/${encodeURIComponent(nombre)}`;
 
 // Día de la semana y minuto del día en hora de Madrid.
 function relojMadrid(fecha) {
@@ -179,7 +212,7 @@ function urlRtveEn(ep, seg) {
 function pintarMarca(ep, m, consulta) {
   const t = Date.parse(ep.inicio) + m.seg * 1000;
   const yt = enlaceYoutube(t);
-  const texto = resaltar(m.texto, consulta);
+  const texto = m.tipo === "mesa" && m.analistas ? nombresMesa(m, consulta) : resaltar(m.texto, consulta);
   const pos = duracion(m.seg) + (m.seg_fin ? `–${duracion(m.seg_fin)}` : "");
   return el("li", { class: m.tipo },
     el("span", { class: "hora" }, fmtHora.format(t)),
@@ -190,6 +223,17 @@ function pintarMarca(ep, m, consulta) {
       ep.url && enlace(urlRtveEn(ep, m.seg), "RTVE Play ▶", "yt"),
       yt && enlace(yt.url, yt.texto, "yt"),
       m.presenta && el("span", { class: "presenta" }, resaltar(m.presenta, consulta))));
+}
+
+// Los nombres de la mesa que tienen ficha enlazan a ella; los seguidos van en negrita.
+function nombresMesa(m, consulta, sinNombre) {
+  const partes = m.texto.split(" · ").filter(x => x !== sinNombre);
+  return partes.flatMap((x, i) => {
+    const nombre = !m.analistas.includes(x) ? resaltar(x, consulta)
+      : el("a", { href: urlFicha(x), class: "nombre-mesa" + (seguidos.has(x) ? " seguido" : "") },
+        seguidos.has(x) ? "★ " : "", resaltar(x, consulta));
+    return i ? [" · ", nombre] : [nombre];
+  });
 }
 
 function pintarLista() {
@@ -215,12 +259,14 @@ function pintarLista() {
       pintarLista();
     });
     const titulo = /^La noche en 24 horas/i.test(ep.titulo || "") ? null : el("span", { class: "meta" }, ep.titulo);
+    const conSeguidos = [...new Set(ep.marcas.flatMap(m => m.analistas || []))].filter(a => seguidos.has(a));
     const ytInicio = enlaceYoutube(inicio);
     lista.append(el("article", { class: "ep" + (visto ? " visto" : "") + (ep === siguiente ? " siguiente" : "") },
       el("div", { class: "ep-cab" },
         el("h2", {}, mayuscula(fmtDia.format(inicio))),
         el("span", { class: "meta" }, `${fmtHora.format(inicio)} · ${duracion(ep.duracion_s)}`),
         ep === siguiente && el("span", { class: "etiqueta" }, "Siguiente"),
+        conSeguidos.length > 0 && el("span", { class: "etiqueta seguido" }, `★ ${conSeguidos.join(", ")}`),
         titulo,
         el("label", {}, casilla, " visto")),
       el("div", { class: "enlaces" },
@@ -233,13 +279,118 @@ function pintarLista() {
   if (!mostrados) lista.append(el("p", { class: "aviso" }, consulta ? "Nada coincide con la búsqueda." : "No hay episodios que mostrar."));
 }
 
+// Noches y compañeros de cada analista, a partir de las mesas de cada episodio.
+function indiceAnalistas() {
+  const indice = new Map();
+  for (const ep of datos.episodios || []) {
+    const mesas = ep.marcas.filter(m => m.tipo === "mesa" && m.analistas && m.analistas.length);
+    const enEpisodio = [...new Set(mesas.flatMap(m => m.analistas))];
+    for (const m of mesas) {
+      for (const a of m.analistas) {
+        if (!indice.has(a)) indice.set(a, { nombre: a, noches: [], companeros: new Map() });
+        const ficha = indice.get(a);
+        if (!ficha.noches.some(n => n.ep === ep)) ficha.noches.push({ ep, m });
+      }
+    }
+    for (const a of enEpisodio) {
+      for (const b of enEpisodio) {
+        if (a !== b) indice.get(a).companeros.set(b, (indice.get(a).companeros.get(b) || 0) + 1);
+      }
+    }
+  }
+  return indice;
+}
+
+function botonSeguir(nombre) {
+  const sigue = seguidos.has(nombre);
+  const accion = `${sigue ? "Dejar de seguir" : "Seguir"} a ${nombre}`;
+  const boton = el("button", { type: "button", class: "estrella", "aria-pressed": String(sigue),
+    title: accion, "aria-label": accion }, sigue ? "★" : "☆");
+  boton.addEventListener("click", () => {
+    sigue ? seguidos.delete(nombre) : seguidos.add(nombre);
+    guardarSeguidos(seguidos);
+    mostrar();
+  });
+  return boton;
+}
+
+const noches = n => `${n} ${n === 1 ? "noche" : "noches"}`;
+
+function pintarAnalistas() {
+  const fichas = [...indiceAnalistas().values()].sort((a, b) =>
+    seguidos.has(b.nombre) - seguidos.has(a.nombre) || b.noches.length - a.noches.length
+    || a.nombre.localeCompare(b.nombre, "es"));
+  const episodios = datos.episodios || [];
+  const desde = episodios.length ? fmtFechaCorta.format(Date.parse(episodios[episodios.length - 1].inicio)) : "";
+  const sinFicha = datos.sin_ficha || [];
+  document.getElementById("vista-analistas").replaceChildren(
+    el("p", { class: "aviso" }, `Tertulianos de la mesa de análisis desde el ${desde}. `,
+      "Sigue a los que te interesen con la estrella: sus noches se destacan en Episodios."),
+    fichas.length
+      ? el("ol", { class: "analistas" }, fichas.map(f => el("li", {},
+        botonSeguir(f.nombre),
+        el("a", { href: urlFicha(f.nombre) }, f.nombre),
+        el("span", { class: "meta" }, `${noches(f.noches.length)} · última: ${fmtFechaCorta.format(Date.parse(f.noches[0].ep.inicio))}`))))
+      : el("p", { class: "aviso" }, "Aún no hay mesas con analistas reconocidos."),
+    sinFicha.length > 0 && el("details", { class: "sin-ficha" },
+      el("summary", {}, `Nombres de mesa sin ficha (${sinFicha.length})`),
+      el("p", {}, "Invitados de una noche o nombres mal reconocidos. Los tertulianos se añaden en ",
+        enlace("https://github.com/thendabs1/noche-24h/blob/main/analistas.json", "analistas.json"), ": ",
+        sinFicha.map(x => `${x.nombre} (${x.veces})`).join(", "), ".")));
+}
+
+function pintarFicha(nombre) {
+  const ficha = indiceAnalistas().get(nombre);
+  const vista = document.getElementById("vista-analistas");
+  const volver = el("p", {}, el("a", { href: "#analistas" }, "← Todos los analistas"));
+  if (!ficha) {
+    vista.replaceChildren(volver, el("p", { class: "aviso" }, `No hay noches de ${nombre}.`));
+    return;
+  }
+  const primera = ficha.noches[ficha.noches.length - 1].ep, ultima = ficha.noches[0].ep;
+  const companeros = [...ficha.companeros].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], "es")).slice(0, 8);
+  vista.replaceChildren(volver, el("article", { class: "ficha" },
+    el("h2", {}, botonSeguir(nombre), nombre),
+    el("p", { class: "meta" }, `${noches(ficha.noches.length)} en la mesa, del ${fmtFechaCorta.format(Date.parse(primera.inicio))} al ${fmtFechaCorta.format(Date.parse(ultima.inicio))}.`),
+    companeros.length > 0 && el("p", {}, "Coincide más con: ",
+      companeros.flatMap(([c, n], i) => [i ? " · " : "", el("a", { href: urlFicha(c) }, c), ` (${n})`])),
+    el("ol", { class: "marcas noches" }, ficha.noches.map(({ ep, m }) => {
+      const t = Date.parse(ep.inicio) + m.seg * 1000;
+      const yt = enlaceYoutube(t);
+      const otros = m.analistas.filter(a => a !== nombre);
+      return el("li", { class: "mesa" + (vistos.has(ep.id) ? " visto" : "") },
+        el("span", { class: "hora" }, fmtFechaCorta.format(Date.parse(ep.inicio))),
+        el("span", { class: "pos" }, fmtHora.format(t)),
+        el("div", { class: "cuerpo" },
+          el("span", { class: "texto" }, otros.length ? ["Con ", ...nombresMesa(m, "", nombre)] : "Mesa"),
+          ep.url && enlace(urlRtveEn(ep, m.seg), "RTVE Play ▶", "yt"),
+          yt && enlace(yt.url, yt.texto, "yt")));
+    }))));
+}
+
+// Vista según el ancla: #analistas (lista), #analista/Nombre (ficha) o nada (episodios).
+function mostrar() {
+  let ancla = location.hash.slice(1);
+  try { ancla = decodeURIComponent(ancla); } catch { /* ancla mal formada: se queda tal cual */ }
+  const enAnalistas = ancla === "analistas" || ancla.startsWith("analista/");
+  document.getElementById("vista-episodios").hidden = enAnalistas;
+  document.getElementById("vista-analistas").hidden = !enAnalistas;
+  for (const [id, activa] of [["pestana-episodios", !enAnalistas], ["pestana-analistas", enAnalistas]]) {
+    const pestana = document.getElementById(id);
+    if (activa) pestana.setAttribute("aria-current", "page"); else pestana.removeAttribute("aria-current");
+  }
+  if (!enAnalistas) pintarLista();
+  else if (ancla.startsWith("analista/")) pintarFicha(ancla.slice("analista/".length));
+  else pintarAnalistas();
+}
+
 function pintarPie() {
   const errores = Object.entries(datos.estado || {}).filter(([, e]) => e.valor !== "ok");
   document.getElementById("pie").replaceChildren(
     el("p", {}, `Datos actualizados el ${fmtFecha.format(Date.parse(datos.generado))}. `,
       "Fuentes: API pública de RTVE y directo de RTVE Noticias en YouTube. ",
       "Mesa, plató y conexiones se deducen de los subtítulos automáticos: puede haber errores y nombres mal escritos. ",
-      "Lo marcado como visto se guarda solo en este navegador. ",
+      "Lo marcado como visto y los analistas que sigues se guardan solo en este navegador. ",
       enlace("https://github.com/thendabs1/noche-24h", "Código")),
     errores.map(([paso, e]) => el("p", { class: "error" },
       `Fallo en ${paso} desde el ${fmtFecha.format(Date.parse(e.desde))}: ${e.valor}`)));
@@ -255,8 +406,12 @@ async function iniciar() {
     return;
   }
   pintarDirecto();
-  pintarLista();
+  mostrar();
   pintarPie();
+  window.addEventListener("hashchange", () => {
+    mostrar();
+    if (location.hash.startsWith("#analista")) document.querySelector(".pestanas").scrollIntoView();
+  });
   document.getElementById("buscar").addEventListener("input", pintarLista);
   document.getElementById("solo-pendientes").addEventListener("change", pintarLista);
   setInterval(pintarDirecto, 60e3);

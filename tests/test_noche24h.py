@@ -124,6 +124,25 @@ class TestSubtitulos(unittest.TestCase):
             self.assertEqual(n.invitado(frase), esperado)
 
 
+class TestAnalistas(unittest.TestCase):
+    def test_variante_exacta_parecida_o_ninguna(self):
+        variantes = {"pedro vallin": "Pedro Vallín", "pedro ballin": "Pedro Vallín",
+                     "marisa cruz": "Marisa Cruz"}
+        self.assertEqual(n.analista("Pedro Ballín", variantes), "Pedro Vallín")
+        self.assertEqual(n.analista("Pedro Avellín", variantes), "Pedro Vallín")
+        self.assertIsNone(n.analista("Juan Cruz", variantes))
+        self.assertIsNone(n.analista("Pedro Sánchez", variantes))
+
+    def test_lista_del_repo(self):
+        lista = json.loads(n.ANALISTAS.read_text(encoding="utf-8"))
+        variantes = n.leer_analistas()
+        # Cada variante lleva a un solo analista.
+        self.assertEqual(len(variantes), sum(1 + len(v) for v in lista.values()))
+        for nombre, otras in lista.items():
+            for v in [nombre, *otras]:
+                self.assertEqual(n.analista(v, variantes), nombre)
+
+
 class TestRTVE(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -183,6 +202,30 @@ class TestRTVE(unittest.TestCase):
         self.assertEqual(self.conn.execute("PRAGMA user_version").fetchone(),
                          (n.VERSION_MARCAS,))
         self.assertEqual(n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar), 0)
+
+    def test_historico_repasa_aunque_haya_episodios(self):
+        api = self.api(con_fragmento=False)
+        n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar)
+        # El episodio del 1/9 queda fuera de los 14 días habituales; con historico=90, dentro.
+        self.assertEqual(n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar), 0)
+        self.assertEqual(n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar,
+                                     historico=90), 1)
+        self.assertEqual(self.conn.execute("SELECT id FROM episodios ORDER BY id").fetchall(),
+                         [(1,), (2,)])
+
+    def test_mesa_con_nombres_de_la_lista(self):
+        api = self.api(con_fragmento=False)
+        api.subtitulos[2] += [(4990, "y seguimos con la actualidad del día"),
+                              (5000, "Renovamos la mesa, se incorporan Pedro Aballín, Marta "
+                                     "Nebot y Fulano Mengánez.")]
+        n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar)
+        variantes = {"pedro vallin": "Pedro Vallín", "pedro ballin": "Pedro Vallín",
+                     "marta nebot": "Marta Nebot"}
+        datos = n.datos_pagina(self.conn, variantes)
+        mesa = [m for m in datos["episodios"][0]["marcas"] if m["tipo"] == "mesa"][0]
+        self.assertEqual(mesa["texto"], "Pedro Vallín · Marta Nebot · Fulano Mengánez")
+        self.assertEqual(mesa["analistas"], ["Pedro Vallín", "Marta Nebot"])
+        self.assertEqual(datos["sin_ficha"], [{"nombre": "Fulano Mengánez", "veces": 1}])
 
     def test_segunda_pasada_no_escribe_ni_toca_el_fichero(self):
         api = self.api()
@@ -300,7 +343,8 @@ class TestDatosPublicados(unittest.TestCase):
         if not ruta.exists():
             self.skipTest("sin datos.json todavía")
         datos = json.loads(ruta.read_text(encoding="utf-8"))
-        self.assertEqual(set(datos), {"generado", "estado", "directos", "episodios"})
+        # «sin_ficha» llega con la primera exportación tras añadir la lista de analistas.
+        self.assertEqual(set(datos) - {"sin_ficha"}, {"generado", "estado", "directos", "episodios"})
         for ep in datos["episodios"]:
             self.assertTrue(ep["url"] and ep["inicio"])
             for m in ep["marcas"]:
