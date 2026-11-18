@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-18T09:01:09+01:00",
+ "generado": "2026-11-18T10:13:57+01:00",
  "estado": {
   "rtve": {
    "valor": "ok",
@@ -32,7 +32,27 @@
     {
      "seg": 65,
      "tipo": "mesa",
-     "texto": "May Marinho · Carlos Elordi Cue · Paloma Esteban"
+     "texto": "May Mariño · Carlos E. Cué · Paloma Esteban",
+     "personas": [
+      {
+       "forma": "May Marinho",
+       "estado": "automatica",
+       "id": "may-marino",
+       "nombre": "May Mariño"
+      },
+      {
+       "forma": "Carlos Elordi Cue",
+       "estado": "automatica",
+       "id": "carlos-e-cue",
+       "nombre": "Carlos E. Cué"
+      },
+      {
+       "forma": "Paloma Esteban",
+       "estado": "automatica",
+       "id": "paloma-esteban",
+       "nombre": "Paloma Esteban"
+      }
+     ]
     },
     {
      "seg": 1458,
@@ -68,7 +88,27 @@
     {
      "seg": 69,
      "tipo": "mesa",
-     "texto": "Lourdes Pérez · Javier Casqueiro · Martínez Hoyos"
+     "texto": "Lourdes Pérez · Javier Casqueiro · Ainhoa Martínez Hoyos",
+     "personas": [
+      {
+       "forma": "Lourdes Pérez",
+       "estado": "automatica",
+       "id": "lourdes-perez",
+       "nombre": "Lourdes Pérez"
+      },
+      {
+       "forma": "Javier Casqueiro",
+       "estado": "automatica",
+       "id": "javier-casqueiro",
+       "nombre": "Javier Casqueiro"
+      },
+      {
+       "forma": "Martínez Hoyos",
+       "estado": "automatica",
+       "id": "ainhoa-martinez-hoyos",
+       "nombre": "Ainhoa Martínez Hoyos"
+      }
+     ]
     },
     {
      "seg": 2362,
@@ -124,7 +164,27 @@
     {
      "seg": 85,
      "tipo": "mesa",
-     "texto": "Antonio Sara · Pablo Montesinos · José Félix Texanos"
+     "texto": "Antón Losada · Pablo Montesinos · José Félix Tezanos",
+     "personas": [
+      {
+       "forma": "Antonio Sara",
+       "estado": "automatica",
+       "id": "anton-losada",
+       "nombre": "Antón Losada"
+      },
+      {
+       "forma": "Pablo Montesinos",
+       "estado": "automatica",
+       "id": "pablo-montesinos",
+       "nombre": "Pablo Montesinos"
+      },
+      {
+       "forma": "José Félix Texanos",
+       "estado": "automatica",
+       "id": "jose-felix-tezanos",
+       "nombre": "José Félix Tezanos"
+      }
+     ]
     },
     {
      "seg": 2199,
@@ -157,7 +217,24 @@
     {
      "seg": 191,
      "tipo": "mesa",
-     "texto": "Anche Chema Crespo · Juan Fernández Miranda"
+     "texto": "Chema Crespo · Juan Fernández-Miranda",
+     "personas": [
+      {
+       "forma": "Anche Chema Crespo",
+       "estado": "candidata",
+       "id": "chema-crespo",
+       "nombre": "Chema Crespo",
+       "apoyos": [
+        "le llaman «Chema» 10 veces"
+       ]
+      },
+      {
+       "forma": "Juan Fernández Miranda",
+       "estado": "automatica",
+       "id": "juan-fernandez-miranda",
+       "nombre": "Juan Fernández-Miranda"
+      }
+     ]
     },
     {
      "seg": 474,
@@ -193,7 +270,33 @@
     {
      "seg": 54,
      "tipo": "mesa",
-     "texto": "Isaias Lafuente · Paloma Esteban · Jesús Maraña · Lucía Méndez"
+     "texto": "Isaías Lafuente · Paloma Esteban · Jesús Maraña · Lucía Méndez",
+     "personas": [
+      {
+       "forma": "Isaias Lafuente",
+       "estado": "automatica",
+       "id": "isaias-lafuente",
+       "nombre": "Isaías Lafuente"
+      },
+      {
+       "forma": "Paloma Esteban",
+       "estado": "automatica",
+       "id": "paloma-esteban",
+       "nombre": "Paloma Esteban"
+      },
+      {
+       "forma": "Jesús Maraña",
+       "estado": "automatica",
+       "id": "jesus-marana",
+       "nombre": "Jesús Maraña"
+      },
+      {
+       "forma": "Lucía Méndez",
+       "estado": "automatica",
+       "id": "lucia-mendez",
+       "nombre": "Lucía Méndez"
+      }
+     ]
     },
     {
      "seg": 2388,
@@ -228,7 +331,15 @@
     {
      "seg": 30,
      "tipo": "mesa",
-     "texto": "Pedro Ballín"
+     "texto": "Pedro Vallín",
+     "personas": [
+      {
+       "forma": "Pedro Ballín",
+       "estado": "automatica",
+       "id": "pedro-vallin",
+       "nombre": "Pedro Vallín"
+      }
+     ]
     },
     {
      "seg": 1459,
@@ -279,7 +390,21 @@
     {
      "seg": 122,
      "tipo": "mesa",
-     "texto": "Raquel Ejerique · May Marinho"
+     "texto": "Raquel Ejerique · May Mariño",
+     "personas": [
+      {
+       "forma": "Raquel Ejerique",
+       "estado": "automatica",
+       "id": "raquel-ejerique",
+       "nombre": "Raquel Ejerique"
+      },
+      {
+       "forma": "May Marinho",
+       "estado": "automatica",
+       "id": "may-marino",
+       "nombre": "May Mariño"
+      }
+     ]
     },
     {
      "seg": 544,
@@ -317,7 +442,33 @@
     {
      "seg": 110,
      "tipo": "mesa",
-     "texto": "Carmelo Encinas · Javier García Vila · García de Blas · Paloma Esteban"
+     "texto": "Carmelo Encinas · Javier García Vila · Elsa García de Blas · Paloma Esteban",
+     "personas": [
+      {
+       "forma": "Carmelo Encinas",
+       "estado": "automatica",
+       "id": "carmelo-encinas",
+       "nombre": "Carmelo Encinas"
+      },
+      {
+       "forma": "Javier García Vila",
+       "estado": "automatica",
+       "id": "javier-garcia-vila",
+       "nombre": "Javier García Vila"
+      },
+      {
+       "forma": "García de Blas",
+       "estado": "automatica",
+       "id": "elsa-garcia-de-blas",
+       "nombre": "Elsa García de Blas"
+      },
+      {
+       "forma": "Paloma Esteban",
+       "estado": "automatica",
+       "id": "paloma-esteban",
+       "nombre": "Paloma Esteban"
+      }
+     ]
     },
     {
      "seg": 2243,
@@ -368,12 +519,40 @@
     {
      "seg": 218,
      "tipo": "mesa",
-     "texto": "Jesús Maraña · Inma Martínez Hoyos · Carlos Cue"
+     "texto": "Jesús Maraña · Ainhoa Martínez Hoyos · Carlos E. Cué",
+     "personas": [
+      {
+       "forma": "Jesús Maraña",
+       "estado": "automatica",
+       "id": "jesus-marana",
+       "nombre": "Jesús Maraña"
+      },
+      {
+       "forma": "Inma Martínez Hoyos",
+       "estado": "automatica",
+       "id": "ainhoa-martinez-hoyos",
+       "nombre": "Ainhoa Martínez Hoyos"
+      },
+      {
+       "forma": "Carlos Cue",
+       "estado": "automatica",
+       "id": "carlos-e-cue",
+       "nombre": "Carlos E. Cué"
+      }
+     ]
     },
     {
      "seg": 1675,
      "tipo": "mesa",
-     "texto": "Carlos Cue"
+     "texto": "Carlos E. Cué",
+     "personas": [
+      {
+       "forma": "Carlos Cue",
+       "estado": "automatica",
+       "id": "carlos-e-cue",
+       "nombre": "Carlos E. Cué"
+      }
+     ]
     },
     {
      "seg": 1957,
@@ -420,7 +599,21 @@
     {
      "seg": 8850,
      "tipo": "mesa",
-     "texto": "Ruth Ferrero · Vicente Palacio"
+     "texto": "Ruth Ferrero · Vicente Palacio",
+     "personas": [
+      {
+       "forma": "Ruth Ferrero",
+       "estado": "automatica",
+       "id": "ruth-ferrero",
+       "nombre": "Ruth Ferrero"
+      },
+      {
+       "forma": "Vicente Palacio",
+       "estado": "automatica",
+       "id": "vicente-palacio",
+       "nombre": "Vicente Palacio"
+      }
+     ]
     },
     {
      "seg": 9536,
@@ -477,12 +670,47 @@
     {
      "seg": 102,
      "tipo": "mesa",
-     "texto": "Marta Nebot · Martínez Hoyos · Pedro Cuartango"
+     "texto": "Marta Nebot · Ainhoa Martínez Hoyos · Pedro García Cuartango",
+     "personas": [
+      {
+       "forma": "Marta Nebot",
+       "estado": "automatica",
+       "id": "marta-nebot",
+       "nombre": "Marta Nebot"
+      },
+      {
+       "forma": "Martínez Hoyos",
+       "estado": "automatica",
+       "id": "ainhoa-martinez-hoyos",
+       "nombre": "Ainhoa Martínez Hoyos"
+      },
+      {
+       "forma": "Pedro Cuartango",
+       "estado": "automatica",
+       "id": "pedro-garcia-cuartango",
+       "nombre": "Pedro García Cuartango"
+      }
+     ]
     },
     {
      "seg": 998,
      "tipo": "mesa",
-     "texto": "Leila Nachawati · Alejandro López"
+     "texto": "Leila Nachawati · Alejandro López Canorea",
+     "personas": [
+      {
+       "forma": "Leila Nachawati",
+       "estado": "automatica",
+       "id": "leila-nachawati",
+       "nombre": "Leila Nachawati"
+      },
+      {
+       "forma": "Alejandro López",
+       "estado": "candidata",
+       "id": "alejandro-lopez-canorea",
+       "nombre": "Alejandro López Canorea",
+       "apoyos": []
+      }
+     ]
     },
     {
      "seg": 1676,
@@ -518,7 +746,27 @@
     {
      "seg": 77,
      "tipo": "mesa",
-     "texto": "Pedro Ballín · Paloma Esteban · Marisa Cruz"
+     "texto": "Pedro Vallín · Paloma Esteban · Marisa Cruz",
+     "personas": [
+      {
+       "forma": "Pedro Ballín",
+       "estado": "automatica",
+       "id": "pedro-vallin",
+       "nombre": "Pedro Vallín"
+      },
+      {
+       "forma": "Paloma Esteban",
+       "estado": "automatica",
+       "id": "paloma-esteban",
+       "nombre": "Paloma Esteban"
+      },
+      {
+       "forma": "Marisa Cruz",
+       "estado": "automatica",
+       "id": "marisa-cruz",
+       "nombre": "Marisa Cruz"
+      }
+     ]
     },
     {
      "seg": 873,
@@ -568,12 +816,58 @@
     {
      "seg": 77,
      "tipo": "mesa",
-     "texto": "Chema Crespo · Pedro Cuartango · Marta Nebot"
+     "texto": "Chema Crespo · Pedro García Cuartango · Marta Nebot",
+     "personas": [
+      {
+       "forma": "Chema Crespo",
+       "estado": "automatica",
+       "id": "chema-crespo",
+       "nombre": "Chema Crespo"
+      },
+      {
+       "forma": "Pedro Cuartango",
+       "estado": "automatica",
+       "id": "pedro-garcia-cuartango",
+       "nombre": "Pedro García Cuartango"
+      },
+      {
+       "forma": "Marta Nebot",
+       "estado": "automatica",
+       "id": "marta-nebot",
+       "nombre": "Marta Nebot"
+      }
+     ]
     },
     {
      "seg": 5001,
      "tipo": "mesa",
-     "texto": "Antonio Papel · Pablo Montesinos · Irene Lozano · José María Brunetti"
+     "texto": "Antonio Papell · Pablo Montesinos · Irene Lozano · José María Brunet",
+     "personas": [
+      {
+       "forma": "Antonio Papel",
+       "estado": "automatica",
+       "id": "antonio-papell",
+       "nombre": "Antonio Papell"
+      },
+      {
+       "forma": "Pablo Montesinos",
+       "estado": "automatica",
+       "id": "pablo-montesinos",
+       "nombre": "Pablo Montesinos"
+      },
+      {
+       "forma": "Irene Lozano",
+       "estado": "automatica",
+       "id": "irene-lozano",
+       "nombre": "Irene Lozano"
+      },
+      {
+       "forma": "José María Brunetti",
+       "estado": "automatica",
+       "id": "jose-maria-brunet",
+       "nombre": "José María Brunet"
+      }
+     ]
     },
     {
      "seg": 7848,
@@ -594,7 +888,21 @@
     {
      "seg": 82,
      "tipo": "mesa",
-     "texto": "Luis Arroyo · Javier Garcia Vila"
+     "texto": "Luis Arroyo · Javier García Vila",
+     "personas": [
+      {
+       "forma": "Luis Arroyo",
+       "estado": "automatica",
+       "id": "luis-arroyo",
+       "nombre": "Luis Arroyo"
+      },
+      {
+       "forma": "Javier Garcia Vila",
+       "estado": "automatica",
+       "id": "javier-garcia-vila",
+       "nombre": "Javier García Vila"
+      }
+     ]
     },
     {
      "seg": 3342,
@@ -604,7 +912,34 @@
     {
      "seg": 5110,
      "tipo": "mesa",
-     "texto": "Gerardo Lorenzo · Carmelo Encinas · Juan Romero · Estefanía Molina"
+     "texto": "Gerardo Lorenzo · Carmelo Encinas · Juanma Romero · Estefanía Molina",
+     "personas": [
+      {
+       "forma": "Gerardo Lorenzo",
+       "estado": "automatica",
+       "id": "gerardo-lorenzo",
+       "nombre": "Gerardo Lorenzo"
+      },
+      {
+       "forma": "Carmelo Encinas",
+       "estado": "automatica",
+       "id": "carmelo-encinas",
+       "nombre": "Carmelo Encinas"
+      },
+      {
+       "forma": "Juan Romero",
+       "estado": "candidata",
+       "id": "juanma-romero",
+       "nombre": "Juanma Romero",
+       "apoyos": []
+      },
+      {
+       "forma": "Estefanía Molina",
+       "estado": "automatica",
+       "id": "estefania-molina",
+       "nombre": "Estefanía Molina"
+      }
+     ]
     }
    ]
   },
@@ -620,7 +955,33 @@
     {
      "seg": 87,
      "tipo": "mesa",
-     "texto": "Javier Casqueiro · Lucía Méndez · Jesús Maraña · Paloma Esteban"
+     "texto": "Javier Casqueiro · Lucía Méndez · Jesús Maraña · Paloma Esteban",
+     "personas": [
+      {
+       "forma": "Javier Casqueiro",
+       "estado": "automatica",
+       "id": "javier-casqueiro",
+       "nombre": "Javier Casqueiro"
+      },
+      {
+       "forma": "Lucía Méndez",
+       "estado": "automatica",
+       "id": "lucia-mendez",
+       "nombre": "Lucía Méndez"
+      },
+      {
+       "forma": "Jesús Maraña",
+       "estado": "automatica",
+       "id": "jesus-marana",
+       "nombre": "Jesús Maraña"
+      },
+      {
+       "forma": "Paloma Esteban",
+       "estado": "automatica",
+       "id": "paloma-esteban",
+       "nombre": "Paloma Esteban"
+      }
+     ]
     },
     {
      "seg": 3812,
@@ -638,5 +999,672 @@
     }
    ]
   }
- ]
+ ],
+ "analistas": [
+  {
+   "id": "ainhoa-martinez-hoyos",
+   "nombre": "Ainhoa Martínez Hoyos",
+   "tipo": "tertuliano",
+   "medio": "ABC",
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "alejandra-clements",
+   "nombre": "Alejandra Clements",
+   "tipo": "tertuliano",
+   "medio": "La Razón",
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "alejandro-requeijo",
+   "nombre": "Alejandro Requeijo",
+   "tipo": "tertuliano",
+   "medio": "El Confidencial",
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "anton-losada",
+   "nombre": "Antón Losada",
+   "tipo": "tertuliano",
+   "medio": null,
+   "wikipedia": "Antón Losada",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "antonio-papell",
+   "nombre": "Antonio Papell",
+   "tipo": "tertuliano",
+   "medio": null,
+   "wikipedia": "Antonio Papell",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "arsenio-escolar",
+   "nombre": "Arsenio Escolar",
+   "tipo": "tertuliano",
+   "medio": "elDiario.es",
+   "wikipedia": "Arsenio Escolar",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "carlos-e-cue",
+   "nombre": "Carlos E. Cué",
+   "tipo": "tertuliano",
+   "medio": "El País",
+   "wikipedia": "Carlos E. Cué",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "carmelo-encinas",
+   "nombre": "Carmelo Encinas",
+   "tipo": "tertuliano",
+   "medio": "20 Minutos",
+   "wikipedia": "Carmelo Encinas",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "chema-crespo",
+   "nombre": "Chema Crespo",
+   "tipo": "tertuliano",
+   "medio": "Público",
+   "wikipedia": "José María Crespo Lorenzo",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "cristina-de-la-hoz",
+   "nombre": "Cristina de la Hoz",
+   "tipo": "tertuliano",
+   "medio": "El Independiente",
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "cristina-monge",
+   "nombre": "Cristina Monge",
+   "tipo": "tertuliano",
+   "medio": null,
+   "wikipedia": "Cristina Monge",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "david-jimenez",
+   "nombre": "David Jiménez",
+   "tipo": "tertuliano",
+   "medio": null,
+   "wikipedia": "David Jiménez García",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "elsa-garcia-de-blas",
+   "nombre": "Elsa García de Blas",
+   "tipo": "tertuliano",
+   "medio": "El País",
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "enric-juliana",
+   "nombre": "Enric Juliana",
+   "tipo": "tertuliano",
+   "medio": "La Vanguardia",
+   "wikipedia": "Enric Juliana",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "estefania-molina",
+   "nombre": "Estefanía Molina",
+   "tipo": "tertuliano",
+   "medio": null,
+   "wikipedia": "Estefanía Molina",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "esther-palomera",
+   "nombre": "Esther Palomera",
+   "tipo": "tertuliano",
+   "medio": "elDiario.es",
+   "wikipedia": "Esther Palomera",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "esther-vera",
+   "nombre": "Esther Vera",
+   "tipo": "tertuliano",
+   "medio": "Ara",
+   "wikipedia": "Esther Vera i Garcia",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "fernando-jauregui",
+   "nombre": "Fernando Jáuregui",
+   "tipo": "tertuliano",
+   "medio": null,
+   "wikipedia": "Fernando Jáuregui",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "gerardo-lorenzo",
+   "nombre": "Gerardo Lorenzo",
+   "tipo": "tertuliano",
+   "medio": null,
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "gloria-lomana",
+   "nombre": "Gloria Lomana",
+   "tipo": "tertuliano",
+   "medio": null,
+   "wikipedia": "Gloria Lomana",
+   "fuentes": []
+  },
+  {
+   "id": "imma-lucas",
+   "nombre": "Imma Lucas",
+   "tipo": "tertuliano",
+   "medio": null,
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "inmaculada-sanchez",
+   "nombre": "Inmaculada Sánchez",
+   "tipo": "tertuliano",
+   "medio": "El Siglo",
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "irene-lozano",
+   "nombre": "Irene Lozano",
+   "tipo": "tertuliano",
+   "medio": null,
+   "wikipedia": "Irene Lozano",
+   "fuentes": []
+  },
+  {
+   "id": "isabel-morillo",
+   "nombre": "Isabel Morillo",
+   "tipo": "tertuliano",
+   "medio": "El Correo de Andalucía",
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "isaias-lafuente",
+   "nombre": "Isaías Lafuente",
+   "tipo": "tertuliano",
+   "medio": "Cadena SER",
+   "wikipedia": "Isaías Lafuente",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "javier-casqueiro",
+   "nombre": "Javier Casqueiro",
+   "tipo": "tertuliano",
+   "medio": "El País",
+   "wikipedia": "Javier Casqueiro",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "javier-garcia-vila",
+   "nombre": "Javier García Vila",
+   "tipo": "tertuliano",
+   "medio": "Europa Press",
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "jesus-marana",
+   "nombre": "Jesús Maraña",
+   "tipo": "tertuliano",
+   "medio": "infoLibre",
+   "wikipedia": "Jesús Maraña",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "jose-maria-brunet",
+   "nombre": "José María Brunet",
+   "tipo": "tertuliano",
+   "medio": "El País",
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "juan-cruz",
+   "nombre": "Juan Cruz",
+   "tipo": "tertuliano",
+   "medio": "Prensa Ibérica",
+   "wikipedia": "Juan Cruz (periodista)",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "juan-fernandez-miranda",
+   "nombre": "Juan Fernández-Miranda",
+   "tipo": "tertuliano",
+   "medio": "El Confidencial",
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "juanma-lamet",
+   "nombre": "Juanma Lamet",
+   "tipo": "tertuliano",
+   "medio": "El Mundo",
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "juanma-romero",
+   "nombre": "Juanma Romero",
+   "tipo": "tertuliano",
+   "medio": "El Independiente",
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "julio-cesar-herrero",
+   "nombre": "Julio César Herrero",
+   "tipo": "tertuliano",
+   "medio": null,
+   "wikipedia": "Julio César Herrero",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "lola-garcia",
+   "nombre": "Lola García",
+   "tipo": "tertuliano",
+   "medio": "La Vanguardia",
+   "wikipedia": "Lola García",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "lourdes-perez",
+   "nombre": "Lourdes Pérez",
+   "tipo": "tertuliano",
+   "medio": "Colpisa",
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "lucia-mendez",
+   "nombre": "Lucía Méndez",
+   "tipo": "tertuliano",
+   "medio": "El Mundo",
+   "wikipedia": "Lucía Méndez (periodista)",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "luis-arroyo",
+   "nombre": "Luis Arroyo",
+   "tipo": "tertuliano",
+   "medio": null,
+   "wikipedia": null,
+   "fuentes": []
+  },
+  {
+   "id": "manuel-rico",
+   "nombre": "Manuel Rico",
+   "tipo": "tertuliano",
+   "medio": null,
+   "wikipedia": "Manuel Rico",
+   "fuentes": []
+  },
+  {
+   "id": "maria-peral",
+   "nombre": "María Peral",
+   "tipo": "tertuliano",
+   "medio": "El Español",
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "marisa-cruz",
+   "nombre": "Marisa Cruz",
+   "tipo": "tertuliano",
+   "medio": "El Mundo",
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "marta-garcia-aller",
+   "nombre": "Marta García Aller",
+   "tipo": "tertuliano",
+   "medio": "El Confidencial",
+   "wikipedia": "Marta García Aller",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "marta-nebot",
+   "nombre": "Marta Nebot",
+   "tipo": "tertuliano",
+   "medio": "Público",
+   "wikipedia": "Marta Nebot",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "may-marino",
+   "nombre": "May Mariño",
+   "tipo": "tertuliano",
+   "medio": "El Periódico de España",
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "mayte-alcaraz",
+   "nombre": "Mayte Alcaraz",
+   "tipo": "tertuliano",
+   "medio": null,
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "nativel-preciado",
+   "nombre": "Nativel Preciado",
+   "tipo": "tertuliano",
+   "medio": null,
+   "wikipedia": "Nativel Preciado",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "pablo-montesinos",
+   "nombre": "Pablo Montesinos",
+   "tipo": "tertuliano",
+   "medio": "Artículo 14",
+   "wikipedia": "Pablo Montesinos Aguayo",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "paloma-esteban",
+   "nombre": "Paloma Esteban",
+   "tipo": "tertuliano",
+   "medio": "ABC",
+   "wikipedia": null,
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "pedro-garcia-cuartango",
+   "nombre": "Pedro García Cuartango",
+   "tipo": "tertuliano",
+   "medio": "ABC",
+   "wikipedia": "Pedro García Cuartango",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "pedro-j-ramirez",
+   "nombre": "Pedro J. Ramírez",
+   "tipo": "tertuliano",
+   "medio": "El Español",
+   "wikipedia": "Pedro J. Ramírez",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "pedro-vallin",
+   "nombre": "Pedro Vallín",
+   "tipo": "tertuliano",
+   "medio": null,
+   "wikipedia": "Pedro Vallín",
+   "fuentes": []
+  },
+  {
+   "id": "raquel-ejerique",
+   "nombre": "Raquel Ejerique",
+   "tipo": "tertuliano",
+   "medio": "elDiario.es",
+   "wikipedia": "Raquel Ejerique",
+   "fuentes": [
+    "https://es.wikipedia.org/wiki/La_noche_en_24_horas"
+   ]
+  },
+  {
+   "id": "yolanda-gomez",
+   "nombre": "Yolanda Gómez",
+   "tipo": "tertuliano",
+   "medio": null,
+   "wikipedia": null,
+   "fuentes": []
+  },
+  {
+   "id": "angel-losada",
+   "nombre": "Ángel Losada",
+   "tipo": "invitado",
+   "medio": "diplomático",
+   "wikipedia": "Ángel Losada Fernández",
+   "fuentes": [
+    "https://www.boe.es/buscar/doc.php?id=BOE-A-2024-9701"
+   ]
+  },
+  {
+   "id": "jose-enrique-de-ayala",
+   "nombre": "José Enrique de Ayala",
+   "tipo": "invitado",
+   "medio": "Fundación Alternativas",
+   "wikipedia": null,
+   "fuentes": [
+    "https://www.rtve.es/rtve/20260908/rtve-prepara-gran-despliegue-informativo-25o-aniversario-del-11-s/17216363.shtml"
+   ]
+  },
+  {
+   "id": "alejandro-lopez-canorea",
+   "nombre": "Alejandro López Canorea",
+   "tipo": "invitado",
+   "medio": "Descifrando la Guerra",
+   "wikipedia": "Alejandro López Canorea",
+   "fuentes": [
+    "https://www.rtve.es/play/videos/la-noche-en-24h/alejandro-lopez-gobierno-israeli-no-pocos-son-mas-radicales/16410444/"
+   ]
+  },
+  {
+   "id": "alfredo-jimeno",
+   "nombre": "Alfredo Jimeno",
+   "tipo": "invitado",
+   "medio": "exconcejal de Chacao (Caracas)",
+   "wikipedia": null,
+   "fuentes": [
+    "https://monitoreamos.com/venezuela/alfredo-jimeno-regresa-venezuela-exilio"
+   ]
+  },
+  {
+   "id": "alex-grijelmo",
+   "nombre": "Álex Grijelmo",
+   "tipo": "invitado",
+   "medio": "periodista y escritor",
+   "wikipedia": "Álex Grijelmo",
+   "fuentes": [
+    "https://www.fundeu.es/noticia/el-periodista-y-escritor-alex-grijelmo-elegido-para-ocupar-la-silla-o-de-la-rae/"
+   ]
+  },
+  {
+   "id": "jose-antonio-martin-pallin",
+   "nombre": "José Antonio Martín Pallín",
+   "tipo": "invitado",
+   "medio": "magistrado emérito del Supremo",
+   "wikipedia": "José Antonio Martín Pallín",
+   "fuentes": [
+    "https://www.boe.es/diario_boe/txt.php?id=BOE-A-2006-10486"
+   ]
+  },
+  {
+   "id": "lane-greene",
+   "nombre": "Lane Greene",
+   "tipo": "invitado",
+   "medio": "The Economist",
+   "wikipedia": null,
+   "fuentes": [
+    "https://www.rtve.es/rtve/20260908/rtve-prepara-gran-despliegue-informativo-25o-aniversario-del-11-s/17216363.shtml"
+   ]
+  },
+  {
+   "id": "rosa-maria-mollo",
+   "nombre": "Rosa María Molló",
+   "tipo": "invitado",
+   "medio": "RTVE",
+   "wikipedia": "Rosa María Molló",
+   "fuentes": [
+    "https://www.rtve.es/rtve/20260908/rtve-prepara-gran-despliegue-informativo-25o-aniversario-del-11-s/17216363.shtml"
+   ]
+  },
+  {
+   "id": "jesus-a-nunez-villaverde",
+   "nombre": "Jesús A. Núñez Villaverde",
+   "tipo": "invitado",
+   "medio": "IECAH",
+   "wikipedia": "Jesús A. Núñez Villaverde",
+   "fuentes": [
+    "https://www.rtve.es/rtve/20260908/rtve-prepara-gran-despliegue-informativo-25o-aniversario-del-11-s/17216363.shtml"
+   ]
+  },
+  {
+   "id": "patxi-lopez",
+   "nombre": "Patxi López",
+   "tipo": "invitado",
+   "medio": "PSOE",
+   "wikipedia": "Patxi López",
+   "fuentes": [
+    "https://www.psoe.es/agenda/previsiones-informativas-lunes-19-de-octubre-2/"
+   ]
+  },
+  {
+   "id": "leila-nachawati",
+   "nombre": "Leila Nachawati",
+   "tipo": "invitado",
+   "medio": "Universidad Carlos III",
+   "wikipedia": "Leila Nachawati",
+   "fuentes": [
+    "https://researchportal.uc3m.es/display/inv42419"
+   ]
+  },
+  {
+   "id": "ruth-ferrero",
+   "nombre": "Ruth Ferrero",
+   "tipo": "invitado",
+   "medio": "Universidad Complutense",
+   "wikipedia": null,
+   "fuentes": [
+    "https://www.ucm.es/ruthferrero/curriculum"
+   ]
+  },
+  {
+   "id": "vicente-palacio",
+   "nombre": "Vicente Palacio",
+   "tipo": "invitado",
+   "medio": "Fundación Alternativas",
+   "wikipedia": null,
+   "fuentes": [
+    "https://fundacionalternativas.org/autores/vicente-palacio/"
+   ]
+  },
+  {
+   "id": "jose-felix-tezanos",
+   "nombre": "José Félix Tezanos",
+   "tipo": "invitado",
+   "medio": "CIS",
+   "wikipedia": "José Félix Tezanos",
+   "fuentes": [
+    "https://www.rtve.es/play/videos/la-noche-en-24h/entrevista-tezanos-defiende-cis/17311892/"
+   ]
+  }
+ ],
+ "sin_ficha": [],
+ "revisiones_huerfanas": [],
+ "reglas": {
+  "version_marcas": 4,
+  "vocabulario": "b4efdac64ee2",
+  "analistas": "7275a93af57a"
+ }
 }
