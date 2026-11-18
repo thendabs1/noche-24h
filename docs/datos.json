@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-18T10:13:57+01:00",
+ "generado": "2026-11-18T10:14:48+01:00",
  "estado": {
   "rtve": {
    "valor": "ok",
@@ -998,6 +998,1749 @@
      "texto": "Mesa de análisis (nombres no reconocidos)"
     }
    ]
+  },
+  {
+   "id": 17274074,
+   "titulo": "La noche en 24 horas - 19/10/26",
+   "inicio": "2026-10-19T22:00:00+02:00",
+   "duracion_s": 9600,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/19-10-26/17274074/",
+   "subtitulos": "https://api.rtve.es/api/videos/17274074/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 83,
+     "tipo": "presentacion",
+     "texto": "María José Rochina, buenas noches durante todo el día ha sido necesario rescatar a muchas personas"
+    },
+    {
+     "seg": 187,
+     "tipo": "mesa",
+     "texto": "Manuel Rico · Ainhoa Martínez Hoyos · Carlos E. Cué · Juanma Lamet",
+     "personas": [
+      {
+       "forma": "Ano Rico",
+       "estado": "candidata",
+       "id": "manuel-rico",
+       "nombre": "Manuel Rico",
+       "apoyos": [
+        "le llaman «Manuel» 4 veces"
+       ]
+      },
+      {
+       "forma": "Ana Martinez Hoyos",
+       "estado": "automatica",
+       "id": "ainhoa-martinez-hoyos",
+       "nombre": "Ainhoa Martínez Hoyos"
+      },
+      {
+       "forma": "Carlos Elordicue",
+       "estado": "automatica",
+       "id": "carlos-e-cue",
+       "nombre": "Carlos E. Cué"
+      },
+      {
+       "forma": "Juan Malamet",
+       "estado": "automatica",
+       "id": "juanma-lamet",
+       "nombre": "Juanma Lamet"
+      }
+     ]
+    },
+    {
+     "seg": 1285,
+     "tipo": "mesa",
+     "texto": "Patxi López",
+     "personas": [
+      {
+       "forma": "Pachi López",
+       "estado": "automatica",
+       "id": "patxi-lopez",
+       "nombre": "Patxi López"
+      }
+     ]
+    },
+    {
+     "seg": 2139,
+     "seg_fin": 2587,
+     "tipo": "entrevista",
+     "texto": "Casanova habla del fin de ETA y los movimientos terroristas contemporáneos",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/casanova-fin-eta-movimientos-terroristas-contemporaneos/17274532/"
+    },
+    {
+     "seg": 2864,
+     "seg_fin": 3410,
+     "tipo": "entrevista",
+     "texto": "Consuelo Ordóñez, 15 años después del fin de ETA: \"Es lo mejor que ha pasado en la historia reciente\"",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/consuelo-ordonez-15-anos-fin-eta/17274045/"
+    },
+    {
+     "seg": 3695,
+     "seg_fin": 4368,
+     "tipo": "entrevista",
+     "texto": "Landáburu recuerda con emoción el fin de ETA",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/landaburu-recuerda-emocion-fin-eta/17274758/"
+    }
+   ]
+  },
+  {
+   "id": 17269099,
+   "titulo": "La noche en 24 horas - 15/10/26",
+   "inicio": "2026-10-15T21:40:00+02:00",
+   "duracion_s": 10486,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/15-10-26/17269099/",
+   "subtitulos": "https://api.rtve.es/api/videos/17269099/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 87,
+     "tipo": "mesa",
+     "texto": "Antonio Papell · Lucía Méndez · Raquel Ejerique · Pablo Montesinos",
+     "personas": [
+      {
+       "forma": "Antonio Papey",
+       "estado": "automatica",
+       "id": "antonio-papell",
+       "nombre": "Antonio Papell"
+      },
+      {
+       "forma": "Lucía Méndez",
+       "estado": "automatica",
+       "id": "lucia-mendez",
+       "nombre": "Lucía Méndez"
+      },
+      {
+       "forma": "Raquel Ejerique",
+       "estado": "automatica",
+       "id": "raquel-ejerique",
+       "nombre": "Raquel Ejerique"
+      },
+      {
+       "forma": "Pablo Montesines",
+       "estado": "automatica",
+       "id": "pablo-montesinos",
+       "nombre": "Pablo Montesinos"
+      }
+     ]
+    },
+    {
+     "seg": 2213,
+     "tipo": "plato",
+     "texto": "Teresa perales"
+    },
+    {
+     "seg": 4780,
+     "tipo": "conexion",
+     "texto": "muchas incógnitas por despejar. Vamos a la redacción de informativos."
+    },
+    {
+     "seg": 5645,
+     "tipo": "presentacion",
+     "texto": "Buenas noches. Javier Casqueiro, buenas noches. Fátima Iglesias, ¿qué tal?"
+    },
+    {
+     "seg": 6413,
+     "tipo": "conexion",
+     "texto": "Ana, buenas noches, cuéntanos. Buenas noches, sí."
+    }
+   ]
+  },
+  {
+   "id": 17267374,
+   "titulo": "La noche en 24 horas - 14/10/26",
+   "inicio": "2026-10-14T22:00:00+02:00",
+   "duracion_s": 10364,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/14-10-26/17267374/",
+   "subtitulos": "https://api.rtve.es/api/videos/17267374/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 85,
+     "tipo": "mesa",
+     "texto": "Juanma Romero · Javier García Vila · Chema Crespo",
+     "personas": [
+      {
+       "forma": "Tomás Romero",
+       "estado": "candidata",
+       "id": "juanma-romero",
+       "nombre": "Juanma Romero",
+       "apoyos": []
+      },
+      {
+       "forma": "García Vila",
+       "estado": "automatica",
+       "id": "javier-garcia-vila",
+       "nombre": "Javier García Vila"
+      },
+      {
+       "forma": "Chema Crespo",
+       "estado": "automatica",
+       "id": "chema-crespo",
+       "nombre": "Chema Crespo"
+      }
+     ]
+    },
+    {
+     "seg": 779,
+     "tipo": "presentacion",
+     "texto": "Raúl Mozos, buenas noches ¿Cómo ha transcurrido hoy la jornada en Melilla?"
+    },
+    {
+     "seg": 1273,
+     "tipo": "presentacion",
+     "texto": "Álvaro Jiménez, Relación de Informativos, buenas noches. ¿Qué tal, Xavi? Buenas noches."
+    },
+    {
+     "seg": 2264,
+     "tipo": "plato",
+     "texto": "José Antonio Martínez Soler, compañero de muchos años de esta casa, Periodista"
+    },
+    {
+     "seg": 6061,
+     "tipo": "conexion",
+     "texto": "candidatura. Vamos hasta la redacción de informativos."
+    },
+    {
+     "seg": 6177,
+     "seg_fin": 6899,
+     "tipo": "entrevista",
+     "texto": "Maíllo, sobre la unidad de la izquierda: \"Estamos más cerca\"",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/maillo-pacto-frente-amplio-podemos-mas-cerca/17267354/"
+    },
+    {
+     "seg": 7318,
+     "tipo": "presentacion",
+     "texto": "Esther Moreno, buenas noches Buenas noches a todos."
+    },
+    {
+     "seg": 8197,
+     "tipo": "conexion",
+     "texto": "Olivia Guillén, redacción. Buenas noches, cuéntanos."
+    }
+   ]
+  },
+  {
+   "id": 17265470,
+   "titulo": "La noche en 24 horas - 13/10/26",
+   "inicio": "2026-10-13T21:40:00+02:00",
+   "duracion_s": 10258,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/13-10-26/17265470/",
+   "subtitulos": "https://api.rtve.es/api/videos/17265470/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 106,
+     "tipo": "presentacion",
+     "texto": "Lara Albillo, buenas noches. Por las imágenes que hemos visto, los ceutíes no van a olvidar esta jornada"
+    },
+    {
+     "seg": 155,
+     "tipo": "mesa",
+     "texto": "Irene Lozano",
+     "personas": [
+      {
+       "forma": "Irene Lozano",
+       "estado": "automatica",
+       "id": "irene-lozano",
+       "nombre": "Irene Lozano"
+      }
+     ]
+    },
+    {
+     "seg": 1943,
+     "tipo": "conexion",
+     "texto": "comparar los resultados. Olivia Guillén, buenas noches, cuéntanos"
+    },
+    {
+     "seg": 2034,
+     "tipo": "plato",
+     "texto": "Iván Redondo, que es consultor político, es jefe de gabinete de Pedro Sánchez y de otros"
+    },
+    {
+     "seg": 2903,
+     "seg_fin": 3137,
+     "tipo": "entrevista",
+     "texto": "El papa León XIV ha sido operado de un cáncer de pulmón",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/papa-leon-operado-cancer-pulmon/17265431/"
+    },
+    {
+     "seg": 3713,
+     "tipo": "conexion",
+     "texto": "El líder del PP afirma que sin limpieza del censo no hay limpieza Democrática Redacción de informativos, Esther Moreno, cuéntanos."
+    },
+    {
+     "seg": 4498,
+     "tipo": "plato",
+     "texto": "Carlos Bardem, actor, guionista, escritor que acaba de publicar este libro, Triángulo"
+    },
+    {
+     "seg": 5897,
+     "tipo": "presentacion",
+     "texto": "Alara Albillo, buenas noches, es indiscutible Sí, buenas noches. Ha dicho Felipe VI que la soberanía y"
+    },
+    {
+     "seg": 6097,
+     "tipo": "mesa",
+     "texto": "Mesa de análisis (nombres no reconocidos)"
+    },
+    {
+     "seg": 9224,
+     "tipo": "conexion",
+     "texto": "complicada. Álvaro Jiménez, Redacción de Informativos"
+    }
+   ]
+  },
+  {
+   "id": 17259721,
+   "titulo": "La noche en 24 horas - 08/10/26",
+   "inicio": "2026-10-08T22:00:00+02:00",
+   "duracion_s": 9812,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/08-10-26/17259721/",
+   "subtitulos": "https://api.rtve.es/api/videos/17259721/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 131,
+     "tipo": "conexion",
+     "texto": "desahucios. Alba López, buenas noches, cuéntanos"
+    },
+    {
+     "seg": 188,
+     "tipo": "mesa",
+     "texto": "Carmelo Encinas · Pedro García Cuartango · Irene Lozano · José María Brunet",
+     "personas": [
+      {
+       "forma": "Carmen Encinas",
+       "estado": "automatica",
+       "id": "carmelo-encinas",
+       "nombre": "Carmelo Encinas"
+      },
+      {
+       "forma": "Pedro Cuartango",
+       "estado": "automatica",
+       "id": "pedro-garcia-cuartango",
+       "nombre": "Pedro García Cuartango"
+      },
+      {
+       "forma": "Irene Nozano",
+       "estado": "automatica",
+       "id": "irene-lozano",
+       "nombre": "Irene Lozano"
+      },
+      {
+       "forma": "José María Brunet",
+       "estado": "automatica",
+       "id": "jose-maria-brunet",
+       "nombre": "José María Brunet"
+      }
+     ]
+    },
+    {
+     "seg": 1296,
+     "tipo": "conexion",
+     "texto": "Así que vamos a ver cómo es todo el proceso Esther Moreno, buenas noches, cuéntanos."
+    },
+    {
+     "seg": 1404,
+     "tipo": "plato",
+     "texto": "Paco Camas, que como saben es politólogo, director de investigación de opinión pública en"
+    },
+    {
+     "seg": 3197,
+     "tipo": "plato",
+     "texto": "Dugalán, que es escritor, psicólogo, también árbitro y esto a"
+    },
+    {
+     "seg": 3879,
+     "tipo": "conexion",
+     "texto": "hace dos semanas. Alicia Belilla, buenas noches, cuéntanos"
+    },
+    {
+     "seg": 3948,
+     "tipo": "conexion",
+     "texto": "en Canarias. Nos vamos hasta Las Palmas de Gran Canaria"
+    }
+   ]
+  },
+  {
+   "id": 17258036,
+   "titulo": "La noche en 24 horas - 07/10/24",
+   "inicio": "2026-10-07T22:00:00+02:00",
+   "duracion_s": 5098,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/07-10-24/17258036/",
+   "subtitulos": "https://api.rtve.es/api/videos/17258036/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 4,
+     "tipo": "presentacion",
+     "texto": "Buenas noches, Mari Carmen La anciana que prendió la mecha de la rebelión social contra los desahucios y"
+    },
+    {
+     "seg": 2369,
+     "tipo": "conexion",
+     "texto": "Esther Moreno, buenas noches. Cuéntanos las reacciones que hayan llegado al terminal"
+    }
+   ]
+  },
+  {
+   "id": 17256344,
+   "titulo": "La noche en 24 horas - 06/10/26",
+   "inicio": "2026-10-06T22:00:00+02:00",
+   "duracion_s": 10141,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/06-10-26/17256344/",
+   "subtitulos": "https://api.rtve.es/api/videos/17256344/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 62,
+     "tipo": "presentacion",
+     "texto": "Álvaro Jimenez, buenas noches. ¿Qué es lo que ha dicho el Tribunal de Garantías?"
+    },
+    {
+     "seg": 134,
+     "tipo": "mesa",
+     "texto": "Isaías Lafuente · Ainhoa Martínez Hoyos · Jesús Maraña · Imma Lucas",
+     "personas": [
+      {
+       "forma": "Isaías Lafuente",
+       "estado": "automatica",
+       "id": "isaias-lafuente",
+       "nombre": "Isaías Lafuente"
+      },
+      {
+       "forma": "Martínez Hoyos",
+       "estado": "automatica",
+       "id": "ainhoa-martinez-hoyos",
+       "nombre": "Ainhoa Martínez Hoyos"
+      },
+      {
+       "forma": "Jesús Maraña",
+       "estado": "automatica",
+       "id": "jesus-marana",
+       "nombre": "Jesús Maraña"
+      },
+      {
+       "forma": "Isma Lucas",
+       "estado": "automatica",
+       "id": "imma-lucas",
+       "nombre": "Imma Lucas"
+      }
+     ]
+    },
+    {
+     "seg": 1487,
+     "tipo": "plato",
+     "texto": "Ignacio Urquizu, que es sociólogo, director de Metroscopia y autor de este libro, GENERACION 15 M"
+    },
+    {
+     "seg": 3949,
+     "tipo": "presentacion",
+     "texto": "de legislación. Pablo Simón, buenas noches. Hola, ¿qué tal? ¿La que has liado?"
+    },
+    {
+     "seg": 6692,
+     "tipo": "conexion",
+     "texto": "Estés Moreno, buenas noches. Cuéntanos qué cambios se han hecho sobre el DECRETO original"
+    },
+    {
+     "seg": 7462,
+     "tipo": "presentacion",
+     "texto": "Olivia Guillén, buenas noches. Estás con uno de sus portavoces"
+    }
+   ]
+  },
+  {
+   "id": 17254608,
+   "titulo": "La noche en 24 horas - 05/10/26",
+   "inicio": "2026-10-05T22:00:00+02:00",
+   "duracion_s": 10289,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/05-10-26/17254608/",
+   "subtitulos": "https://api.rtve.es/api/videos/17254608/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 67,
+     "tipo": "mesa",
+     "texto": "Marta Nebot · Carlos E. Cué · Gloria Lomana",
+     "personas": [
+      {
+       "forma": "Marta Nebot",
+       "estado": "automatica",
+       "id": "marta-nebot",
+       "nombre": "Marta Nebot"
+      },
+      {
+       "forma": "Carlos Lordi Cue",
+       "estado": "automatica",
+       "id": "carlos-e-cue",
+       "nombre": "Carlos E. Cué"
+      },
+      {
+       "forma": "Gloria Romana",
+       "estado": "automatica",
+       "id": "gloria-lomana",
+       "nombre": "Gloria Lomana"
+      }
+     ]
+    },
+    {
+     "seg": 901,
+     "tipo": "conexion",
+     "texto": "Nos vamos al Palacio de la Moncloa, Esther Moreno. Buenas noches, cuéntanos"
+    },
+    {
+     "seg": 1261,
+     "tipo": "conexion",
+     "texto": "Sol está María Chapinal. María, buenas noches, cuéntanos."
+    },
+    {
+     "seg": 1314,
+     "seg_fin": 3024,
+     "tipo": "entrevista",
+     "texto": "Sordo (CCOO) cree que la huelga general será \"a principios de noviembre\"",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/entrevista-unai-sordo-ccoo-huelga-general-elecciones/17254560/"
+    },
+    {
+     "seg": 1603,
+     "tipo": "conexion",
+     "texto": "supongo que el presidente ha visto otro escenario y lo ha dado a aprovechar. Seguimos hablando, pero vamos hasta Barcelona"
+    },
+    {
+     "seg": 3720,
+     "tipo": "conexion",
+     "texto": "día 17. Volvemos en directo al"
+    },
+    {
+     "seg": 5629,
+     "tipo": "mesa",
+     "texto": "Marisa Cruz · Pedro Vallín",
+     "personas": [
+      {
+       "forma": "Marisa Cruz",
+       "estado": "automatica",
+       "id": "marisa-cruz",
+       "nombre": "Marisa Cruz"
+      },
+      {
+       "forma": "Pelo Ballín",
+       "estado": "automatica",
+       "id": "pedro-vallin",
+       "nombre": "Pedro Vallín"
+      }
+     ]
+    },
+    {
+     "seg": 8909,
+     "tipo": "plato",
+     "texto": "Jorge Resina, que es politólogo de la Universidad Complutense de Madrid, autor del libro"
+    },
+    {
+     "seg": 10212,
+     "tipo": "presentacion",
+     "texto": "noche. Marisa Cruz, muy buenas noches. Ha sido un placer. Nos veremos antes del 29 de"
+    }
+   ]
+  },
+  {
+   "id": 17250192,
+   "titulo": "La noche en 24 horas - 01/10/26",
+   "inicio": "2026-10-01T22:00:00+02:00",
+   "duracion_s": 10052,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/01-10-26/17250192/",
+   "subtitulos": "https://api.rtve.es/api/videos/17250192/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 157,
+     "tipo": "mesa",
+     "texto": "Marta Nebot · Pablo Montesinos · Antón Losada · María Peral",
+     "personas": [
+      {
+       "forma": "Marta Nebot",
+       "estado": "automatica",
+       "id": "marta-nebot",
+       "nombre": "Marta Nebot"
+      },
+      {
+       "forma": "Pablo Montesinos",
+       "estado": "automatica",
+       "id": "pablo-montesinos",
+       "nombre": "Pablo Montesinos"
+      },
+      {
+       "forma": "Antón Lozada",
+       "estado": "automatica",
+       "id": "anton-losada",
+       "nombre": "Antón Losada"
+      },
+      {
+       "forma": "María Esperal",
+       "estado": "automatica",
+       "id": "maria-peral",
+       "nombre": "María Peral"
+      }
+     ]
+    },
+    {
+     "seg": 506,
+     "tipo": "presentacion",
+     "texto": "en sol. Olivia Guillén, buenas noches. ¿Cómo siguen ahí las noticias sobre la posible validación de"
+    },
+    {
+     "seg": 3223,
+     "tipo": "presentacion",
+     "texto": "Olivia Guillén, buenas noches. ¿Cómo han recibido esta noticia en la Puerta del Sol entre los acampados?"
+    },
+    {
+     "seg": 3296,
+     "tipo": "plato",
+     "texto": "Pablo Simón"
+    },
+    {
+     "seg": 4128,
+     "tipo": "conexion",
+     "texto": "1 de octubre, que se ha puesto como se ha puesto vamos a la redacción de informativos."
+    },
+    {
+     "seg": 7946,
+     "tipo": "conexion",
+     "texto": "jugar en las próximas 12 horas un papel clave Enseguida voy con Álvaro Jiménez a la redacción de informativos para acoger"
+    },
+    {
+     "seg": 8019,
+     "tipo": "conexion",
+     "texto": "Luego sigo con Pablo Montesinos. Volvemos a la redacción de informativos porque seguimos"
+    },
+    {
+     "seg": 9979,
+     "tipo": "presentacion",
+     "texto": "Buenas noches, Santa Rosada Pablo Simón. Efectivamente, como te decía, iban a"
+    }
+   ]
+  },
+  {
+   "id": 17248383,
+   "titulo": "La noche en 24 horas - 30/09/26",
+   "inicio": "2026-09-30T22:00:00+02:00",
+   "duracion_s": 9244,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/30-09-26/17248383/",
+   "subtitulos": "https://api.rtve.es/api/videos/17248383/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 115,
+     "tipo": "mesa",
+     "texto": "Javier García Vila · Estefanía Molina",
+     "personas": [
+      {
+       "forma": "Javier Gracia Vila",
+       "estado": "automatica",
+       "id": "javier-garcia-vila",
+       "nombre": "Javier García Vila"
+      },
+      {
+       "forma": "Estefaya Molina",
+       "estado": "automatica",
+       "id": "estefania-molina",
+       "nombre": "Estefanía Molina"
+      }
+     ]
+    },
+    {
+     "seg": 804,
+     "tipo": "presentacion",
+     "texto": "Olivia Guillen, buenas noches, quinto día de acampada. Tú que conoces bien esa zona por trabajar estos días,"
+    },
+    {
+     "seg": 1898,
+     "tipo": "plato",
+     "texto": "Enrique García, Portavoz de la OCU"
+    },
+    {
+     "seg": 3990,
+     "tipo": "conexion",
+     "texto": "gobierno y de sus aliados parlamentarios habituales. Volvemos en directo al Congreso de los Diputados con Álvaro Jiménez"
+    },
+    {
+     "seg": 4592,
+     "tipo": "presentacion",
+     "texto": "...Olivia Guillén, buenas noches... ...cada día parece que llega más gente..."
+    },
+    {
+     "seg": 5854,
+     "tipo": "conexion",
+     "texto": "Ester Moreno, buenas noches Cuéntanos todos los detalles."
+    },
+    {
+     "seg": 9195,
+     "tipo": "presentacion",
+     "texto": "Estefanía Molina, muy buenas noches. Buenas noches. Buenas noches."
+    }
+   ]
+  },
+  {
+   "id": 17245003,
+   "titulo": "La noche en 24 horas - 28/09/26",
+   "inicio": "2026-09-28T22:00:00+02:00",
+   "duracion_s": 9073,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/28-09-26/17245003/",
+   "subtitulos": "https://api.rtve.es/api/videos/17245003/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 34,
+     "tipo": "conexion",
+     "texto": "en su casa Estel Moreno, Redacción de Informativos, buenas noches, cuéntanos."
+    },
+    {
+     "seg": 102,
+     "tipo": "mesa",
+     "texto": "Raquel Ejerique",
+     "personas": [
+      {
+       "forma": "Raquel Ejerique",
+       "estado": "automatica",
+       "id": "raquel-ejerique",
+       "nombre": "Raquel Ejerique"
+      }
+     ]
+    },
+    {
+     "seg": 322,
+     "tipo": "presentacion",
+     "texto": "Olivia Guillén, buenas noches Puerta del Sol. ¿Cómo están los ánimos después de que"
+    },
+    {
+     "seg": 566,
+     "tipo": "presentacion",
+     "texto": "Rubén Navarro, buenas noches. Ahí se han producido algunos incidentes"
+    },
+    {
+     "seg": 1986,
+     "seg_fin": 3128,
+     "tipo": "entrevista",
+     "texto": "Enrique Santiago, sobre el decreto de vivienda: \"Buscamos soluciones que hay en otros países\"",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/enrique-santiago-vivienda-soluciones-otros-paises/17244981/",
+     "presenta": "Enrique Santiago que es portavoz de Izquierda Unida en el Congreso y",
+     "lugar": "plato"
+    },
+    {
+     "seg": 3666,
+     "tipo": "conexion",
+     "texto": "finalmente Mari Carmen Abascal va a poder volver a su casa. Paloma Castillo, buenas noches, cuéntanos"
+    },
+    {
+     "seg": 5265,
+     "tipo": "plato",
+     "texto": "Inés Rey, Alcaldesa socialista de Acoruña"
+    },
+    {
+     "seg": 5784,
+     "tipo": "presentacion",
+     "texto": "Señora Rey, buenas noches. Parece ser que en el decreto su partido no va a incluir la modificación de la"
+    },
+    {
+     "seg": 6011,
+     "tipo": "conexion",
+     "texto": "Buenas noches. Buenas noches, un placer, gracias. Bueno, pues volvemos en directo a la Puerta del Sol."
+    },
+    {
+     "seg": 9027,
+     "tipo": "presentacion",
+     "texto": "A ti. Pelo Ballín, muy buenas noches Ahí no van, Raquel."
+    }
+   ]
+  },
+  {
+   "id": 17239658,
+   "titulo": "La noche en 24 horas - 24/09/26",
+   "inicio": "2026-09-24T22:00:00+02:00",
+   "duracion_s": 8996,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/24-09-26/17239658/",
+   "subtitulos": "https://api.rtve.es/api/videos/17239658/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 65,
+     "tipo": "mesa",
+     "texto": "Irene Lozano · Marta Nebot · Lourdes Pérez · Pedro García Cuartango",
+     "personas": [
+      {
+       "forma": "Irene Lozano",
+       "estado": "automatica",
+       "id": "irene-lozano",
+       "nombre": "Irene Lozano"
+      },
+      {
+       "forma": "Marta Nebot",
+       "estado": "automatica",
+       "id": "marta-nebot",
+       "nombre": "Marta Nebot"
+      },
+      {
+       "forma": "Lourdes Pérez",
+       "estado": "automatica",
+       "id": "lourdes-perez",
+       "nombre": "Lourdes Pérez"
+      },
+      {
+       "forma": "Pedro Cuartango",
+       "estado": "automatica",
+       "id": "pedro-garcia-cuartango",
+       "nombre": "Pedro García Cuartango"
+      }
+     ]
+    },
+    {
+     "seg": 1890,
+     "tipo": "plato",
+     "texto": "Alguien que superó un Cáncer de la sangre poco común gracias a un tratamiento experimental y que luego creó la Fundación Cris contra"
+    },
+    {
+     "seg": 2575,
+     "tipo": "plato",
+     "texto": "Belén Alonso"
+    },
+    {
+     "seg": 3200,
+     "seg_fin": 3715,
+     "tipo": "entrevista",
+     "texto": "El responsable de las exhumaciones en Cuelgamuros califica su trabajo \"entre lo muy difícil y lo imposible\"",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/antropologo-forense-exhumaciones-cuelgamuros-entrevistado-noche-24/17239668/"
+    }
+   ]
+  },
+  {
+   "id": 17237861,
+   "titulo": "La noche en 24 horas - 23/09/26",
+   "inicio": "2026-09-23T22:00:00+02:00",
+   "duracion_s": 9358,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/23-09-26/17237861/",
+   "subtitulos": "https://api.rtve.es/api/videos/17237861/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 76,
+     "tipo": "presentacion",
+     "texto": "Paula Murillo, buenas noches. ¿Cómo están ahora ahí las cosas?"
+    },
+    {
+     "seg": 187,
+     "tipo": "mesa",
+     "texto": "Chema Crespo Lucía Méndez · Carmelo Encinas · Javier García Vila",
+     "personas": [
+      {
+       "forma": "Chema Crespo Lucía Méndez",
+       "estado": null
+      },
+      {
+       "forma": "Carmelo Encinas",
+       "estado": "automatica",
+       "id": "carmelo-encinas",
+       "nombre": "Carmelo Encinas"
+      },
+      {
+       "forma": "Javier Garcia Vila",
+       "estado": "automatica",
+       "id": "javier-garcia-vila",
+       "nombre": "Javier García Vila"
+      }
+     ]
+    },
+    {
+     "seg": 624,
+     "tipo": "conexion",
+     "texto": "Luego escuchamos desde Nueva York, en unos minutos conectamos con nuestra compañera Almudena Guerrero"
+    },
+    {
+     "seg": 817,
+     "tipo": "conexion",
+     "texto": "Palacio de la Moncloa es que el presidente del gobierno desde la asunto. Cuéntanos, buenas noches"
+    },
+    {
+     "seg": 2936,
+     "tipo": "plato",
+     "texto": "Juan Cuartero, actor que encarna al inolvidable profesor Kitting en la adaptación"
+    },
+    {
+     "seg": 6384,
+     "tipo": "presentacion",
+     "texto": "Buenas noches, Iza Patero. Insiste en esa versión que ya dio aquí en RTVE en una entrevista."
+    },
+    {
+     "seg": 8490,
+     "tipo": "plato",
+     "texto": "El impulsor de estas jornadas, el escritor y divulgador histórico Jair Santa Marta"
+    }
+   ]
+  },
+  {
+   "id": 17236108,
+   "titulo": "La noche en 24 horas - 22/09/26",
+   "inicio": "2026-09-22T22:00:00+02:00",
+   "duracion_s": 8784,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/22-09-26/17236108/",
+   "subtitulos": "https://api.rtve.es/api/videos/17236108/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 88,
+     "tipo": "mesa",
+     "texto": "Pedro Vallín · Juan Fernández-Miranda · Marisa Cruz",
+     "personas": [
+      {
+       "forma": "Pedro Avellín",
+       "estado": "automatica",
+       "id": "pedro-vallin",
+       "nombre": "Pedro Vallín"
+      },
+      {
+       "forma": "Juan Fernando Miranda",
+       "estado": "automatica",
+       "id": "juan-fernandez-miranda",
+       "nombre": "Juan Fernández-Miranda"
+      },
+      {
+       "forma": "Marisa Cruz",
+       "estado": "automatica",
+       "id": "marisa-cruz",
+       "nombre": "Marisa Cruz"
+      }
+     ]
+    },
+    {
+     "seg": 566,
+     "tipo": "presentacion",
+     "texto": "Lara Albillos, buenas noches. Estás junto a la valla del Talajal"
+    },
+    {
+     "seg": 4090,
+     "tipo": "presentacion",
+     "texto": "Lara Albillos, buenas noches de nuevo El llamamiento a cruzar en redes coincide con la jornada electoral en"
+    }
+   ]
+  },
+  {
+   "id": 17234530,
+   "titulo": "La noche en 24 horas - 21/09/24",
+   "inicio": "2026-09-21T22:00:00+02:00",
+   "duracion_s": 9184,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/21-09-24/17234530/",
+   "subtitulos": "https://api.rtve.es/api/videos/17234530/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 68,
+     "tipo": "mesa",
+     "texto": "Isabel Morillo · Ainhoa Martínez Hoyos · Javier Casqueiro",
+     "personas": [
+      {
+       "forma": "Isabel Morillo",
+       "estado": "automatica",
+       "id": "isabel-morillo",
+       "nombre": "Isabel Morillo"
+      },
+      {
+       "forma": "Ainhoa Martínez Hoyos",
+       "estado": "automatica",
+       "id": "ainhoa-martinez-hoyos",
+       "nombre": "Ainhoa Martínez Hoyos"
+      },
+      {
+       "forma": "Javier Cascaíro",
+       "estado": "automatica",
+       "id": "javier-casqueiro",
+       "nombre": "Javier Casqueiro"
+      }
+     ]
+    },
+    {
+     "seg": 712,
+     "tipo": "presentacion",
+     "texto": "el Puerto. Lara Malvillos, buenas noches. Ceuta ha recibido la condena de todos los partidos"
+    },
+    {
+     "seg": 1780,
+     "tipo": "plato",
+     "texto": "Juan Abarca Zidón, presidente del grupo privado HM Hospitales"
+    },
+    {
+     "seg": 2902,
+     "seg_fin": 4489,
+     "tipo": "entrevista",
+     "texto": "Óscar López, sobre el juicio contra Begoña Gómez: \"Ha sido una instrucción inquisitorial\"",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/oscar-lopez-sobre-apertura-juicio-oral-contra-begona-gomez-sido-instruccion-inquisitorial/17234522/",
+     "presenta": "Oscar López, ministro para la transformación digital y",
+     "lugar": "plato"
+    },
+    {
+     "seg": 5295,
+     "tipo": "conexion",
+     "texto": "como imputadas a sus hijas a finales de noviembre. Nos vamos hasta la redacción de informativos"
+    }
+   ]
+  },
+  {
+   "id": 17229909,
+   "titulo": "La noche en 24 horas - 17/09/26",
+   "inicio": "2026-09-17T22:00:00+02:00",
+   "duracion_s": 9275,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/17-09-26/17229909/",
+   "subtitulos": "https://api.rtve.es/api/videos/17229909/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 60,
+     "tipo": "presentacion",
+     "texto": "Elisa Cardenal, buenas noches Para eso han apretado ya el acelerador"
+    },
+    {
+     "seg": 97,
+     "tipo": "mesa",
+     "texto": "Gerardo Lorenzo · Marta Nebot",
+     "personas": [
+      {
+       "forma": "Fernando Lorenzo",
+       "estado": "candidata",
+       "id": "gerardo-lorenzo",
+       "nombre": "Gerardo Lorenzo",
+       "apoyos": [
+        "esa noche también sale «Gerardo Lorenzo»",
+        "le llaman «Gerardo» 3 veces"
+       ]
+      },
+      {
+       "forma": "Marta Nebot",
+       "estado": "automatica",
+       "id": "marta-nebot",
+       "nombre": "Marta Nebot"
+      }
+     ]
+    },
+    {
+     "seg": 616,
+     "tipo": "conexion",
+     "texto": "también para autoridades regionales. Olivia Guillén, Redacción de Informativos, buenas noches,"
+    },
+    {
+     "seg": 2733,
+     "tipo": "plato",
+     "texto": "Ángel Ruiz, que interpreta al poeta Federico García Lorca"
+    }
+   ]
+  },
+  {
+   "id": 17228275,
+   "titulo": "La noche en 24 horas - 16/09/26",
+   "inicio": "2026-09-16T22:00:00+02:00",
+   "duracion_s": 9186,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/16-09-26/17228275/",
+   "subtitulos": "https://api.rtve.es/api/videos/17228275/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 99,
+     "tipo": "mesa",
+     "texto": "Chema Crespo · Elsa García de Blas · Pablo Montesinos",
+     "personas": [
+      {
+       "forma": "Chema Crespo",
+       "estado": "automatica",
+       "id": "chema-crespo",
+       "nombre": "Chema Crespo"
+      },
+      {
+       "forma": "Elche Garcia Debradas",
+       "estado": "automatica",
+       "id": "elsa-garcia-de-blas",
+       "nombre": "Elsa García de Blas"
+      },
+      {
+       "forma": "Pablo Montesinos",
+       "estado": "automatica",
+       "id": "pablo-montesinos",
+       "nombre": "Pablo Montesinos"
+      }
+     ]
+    },
+    {
+     "seg": 564,
+     "tipo": "presentacion",
+     "texto": "Elisa Cardenal, buenas noches. La Audiencia responde a la petición de"
+    },
+    {
+     "seg": 1855,
+     "tipo": "plato",
+     "texto": "La directora y guionista de cine y escritora Ángeles González Sinde, que acaba de publicar esta novela, su"
+    },
+    {
+     "seg": 4420,
+     "tipo": "conexion",
+     "texto": "exjefe de gabinete de la Delegación del gobierno Olivia Guillén, redacción de Informativos, muy buenas noches,"
+    },
+    {
+     "seg": 5397,
+     "seg_fin": 5945,
+     "tipo": "entrevista",
+     "texto": "Las fuertes lluvias provocan inundaciones en Valencia y Barcelona",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/fuertes-lluvias-inundaciones-valencia-barcelona/17228262/"
+    },
+    {
+     "seg": 8858,
+     "tipo": "conexion",
+     "texto": "papel, volvemos a la redacción de informativos para conocer la última hora de las fuertes e intensas lluvias"
+    }
+   ]
+  },
+  {
+   "id": 17226590,
+   "titulo": "La noche en 24 horas - 15/09/26",
+   "inicio": "2026-09-15T22:00:00+02:00",
+   "duracion_s": 9245,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/15-09-26/17226590/",
+   "subtitulos": "https://api.rtve.es/api/videos/17226590/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 62,
+     "tipo": "mesa",
+     "texto": "Isaías Lafuente · Paloma Esteban · Jesús Maraña · María Peral",
+     "personas": [
+      {
+       "forma": "Isaias Lafuentes",
+       "estado": "automatica",
+       "id": "isaias-lafuente",
+       "nombre": "Isaías Lafuente"
+      },
+      {
+       "forma": "Paloma Esteban",
+       "estado": "automatica",
+       "id": "paloma-esteban",
+       "nombre": "Paloma Esteban"
+      },
+      {
+       "forma": "Jesús Maraña",
+       "estado": "automatica",
+       "id": "jesus-marana",
+       "nombre": "Jesús Maraña"
+      },
+      {
+       "forma": "María Perala",
+       "estado": "automatica",
+       "id": "maria-peral",
+       "nombre": "María Peral"
+      }
+     ]
+    },
+    {
+     "seg": 4824,
+     "tipo": "presentacion",
+     "texto": "Álvaro Jiménez, Reacción de Informativos, buenas noches la sentencia del Tribunal de Justicia"
+    },
+    {
+     "seg": 5238,
+     "tipo": "presentacion",
+     "texto": "José María, buenas noches. Brevemente"
+    },
+    {
+     "seg": 6225,
+     "tipo": "conexion",
+     "texto": "organizadores prometen continuar con el festival. Olivia Guillén, Redacción de Informativos, cuéntanos los"
+    }
+   ]
+  },
+  {
+   "id": 17224910,
+   "titulo": "La noche en 24 horas - 14/09/26",
+   "inicio": "2026-09-14T22:00:00+02:00",
+   "duracion_s": 9206,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/14-09-26/17224910/",
+   "subtitulos": "https://api.rtve.es/api/videos/17224910/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 59,
+     "tipo": "mesa",
+     "texto": "Irene Lozano · Ainhoa Martínez Hoyos · Carlos E. Cué · Juanma Lamet",
+     "personas": [
+      {
+       "forma": "Irene Lozano",
+       "estado": "automatica",
+       "id": "irene-lozano",
+       "nombre": "Irene Lozano"
+      },
+      {
+       "forma": "Señor Martinez Hoyos",
+       "estado": "candidata",
+       "id": "ainhoa-martinez-hoyos",
+       "nombre": "Ainhoa Martínez Hoyos",
+       "apoyos": [
+        "le llaman «Ainhoa» 3 veces"
+       ]
+      },
+      {
+       "forma": "Carlos Edordicuer",
+       "estado": "automatica",
+       "id": "carlos-e-cue",
+       "nombre": "Carlos E. Cué"
+      },
+      {
+       "forma": "Juan Maramit",
+       "estado": "candidata",
+       "id": "juanma-lamet",
+       "nombre": "Juanma Lamet",
+       "apoyos": []
+      }
+     ]
+    },
+    {
+     "seg": 4418,
+     "tipo": "conexion",
+     "texto": "la mitad. Olivia Guillén, buenas noches, Redacción de Informativos."
+    }
+   ]
+  },
+  {
+   "id": 17220563,
+   "titulo": "La noche en 24 horas - 10/09/26",
+   "inicio": "2026-09-10T22:00:00+02:00",
+   "duracion_s": 9173,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/10-09-26/17220563/",
+   "subtitulos": "https://api.rtve.es/api/videos/17220563/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 1,
+     "seg_fin": 4282,
+     "tipo": "entrevista",
+     "texto": "'La noche en 24h': programa especial por el 25 aniversario del 11-S",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/programa-especial-25-aniversario-11-s/17220518/"
+    },
+    {
+     "seg": 75,
+     "tipo": "mesa",
+     "texto": "The Economist · Torres Temelas · Rosa María Molló · José Enrique de Ayala · Jesús A. Núñez Villaverde",
+     "personas": [
+      {
+       "forma": "The Economist",
+       "estado": null
+      },
+      {
+       "forma": "Torres Temelas",
+       "estado": null
+      },
+      {
+       "forma": "Rosa Molló",
+       "estado": "automatica",
+       "id": "rosa-maria-mollo",
+       "nombre": "Rosa María Molló"
+      },
+      {
+       "forma": "Enrique Ayala",
+       "estado": "automatica",
+       "id": "jose-enrique-de-ayala",
+       "nombre": "José Enrique de Ayala"
+      },
+      {
+       "forma": "Jesús Núñez",
+       "estado": "candidata",
+       "id": "jesus-a-nunez-villaverde",
+       "nombre": "Jesús A. Núñez Villaverde",
+       "apoyos": []
+      }
+     ]
+    },
+    {
+     "seg": 1625,
+     "seg_fin": 1748,
+     "tipo": "entrevista",
+     "texto": "Miguel Ángel Ballesteros: \"Tenemos la amenaza yihadista más cerca que nunca\"",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/miguel-angel-ballesteros-nosotros-no-notamos-pero-tenemos-amenaza-yihadista-mas-cerca-nunca/17221802/"
+    },
+    {
+     "seg": 2137,
+     "seg_fin": 2536,
+     "tipo": "entrevista",
+     "texto": "Álvaro Soto presenta 'Agente Rossini. La historia del hombre que pudo haber evitado el 11-S'",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/alvaro-soto-agente-rossini-historia-hombre-pudo-evitado-11-s/17220527/"
+    },
+    {
+     "seg": 2764,
+     "seg_fin": 2884,
+     "tipo": "entrevista",
+     "texto": "La huella del 11-S en España",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/huella-del-11-s-espana/17220535/"
+    },
+    {
+     "seg": 4364,
+     "tipo": "mesa",
+     "texto": "Luis Arroyo · Lucía Méndez · Irene Lozano · Pedro García Cuartango",
+     "personas": [
+      {
+       "forma": "Luis Arroyo",
+       "estado": "automatica",
+       "id": "luis-arroyo",
+       "nombre": "Luis Arroyo"
+      },
+      {
+       "forma": "Lucía Méndez",
+       "estado": "automatica",
+       "id": "lucia-mendez",
+       "nombre": "Lucía Méndez"
+      },
+      {
+       "forma": "Irene Lozano",
+       "estado": "automatica",
+       "id": "irene-lozano",
+       "nombre": "Irene Lozano"
+      },
+      {
+       "forma": "Pedro Cuartango",
+       "estado": "automatica",
+       "id": "pedro-garcia-cuartango",
+       "nombre": "Pedro García Cuartango"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "id": 17219051,
+   "titulo": "La noche en 24 horas - 09/09/26",
+   "inicio": "2026-09-09T22:00:00+02:00",
+   "duracion_s": 9033,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/09-09-26/17219051/",
+   "subtitulos": "https://api.rtve.es/api/videos/17219051/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 89,
+     "tipo": "mesa",
+     "texto": "Enric Juliana · Javier García Vila · Elsa García de Blas · Juanma Lamet",
+     "personas": [
+      {
+       "forma": "Enrique Juliana",
+       "estado": "automatica",
+       "id": "enric-juliana",
+       "nombre": "Enric Juliana"
+      },
+      {
+       "forma": "Javier Garcia Vila",
+       "estado": "automatica",
+       "id": "javier-garcia-vila",
+       "nombre": "Javier García Vila"
+      },
+      {
+       "forma": "Anciane Blas",
+       "estado": "candidata",
+       "id": "elsa-garcia-de-blas",
+       "nombre": "Elsa García de Blas",
+       "apoyos": [
+        "le llaman «Elsa» 6 veces"
+       ]
+      },
+      {
+       "forma": "Juan Malamed",
+       "estado": "automatica",
+       "id": "juanma-lamet",
+       "nombre": "Juanma Lamet"
+      }
+     ]
+    },
+    {
+     "seg": 2576,
+     "tipo": "plato",
+     "texto": "Victoria Rosel, magistrada y exdiputada"
+    },
+    {
+     "seg": 4643,
+     "tipo": "conexion",
+     "texto": "de esa casa nos han trasladado o han hecho público esta tarde Olivia Guillén, redacción de informativos, dicen que esas fuentes"
+    }
+   ]
+  },
+  {
+   "id": 17217623,
+   "titulo": "La noche en 24 horas - 08/09/26",
+   "inicio": "2026-09-08T22:00:00+02:00",
+   "duracion_s": 9053,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/08-09-26/17217623/",
+   "subtitulos": "https://api.rtve.es/api/videos/17217623/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 56,
+     "tipo": "mesa",
+     "texto": "Manuel Rico · Paloma Esteban · Antón Losada",
+     "personas": [
+      {
+       "forma": "Manu Rico",
+       "estado": "automatica",
+       "id": "manuel-rico",
+       "nombre": "Manuel Rico"
+      },
+      {
+       "forma": "Paloma Esteban",
+       "estado": "automatica",
+       "id": "paloma-esteban",
+       "nombre": "Paloma Esteban"
+      },
+      {
+       "forma": "Antón Lozada",
+       "estado": "automatica",
+       "id": "anton-losada",
+       "nombre": "Antón Losada"
+      }
+     ]
+    },
+    {
+     "seg": 2532,
+     "tipo": "plato",
+     "texto": "Fernando González Molina, director de esta película de Cronos y Nacho Carretero, periodista, escritor, productor e"
+    },
+    {
+     "seg": 3853,
+     "tipo": "presentacion",
+     "texto": "Olivia Guillén, buenas noches. ¿Qué dicen los resultados?"
+    },
+    {
+     "seg": 5425,
+     "tipo": "conexion",
+     "texto": "Asier Anzola, cuéntanos. Buenas noches"
+    },
+    {
+     "seg": 6609,
+     "tipo": "conexion",
+     "texto": "que recibió antes y después de la entrada masiva de inmigrantes a Ceuta. Vamos a la redacción de informativos,"
+    }
+   ]
+  },
+  {
+   "id": 17216013,
+   "titulo": "La noche en 24 horas - 07/09/26",
+   "inicio": "2026-09-07T22:00:00+02:00",
+   "duracion_s": 9101,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/07-09-26/17216013/",
+   "subtitulos": "https://api.rtve.es/api/videos/17216013/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 89,
+     "tipo": "mesa",
+     "texto": "Juanma Romero · Carlos E. Cué · Lola García",
+     "personas": [
+      {
+       "forma": "Juan Pablo Romero",
+       "estado": "candidata",
+       "id": "juanma-romero",
+       "nombre": "Juanma Romero",
+       "apoyos": []
+      },
+      {
+       "forma": "Carlos Fue",
+       "estado": "candidata",
+       "id": "carlos-e-cue",
+       "nombre": "Carlos E. Cué",
+       "apoyos": [
+        "esa noche también sale «Carlos Cue»",
+        "le llaman «Carlos» 14 veces"
+       ]
+      },
+      {
+       "forma": "Lola García",
+       "estado": "automatica",
+       "id": "lola-garcia",
+       "nombre": "Lola García"
+      }
+     ]
+    },
+    {
+     "seg": 2251,
+     "tipo": "conexion",
+     "texto": "Beatriz, dos preguntas muy breves, muy concretas, que tengo que ir con nuestro corresponsal en Ceuta."
+    },
+    {
+     "seg": 2758,
+     "tipo": "conexion",
+     "texto": "del gobierno no voy a estar. Bueno, pues vamos hasta Ceuta, porque mañana está prevista la vuelta a las"
+    },
+    {
+     "seg": 4423,
+     "seg_fin": 6483,
+     "tipo": "entrevista",
+     "texto": "Ángel Víctor Torres: \"Solo puedes decir que detrás está Marruecos si tienes pruebas\"",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/angel-victor-torres-solo-puedes-decir-detras-esta-marruecos-si-tienes-pruebas/17216017/",
+     "presenta": "Ángel Víctor Torres, Ministro de Política Territorial manera Memoria Democrática y además mando único en esta crisis muy",
+     "lugar": "plato"
+    },
+    {
+     "seg": 5813,
+     "tipo": "conexion",
+     "texto": "Olivia Guillermo, buenas noches. Cuéntanos a qué conclusiones llegan."
+    },
+    {
+     "seg": 9073,
+     "tipo": "presentacion",
+     "texto": "Lula García, buenas noches. Muchas gracias. Carlos Aldicué, Ainhoa,"
+    }
+   ]
+  },
+  {
+   "id": 17211853,
+   "titulo": "La noche en 24 horas - 03/09/26",
+   "inicio": "2026-09-03T22:00:00+02:00",
+   "duracion_s": 9092,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/03-09-26/17211853/",
+   "subtitulos": "https://api.rtve.es/api/videos/17211853/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 72,
+     "tipo": "mesa",
+     "texto": "Marta Nebot · Pablo Montesinos",
+     "personas": [
+      {
+       "forma": "Marta Nebot",
+       "estado": "automatica",
+       "id": "marta-nebot",
+       "nombre": "Marta Nebot"
+      },
+      {
+       "forma": "Pavo Montesinos",
+       "estado": "automatica",
+       "id": "pablo-montesinos",
+       "nombre": "Pablo Montesinos"
+      }
+     ]
+    },
+    {
+     "seg": 1550,
+     "tipo": "presentacion",
+     "texto": "acogida. María Chapinal, buenas noches. Al parecer el chico de 17 años era diabético"
+    },
+    {
+     "seg": 3063,
+     "tipo": "plato",
+     "texto": "Alejandro López del portal Descifrando la Guerra, al que recudimos actualmente"
+    },
+    {
+     "seg": 5777,
+     "tipo": "conexion",
+     "texto": "documentos. Estés Moreno, Redacción de Informativos, cuéntanos"
+    },
+    {
+     "seg": 7482,
+     "tipo": "presentacion",
+     "texto": "Así, Adán Zola, buenas noches. ¿Ha concretado alguna fecha Moncloa más allá de en unas semanas?"
+    },
+    {
+     "seg": 7737,
+     "tipo": "conexion",
+     "texto": "Así lo han trasladado, además, en los medios marroquíes y en las fuentes que maneja nuestro corresponsal en el país"
+    }
+   ]
+  },
+  {
+   "id": 17210455,
+   "titulo": "La noche en 24 horas - 02/09/26",
+   "inicio": "2026-09-02T21:53:00+02:00",
+   "duracion_s": 9492,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/02-09-26/17210455/",
+   "subtitulos": "https://api.rtve.es/api/videos/17210455/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 72,
+     "tipo": "mesa",
+     "texto": "Pedro Vallín · Lucía Méndez · Carmelo Encinas · Javier García Vila",
+     "personas": [
+      {
+       "forma": "Pedro Aballín",
+       "estado": "automatica",
+       "id": "pedro-vallin",
+       "nombre": "Pedro Vallín"
+      },
+      {
+       "forma": "Lucía Méndez",
+       "estado": "automatica",
+       "id": "lucia-mendez",
+       "nombre": "Lucía Méndez"
+      },
+      {
+       "forma": "Carmen Encinas",
+       "estado": "automatica",
+       "id": "carmelo-encinas",
+       "nombre": "Carmelo Encinas"
+      },
+      {
+       "forma": "Javier García Vila",
+       "estado": "automatica",
+       "id": "javier-garcia-vila",
+       "nombre": "Javier García Vila"
+      }
+     ]
+    },
+    {
+     "seg": 1048,
+     "tipo": "conexion",
+     "texto": "Anzola. Buenas noches, cuéntanos"
+    },
+    {
+     "seg": 2147,
+     "seg_fin": 2579,
+     "tipo": "entrevista",
+     "texto": "Kissy Chandiramani, vicepresidenta de Ceuta: \"Vivimos una situación insostenible\"",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/kissy-chandiramani-vicepresidenta-ceuta-vivimos-situacion-insostenible/17210404/"
+    },
+    {
+     "seg": 4583,
+     "tipo": "mesa",
+     "texto": "María Peral",
+     "personas": [
+      {
+       "forma": "María Peral",
+       "estado": "automatica",
+       "id": "maria-peral",
+       "nombre": "María Peral"
+      }
+     ]
+    },
+    {
+     "seg": 5215,
+     "tipo": "conexion",
+     "texto": "Marruecos en la entrada masiva de migrantes a Ceuta y redacción de informativos, Ester"
+    },
+    {
+     "seg": 6787,
+     "tipo": "conexion",
+     "texto": "importancia a ese aviso. Olivia Guillén, Redacción de Informativos,"
+    },
+    {
+     "seg": 7115,
+     "tipo": "conexion",
+     "texto": "de Ceuta tan excepcional Jesús Navarro, volvemos en directo contigo con la protesta por las calles"
+    }
+   ]
+  },
+  {
+   "id": 17208971,
+   "titulo": "La noche en 24 horas - 01/09/26",
+   "inicio": "2026-09-01T22:00:00+02:00",
+   "duracion_s": 8730,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/01-09-26/17208971/",
+   "subtitulos": "https://api.rtve.es/api/videos/17208971/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 79,
+     "tipo": "mesa",
+     "texto": "Isaías Lafuente · Ainhoa Martínez Hoyos · Jesús Maraña · Juan Fernández-Miranda",
+     "personas": [
+      {
+       "forma": "Isaias Lafuente",
+       "estado": "automatica",
+       "id": "isaias-lafuente",
+       "nombre": "Isaías Lafuente"
+      },
+      {
+       "forma": "Martínez Hoyos",
+       "estado": "automatica",
+       "id": "ainhoa-martinez-hoyos",
+       "nombre": "Ainhoa Martínez Hoyos"
+      },
+      {
+       "forma": "Jesús Maraña",
+       "estado": "automatica",
+       "id": "jesus-marana",
+       "nombre": "Jesús Maraña"
+      },
+      {
+       "forma": "Juan Fernando Miranda",
+       "estado": "automatica",
+       "id": "juan-fernandez-miranda",
+       "nombre": "Juan Fernández-Miranda"
+      }
+     ]
+    },
+    {
+     "seg": 4591,
+     "tipo": "presentacion",
+     "texto": "Jorge Dezcayar, muy buenas noches. Buenas noches, Javier."
+    },
+    {
+     "seg": 4970,
+     "tipo": "conexion",
+     "texto": "sobre la crisis migratoria en Ceuta. Álvaro Jiménez, Redacción de Informativos, en Moncloa dicen contar"
+    },
+    {
+     "seg": 6034,
+     "tipo": "conexion",
+     "texto": "Relación de informativos, Ester Moreno, cuéntanos, buenas noches."
+    }
+   ]
+  },
+  {
+   "id": 17207746,
+   "titulo": "La noche en 24 horas - 31/08/26",
+   "inicio": "2026-08-31T22:00:00+02:00",
+   "duracion_s": 8918,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/31-08-26/17207746/",
+   "subtitulos": "https://api.rtve.es/api/videos/17207746/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 62,
+     "tipo": "mesa",
+     "texto": "Pedro Vallín · Paloma Esteban · Carlos E. Cué · Estefanía Molina",
+     "personas": [
+      {
+       "forma": "Pedro Vallín",
+       "estado": "automatica",
+       "id": "pedro-vallin",
+       "nombre": "Pedro Vallín"
+      },
+      {
+       "forma": "Paloma Esteban",
+       "estado": "automatica",
+       "id": "paloma-esteban",
+       "nombre": "Paloma Esteban"
+      },
+      {
+       "forma": "Carlos Lordi",
+       "estado": "automatica",
+       "id": "carlos-e-cue",
+       "nombre": "Carlos E. Cué"
+      },
+      {
+       "forma": "Estefanía Molina",
+       "estado": "automatica",
+       "id": "estefania-molina",
+       "nombre": "Estefanía Molina"
+      }
+     ]
+    },
+    {
+     "seg": 610,
+     "tipo": "presentacion",
+     "texto": "...Jesús Navarro, buenas noches Ceuta... ...había varios actos de protesta convocados para esta noche.."
+    },
+    {
+     "seg": 2192,
+     "tipo": "plato",
+     "texto": "Un payaso Payaso, actor, humorista, poeta y escritor"
+    },
+    {
+     "seg": 3535,
+     "tipo": "presentacion",
+     "texto": "Jesús Navarro, buenas noches de nuevo A última hora ha habido protestas, pero todas pacíficas, y ya está todo más"
+    },
+    {
+     "seg": 4222,
+     "tipo": "conexion",
+     "texto": "presidente del gobierno en una entrevista en la Cadena Ser. Álvaro Jiménez, Redacción de Informativos, Pedro Sánchez"
+    }
+   ]
   }
  ],
  "analistas": [
@@ -1660,7 +3403,38 @@
    ]
   }
  ],
- "sin_ficha": [],
+ "sin_ficha": [
+  {
+   "forma": "Chema Crespo Lucía Méndez",
+   "veces": 1,
+   "noches": [
+    {
+     "episodio": 17237861,
+     "seg": 187
+    }
+   ]
+  },
+  {
+   "forma": "The Economist",
+   "veces": 1,
+   "noches": [
+    {
+     "episodio": 17220563,
+     "seg": 75
+    }
+   ]
+  },
+  {
+   "forma": "Torres Temelas",
+   "veces": 1,
+   "noches": [
+    {
+     "episodio": 17220563,
+     "seg": 75
+    }
+   ]
+  }
+ ],
  "revisiones_huerfanas": [],
  "reglas": {
   "version_marcas": 4,
