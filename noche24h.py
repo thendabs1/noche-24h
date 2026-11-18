@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS recuentos(episodio_id INTEGER PRIMARY KEY, firma TEXT
 """
 # Sube cuando cambia cómo se sacan las marcas: se rehacen las de todos los episodios.
 # Se guarda en PRAGMA user_version de la base.
-VERSION_MARCAS = 4
+VERSION_MARCAS = 5
 CERCA = 90  # segundos: una presentación tan cerca de un fragmento es la de esa entrevista
 
 
@@ -206,7 +206,7 @@ MESA = re.compile(r"(?i:\b(?:acompañan?|se incorporan?|renovamos)\b(?:[^.?]|\.\
 ENTRADA_SUAVE = re.compile(r"(?i:\bnos acompaña\b|\bcomentar(?:lo)?(?: esta noche)? con\b"
                            r"|\bmesa de análisis\b)")
 # Al presentar la mesa cada nombre va con su saludo; la primera pregunta cierra la ronda.
-SALUDO_MESA = re.compile(r"(?i:\bbuenas\b|bienvenid[oa]\b|qué tal|\bhola\b|un placer|buena nit)")
+SALUDO_MESA = re.compile(r"(?i:\bbuenas\b(?!\s+(?!noches|tardes)[a-záéíóúñ])|bienvenid[oa]\b|qué tal|\bhola\b|un placer|buena nit)")
 FIN_MESA = re.compile(r"(?i:\bempie(?:zo|za|zamos)\b|\bcomienzo por\b|\b(?:os|te) pregunt|\bos quer[ií]a\b"
                       r"|\bpor ti\b|\bprimera (?:valoración|ronda)\b|\bdecíamos\b)")
 # «Chema CRESPO», «Ana MARTINEZ HOYOS»: apellidos en mayúsculas detrás de un nombre.
@@ -238,12 +238,22 @@ CARGO = set("Supremo Tribunal Constitucional Magistrado Magistrada General Coman
 # de instituciones descartan el candidato entero («Consejo General del Poder Judicial»).
 RELLENO = set("""Buenas Muy Hola Comenzamos Hoy Nos Mesa Análisis Gracias Bueno Pues Sí Y
 Bienvenido Bienvenida Empiezo Empieza El La Los Las Un Una Este Esta Esto Ese Esa Entre Para Con
-Por En Desde Ahí Usted Yo Te Le Lo Pero Ahora Luego Bien
+Por En Desde Ahí Usted Yo Te Le Lo Pero Ahora Luego Bien Ni
 Xavi Xabier Fortes Gabón Sabín Sabi""".split())  # el presentador, como lo escriben los subtítulos
 INSTITUCION = set("""Partido Popular Socialista Gobierno España Congreso Senado Redacción
 Informativos Junta Electoral Comunidad Presidente Ministro Ministerio Estados Unidos Unión
 Europea Canal Horas Radio Televisión Española Universidad Departamento Consejo General Poder
-Judicial Fundación Generalitat Ayuntamiento York Ciencia Política Internacional Oriente Próximo""".split())
+Judicial Fundación Generalitat Ayuntamiento York Ciencia Política Internacional Oriente Próximo
+Ingeniero Ingeniera""".split())
+# En la frase de entrada, estas palabras delante indican que no es un invitado sino algo de
+# su presentación: «corresponsal de The Economist, que estaba cerca de las Torres Gemelas».
+MENCION = re.compile(r"(?i:\b(?:de\s+la|de|del|las|el|los|en)\s+)$")
+# Delante de un nombre de la ronda: «Y Javier…», «e Irene…», «Y el comandante Jesús Núñez»,
+# «Nos acompaña también el general Enrique Ayala».
+PRESENTA = re.compile(r"(?i:\b(?:y|e|nos acompañan?(?: también)?|se incorporan?)\s+"
+                      r"(?:(?:el|la)\s+[a-záéíóúñ]+\s+)?)$")
+# Sin frase de entrada, la ronda empieza aquí: lo de antes es el final del sumario.
+COMIENZO = re.compile(r"(?i:\bcomenzamos\b|\bnos acompañan\b)")
 
 
 def sin_mayusculas(texto):
@@ -291,9 +301,12 @@ def tertulianos(cues, n, entrada=None, ventana=40, cerca=4):
     """Nombres de la mesa que se presenta a partir de la línea n.
 
     Cuentan los que van con un saludo a `cerca` segundos o menos («Paloma Esteban, buenas
-    noches»), los que cierran la lista («Y Marta Nebot») y, si se da `entrada` (el match de
+    noches»), si van sueltos o el saludo va detrás de ellos (no «Ha intervenido Donald
+    Trump»), los que cierran la lista («Y Marta Nebot») y, si se da `entrada` (el match de
     la frase de entrada sobre esta línea y la siguiente), todos los de su primera frase:
-    «se incorporan Gerardo Lorenzo, Carmelo Encinas, Juan Romero y Estefanía Molina.».
+    «se incorporan Gerardo Lorenzo, Carmelo Encinas, Juan Romero y Estefanía Molina.»,
+    salvo los que van tras «de», «las»… («corresponsal de The Economist»). Sin `entrada`, lo
+    de antes de «Comenzamos» o «nos acompañan» no cuenta.
     La ronda acaba en la primera pregunta («Empiezo por ti») o a los `ventana` segundos:
     así no entran los nombres de los que se habla después."""
     desde = entrada.start() if entrada else 0
@@ -312,7 +325,8 @@ def tertulianos(cues, n, entrada=None, ventana=40, cerca=4):
             break
     texto = sin_mayusculas(texto)
 
-    candidatos = nombres_con_posicion(texto)
+    inicios = [ini for ini, _ in lineas]
+    candidatos = partir_en_lineas(nombres_con_posicion(texto), inicios, texto)
     # Fin de la primera frase con nombres: el primer punto (no «..») detrás de la entrada y
     # del primer nombre («…se incorporan ya a la mesa. Ruth Ferrero, doctora…, y Vicente…»).
     primera = len(texto)
@@ -323,14 +337,57 @@ def tertulianos(cues, n, entrada=None, ventana=40, cerca=4):
             desde_nombre = largo
         corte = re.compile(r"(?<!\.)[.?!](?!\.)").search(texto, desde_nombre)
         primera = corte.start() if corte else len(texto)
+    comienzo = None if entrada else COMIENZO.search(texto)
+    linea = lambda pos: max(i for ini, i in lineas if ini <= pos)
     vistos = []
-    for nombre, pos in candidatos:
-        linea = max(i for ini, i in lineas if ini <= pos)
-        if nombre not in vistos and (
-                (entrada and pos < primera) or saludada(cues, linea, cerca)
-                or re.search(r"(?i:\by)\s+$", texto[max(0, pos - 4):pos])):
+    for k, (nombre, pos) in enumerate(candidatos):
+        if nombre in vistos or (comienzo and pos < comienzo.end()):
+            continue
+        if entrada and pos < primera:
+            if not MENCION.search(texto[max(0, pos - 10):pos]):
+                vistos.append(nombre)
+            continue
+        # Con un saludo cerca vale el nombre suelto, al empezar línea o tras puntuación
+        # («Buenas noches. Pablo Montesinos.»). A media frase hace falta que el saludo vaya
+        # detrás y antes del siguiente nombre («ahí no hay Martínez Hoyos. Buenas noches»): así
+        # no entra «Ha intervenido Donald Trump» aunque acaben de decir «buenas noches».
+        fin = pos + len(nombre)
+        siguiente = candidatos[k + 1][1] if k + 1 < len(candidatos) else len(texto)
+        saludo = SALUDO_MESA.search(texto, fin, max(fin, siguiente))
+        antes = delante(texto, pos)
+        suelto = pos in inicios or not antes.strip() or re.search(r"[.,;?!¿]\s*$", antes)
+        if (PRESENTA.search(antes) or (suelto and saludada(cues, linea(pos), cerca))
+                or (saludo and cues[linea(saludo.start())][0] - cues[linea(pos)][0] <= cerca)):
             vistos.append(nombre)
     return vistos
+
+
+def delante(texto, pos, largo=60):
+    """Lo que precede a un nombre, sin las palabras de relleno pegadas a él («Y Gabón Lourdes
+    Pérez»: «Y »), para ver si va suelto o tras «y»."""
+    antes = texto[max(0, pos - largo):pos]
+    while True:
+        m = re.search(r"(\S+)\s*$", antes)
+        if not m or m[1] not in RELLENO - {"Y"}:
+            return antes
+        antes = antes[:m.start()]
+
+
+def partir_en_lineas(candidatos, inicios, texto):
+    """Separa dos nombres que los subtítulos dejan seguidos en líneas distintas, sin
+    puntuación entre ellos («…análisis Chema Crespo» + «Lucía Méndez, Carmelo…»), si a
+    cada lado queda un nombre de dos palabras o más. «Juan Fernando» + «Miranda» se queda."""
+    partidos = []
+    for nombre, pos in candidatos:
+        fin = pos + len(nombre)
+        corte = next((b for b in inicios if pos < b < fin
+                      and all(re.fullmatch(NOMBRE, lado.strip())
+                              for lado in (texto[pos:b], texto[b:fin]))), None)
+        if corte is None:
+            partidos.append((nombre, pos))
+        else:
+            partidos += [(texto[pos:corte].strip(), pos), (texto[corte:fin].strip(), corte)]
+    return partidos
 
 
 def invitado(frase):
@@ -371,14 +428,16 @@ def presentaciones(cues, duracion=None, separacion=60, largo=160, inicio=600, fi
         # Sin frase de entrada, al empezar: tres o más nombres seguidos, cada uno con su saludo
         # («Vamos a comentarlo con Irene Lozano, buenas noches. Marta Nebot, buenas noches…»).
         sin_mesa = seg < inicio and not any(t == "mesa" for _, t, _ in marcas)
-        empieza_ronda = (ENTRADA_SUAVE.search(frase)
-                         or nombres(frase) and saludada(cues, n))
+        # «…y nos acompañan Juanma Romero…» vale como entrada suave en su propia línea (no en
+        # la anterior, para que la marca no se adelante).
+        suave = ENTRADA_SUAVE.search(frase) or re.search(r"(?i:\bnos acompañan\b)", txt)
+        empieza_ronda = suave or nombres(frase) and saludada(cues, n)
         ronda = (tertulianos(cues, n) if not entrada and sin_mesa and empieza_ronda
                  and not CONEXION.search(frase) else [])
         # Un anuncio no tapa lo que venga detrás («nos acompañará…» y enseguida la mesa), y una
         # conexión o un saludo tampoco tapan la mesa que llega justo después.
         ultima = next((t for t in reversed(marcas) if t[1] != "anuncio"), None)
-        es_mesa = entrada or len(ronda) >= (2 if ENTRADA_SUAVE.search(frase) else 3)
+        es_mesa = entrada or len(ronda) >= (2 if suave else 3)
         if ultima and seg - ultima[0] < separacion and (ultima[1] == "mesa" or not es_mesa):
             continue
         if RUIDO.search(frase):
