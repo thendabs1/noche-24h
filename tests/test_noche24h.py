@@ -125,7 +125,8 @@ class TestSubtitulos(unittest.TestCase):
 
 
 def ficha(id_, nombre, seguras=(), probables=(), descartadas=()):
-    return {"id": id_, "nombre": nombre, "medio": None, "wikipedia": None, "fuentes": [],
+    return {"id": id_, "nombre": nombre, "tipo": "tertuliano", "medio": None, "wikipedia": None,
+            "fuentes": [],
             "seguras": list(seguras), "probables": list(probables), "descartadas": list(descartadas)}
 
 
@@ -162,10 +163,12 @@ class TestAnalistas(unittest.TestCase):
     def test_problemas_de_la_tabla(self):
         mala = [ficha("a", "Ana Ruiz", ["Ruiz"]), ficha("a", "Eva Gil"),
                 ficha("b", "Eva Sanz", ["Ana Ruiz"], ["Eva Sanz"], ["Eva Sanz"])]
+        mala[1]["tipo"] = "contertulio"
         self.assertEqual(n.problemas_analistas(mala), [
             "id repetido: a",
             "«ana ruiz» apunta a a, b",
             "a: forma segura de una sola palabra «Ruiz»",
+            "a: tipo «contertulio» (tertuliano o invitado)",
             "b: «eva sanz» repetida",
             "b: «eva sanz» es a la vez variante y descartada"])
 

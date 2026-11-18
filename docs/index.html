@@ -79,7 +79,7 @@ a.nombre-mesa.candidata { text-decoration-style: dashed; }
 .duda { font-size: .72em; font-weight: 700; color: var(--acento); margin-left: 1px; }
 .nota { color: var(--suave); font-size: .85rem; }
 .corregir { display: inline-block; margin-left: 6px; font-size: .8rem; white-space: nowrap; }
-.pendientes h3 { font-size: 1.05rem; margin: 22px 0 4px; }
+.pendientes h3, h3.subtitulo { font-size: 1.05rem; margin: 22px 0 4px; }
 .pendientes h4 { font-size: .95rem; margin: 12px 0 2px; }
 .estrella { background: none; border: 0; padding: 0 2px; font: inherit; font-size: 1.15rem; line-height: 1;
   cursor: pointer; color: var(--suave); }
@@ -404,16 +404,21 @@ function pintarAnalistas() {
     || a.nombre.localeCompare(b.nombre, "es"));
   const episodios = datos.episodios || [];
   const desde = episodios.length ? fmtFechaCorta.format(Date.parse(episodios[episodios.length - 1].inicio)) : "";
+  const lista = grupo => el("ol", { class: "analistas" }, grupo.map(f => el("li", {},
+    botonSeguir(f.id, f.nombre),
+    el("a", { href: urlFicha(f.id) }, f.nombre),
+    el("span", { class: "meta" }, `${resumen(f)} · última: ${fmtFechaCorta.format(Date.parse(f.noches[0].ep.inicio))}`))));
+  const esInvitado = f => (fichasPorId.get(f.id) || {}).tipo === "invitado";
+  const tertulianos = fichas.filter(f => !esInvitado(f)), invitados = fichas.filter(esInvitado);
   document.getElementById("vista-analistas").replaceChildren(
     el("p", { class: "aviso" }, `Tertulianos de la mesa de análisis desde el ${desde}. `,
       "Se identifican solos con una tabla curada; las noches dudosas (?) se cuentan aparte y se revisan en ",
       el("a", { href: "#pendientes" }, "Pendientes"), ". Sigue a quien te interese con la estrella."),
-    fichas.length
-      ? el("ol", { class: "analistas" }, fichas.map(f => el("li", {},
-        botonSeguir(f.id, f.nombre),
-        el("a", { href: urlFicha(f.id) }, f.nombre),
-        el("span", { class: "meta" }, `${resumen(f)} · última: ${fmtFechaCorta.format(Date.parse(f.noches[0].ep.inicio))}`))))
-      : el("p", { class: "aviso" }, "Aún no hay mesas con analistas reconocidos."));
+    tertulianos.length ? lista(tertulianos) : el("p", { class: "aviso" }, "Aún no hay mesas con analistas reconocidos."),
+    ...(invitados.length ? [
+      el("h3", { class: "subtitulo" }, "Invitados en la mesa"),
+      el("p", { class: "nota" }, "Especialistas o invitados de una o pocas noches que se sentaron en la mesa: no son tertulianos habituales."),
+      lista(invitados)] : []));
 }
 
 function pintarFicha(id) {
@@ -426,7 +431,7 @@ function pintarFicha(id) {
   }
   const primera = ficha.noches[ficha.noches.length - 1].ep, ultima = ficha.noches[0].ep;
   const companeros = [...ficha.companeros].sort((a, b) => b[1] - a[1]).slice(0, 8);
-  const datosFicha = [info && info.medio, info && info.wikipedia && enlace(urlWikipedia(info.wikipedia), "Wikipedia"),
+  const datosFicha = [info && info.tipo === "invitado" && "Invitado en la mesa", info && info.medio, info && info.wikipedia && enlace(urlWikipedia(info.wikipedia), "Wikipedia"),
     ...(info ? info.fuentes : []).map((u, i) => enlace(u, i ? `fuente ${i + 1}` : "fuente"))].filter(Boolean);
   vista.replaceChildren(volver, el("article", { class: "ficha" },
     el("h2", {}, botonSeguir(id, ficha.nombre), ficha.nombre),
@@ -550,7 +555,7 @@ function pintarPie() {
       "Los tertulianos se identifican solos con una tabla curada; lo dudoso lleva «?» y se corrige desde ", el("a", { href: "#pendientes" }, "Pendientes"), ". ",
       "Lo marcado como visto y los analistas que sigues se guardan solo en este navegador. ",
       enlace("https://github.com/thendabs1/noche-24h", "Código")),
-    errores.map(([paso, e]) => el("p", { class: "error" },
+    ...errores.map(([paso, e]) => el("p", { class: "error" },
       `Fallo en ${paso} desde el ${fmtFecha.format(Date.parse(e.desde))}: ${e.valor}`)));
 }
 

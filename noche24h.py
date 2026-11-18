@@ -610,8 +610,9 @@ def leer_json(ruta, vacio):
 
 
 def leer_analistas(ruta=ANALISTAS):
-    """Tabla curada de tertulianos (analistas.json, versión 1): fichas con id, nombre, medio,
-    wikipedia, fuentes y variantes de los subtítulos seguras, probables y descartadas."""
+    """Tabla curada de la mesa (analistas.json, versión 1): fichas con id, nombre, tipo
+    (tertuliano habitual o invitado), medio, wikipedia, fuentes y variantes de los subtítulos
+    seguras, probables y descartadas."""
     return leer_json(ruta, {"analistas": []})["analistas"]
 
 
@@ -642,6 +643,8 @@ def problemas_analistas(analistas):
         if len(personas) > 1:
             errores.append(f"«{f}» apunta a {', '.join(sorted(personas))}")
     for a in analistas:
+        if a.get("tipo") not in ("tertuliano", "invitado"):
+            errores.append(f"{a['id']}: tipo «{a.get('tipo')}» (tertuliano o invitado)")
         errores += [f"{a['id']}: forma segura de una sola palabra «{x}»"
                     for x in a["seguras"] if len(x.split()) < 2]
         propias = [plano(x) for x in [a["nombre"], *a["seguras"], *a["probables"]]]
@@ -825,7 +828,7 @@ def datos_pagina(conn, analistas=None, revisiones=None):
     directos = [dict(zip(("video_id", "titulo", "inicio", "primera_vez", "fin_detectado"), f))
                 for f in conn.execute("SELECT * FROM directos ORDER BY primera_vez DESC")]
     estado = {c: {"valor": v, "desde": d} for c, v, d in conn.execute("SELECT * FROM estado")}
-    fichas = [{k: a[k] for k in ("id", "nombre", "medio", "wikipedia", "fuentes")}
+    fichas = [{k: a[k] for k in ("id", "nombre", "tipo", "medio", "wikipedia", "fuentes")}
               for a in analistas]
     return {
         "estado": estado, "directos": directos, "episodios": episodios, "analistas": fichas,

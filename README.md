@@ -45,7 +45,7 @@ Solo hay commit cuando algo cambia. Para cargar noches antiguas: en Actions, «a
 
 La identificación es automática y se publica sin esperar a nadie; lo dudoso se marca y se corrige rápido. Hay dos ficheros que se editan a mano y se revisan en los PR:
 
-- **`analistas.json`**, la tabla curada: por tertuliano, `id`, `nombre`, `medio` (solo si está documentado), `wikipedia` (título del artículo, tomado de la lista del programa en Wikipedia o comprobado a mano; nunca buscado por el nombre), `fuentes` (URL) y las variantes de los subtítulos: `seguras` (diferencia obvia: «Pedro Ballín»), `probables` (ambiguas: «Antonio Sala») y `descartadas` (formas que no son esa persona).
+- **`analistas.json`**, la tabla curada: por persona, `id`, `nombre`, `tipo` (`tertuliano` habitual o `invitado` de una o pocas noches, que en la web van en una lista aparte), `medio` (solo si está documentado), `wikipedia` (título del artículo, tomado de la lista del programa en Wikipedia o comprobado a mano; nunca buscado por el nombre), `fuentes` (URL) y las variantes de los subtítulos: `seguras` (diferencia obvia: «Pedro Ballín»), `probables` (ambiguas: «Antonio Sala») y `descartadas` (formas que no son esa persona).
 - **`revisiones.json`**, decisiones humanas sobre apariciones concretas: `episodio` (id RTVE), `forma` (el nombre tal como sale), `decision` (`confirmada`, `descartada`, `sin_identificar` o `no_es_mesa`, que la quita de la mesa), `persona` (id; en un descarte, a quién se descarta), `evidencia`, `issue`, `fecha`.
 
 Al exportar, cada nombre de la mesa recibe un estado:
