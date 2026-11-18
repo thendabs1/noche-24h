@@ -94,6 +94,19 @@ class TestSubtitulos(unittest.TestCase):
                  "Judicial. Paloma Esteban. Javier Casqueiro.")
         self.assertEqual(n.nombres(texto), ["Javier Casqueiro", "Paloma Esteban"])
 
+    def test_mesa_en_aperturas_reales(self):
+        # Trozos de 70 s de subtítulos reales (junio–noviembre de 2026), uno por caso difícil.
+        ruta = Path(__file__).resolve().parent / "aperturas.json"
+        for caso in json.loads(ruta.read_text(encoding="utf-8")):
+            with self.subTest(caso["fecha"], prueba=caso["prueba"]):
+                cues = [tuple(c) for c in caso["cues"]]
+                mesas = [x for _, t, x in n.presentaciones(cues, caso["duracion"]) if t == "mesa"]
+                self.assertEqual(mesas, caso["mesa"])
+
+    def test_sin_mayusculas(self):
+        self.assertEqual(n.sin_mayusculas("Chema CRESPO y Ana MARTINEZ HOYOS, del PSOE"),
+                         "Chema Crespo y Ana Martinez Hoyos, del PSOE")
+
     def test_invitado_de_plato(self):
         casos = {
             "humano. Y como les decíamos, hoy nos acompaña Félix Bolaños, ministro de Presidencia":
