@@ -3,8 +3,8 @@
 
 - Episodios del programa con las entrevistas (fragmentos que RTVE publica aparte, situados
   por su texto dentro del episodio completo) y lo que se ve en los subtítulos: la mesa de
-  análisis, los invitados en el plató, las conexiones en directo y los tramos en que se
-  habla de elecciones, cada cosa con su minuto y su hora de reloj.
+  análisis, los invitados en el plató y las conexiones en directo, cada cosa con su minuto y
+  su hora de reloj.
 - Registro de las sesiones del directo de Canal 24h en YouTube: cuando YouTube reinicia el
   directo cambia de vídeo y se pierde el rebobinado; aquí queda qué vídeo cubría cada hora.
 
@@ -58,13 +58,11 @@ CREATE TABLE IF NOT EXISTS fragmentos(
 CREATE TABLE IF NOT EXISTS directos(
   video_id TEXT PRIMARY KEY, titulo TEXT, inicio TEXT, primera_vez TEXT, fin_detectado TEXT);
 CREATE TABLE IF NOT EXISTS estado(clave TEXT PRIMARY KEY, valor TEXT, desde TEXT);
-CREATE TABLE IF NOT EXISTS tramos(
-  episodio_id INTEGER, tema TEXT, seg INTEGER, seg_fin INTEGER,
-  PRIMARY KEY(episodio_id, tema, seg));
+DROP TABLE IF EXISTS tramos;
 """
-# Sube cuando cambia cómo se sacan marcas o tramos: se rehacen los de todos los episodios.
+# Sube cuando cambia cómo se sacan las marcas: se rehacen las de todos los episodios.
 # Se guarda en PRAGMA user_version de la base.
-VERSION_MARCAS = 2
+VERSION_MARCAS = 3
 CERCA = 90  # segundos: una presentación tan cerca de un fragmento es la de esa entrevista
 
 
@@ -193,6 +191,10 @@ MESA = re.compile(r"(?i:\b(?:nos acompañan|se incorporan?|renovamos)\b[^.?]{0,4
 APERTURA = re.compile(r"(?i:^(?:comenzamos[.,]?\s*)?(?:hoy\s+)?nos acompañan\b)")
 # Invitado en el plató: «nos acompaña X, cargo», «X, bienvenido».
 PLATO = re.compile(rf"(?i:\bnos acompaña\b)(?!n)|(?i:\bnos visita\b)|{NOMBRE},?\s+(?i:bienvenid[oa])")
+# Lo que va entre «nos acompaña» y el invitado: «hoy nos acompaña en el plató de la noche X».
+RELLENO_PLATO = re.compile(
+    r"(?i:^(?:\s*(?:ahora|hoy|ya|aquí|también|a continuación|esta noche|en la noche"
+    r"|en (?:el )?(?:plat[oó]|estudio)(?: de la noche)?)\b[\s,]*)*)")
 # Conexión en directo: redacción, reporteros, corresponsales y entrevistas a distancia.
 CONEXION = re.compile(
     r"(?i:redacción de informativos|\bvolvemos en directo\b|\bconectamos con\b"
@@ -216,10 +218,6 @@ INSTITUCION = set("""Partido Popular Socialista Gobierno España Congreso Senado
 Informativos Junta Electoral Comunidad Presidente Ministro Ministerio Estados Unidos Unión
 Europea Canal Horas Radio Televisión Española Universidad Departamento Consejo General Poder
 Judicial Fundación Generalitat Ciencia Política Internacional Oriente Próximo""".split())
-ELECCIONES = re.compile(
-    r"(?i:\b(?:elecciones|electoral(?:es)?|campaña|29 de noviembre|29N|candidat[oa]s?"
-    r"|cabeza de lista|número uno|mitin(?:es)?|mítines|encuestas?|sondeos?|CIS|cara a cara"
-    r"|escaños?|mayoría absoluta|urnas?|votantes?|papeletas?)\b)")
 
 
 def nombres(texto):
@@ -239,6 +237,25 @@ def nombres(texto):
                 and not any(p in RELLENO for p in palabras)):
             vistos.append(nombre)
     return vistos
+
+
+def invitado(frase):
+    """El invitado de una presentación en plató, sin lo que la rodea:
+    «humano. Y hoy nos acompaña Félix Bolaños, ministro de Presidencia. Buenas noches»
+    → «Félix Bolaños, ministro de Presidencia». Si detrás no queda nada («Pablo Simón nos
+    acompaña ya»), el nombre de delante. Si no se reconoce, la frase tal cual."""
+    m = PLATO.search(frase)
+    if not m:
+        return frase
+    if m.group(0).lower().startswith("nos "):
+        resto = RELLENO_PLATO.sub("", frase[m.end():].lstrip(" .,:"))
+        texto = re.split(r"[.?!¿]+(?:\s|$)|(?i:\b(?:qué tal|hola|(?:muy )?buenas noches|bienvenid[oa])\b)",
+                         resto, maxsplit=1)[0].rstrip(" ,;:¿")
+        if not texto:
+            texto = (nombres(frase[:m.start()]) or [""])[-1]
+    else:  # «X, bienvenido»
+        texto = re.match(NOMBRE, m.group(0)).group(0)
+    return texto[:1].upper() + texto[1:] if texto else frase
 
 
 def presentaciones(cues, duracion=None, separacion=60, largo=160, ventana_mesa=35,
@@ -279,7 +296,9 @@ def presentaciones(cues, duracion=None, separacion=60, largo=160, ventana_mesa=3
         if seg > duracion - final and DESPEDIDA.search(" ".join(t for _, t in cues[n:n + 4])):
             continue
         texto = frase
-        if tipo == "mesa":
+        if tipo == "plato":
+            texto = invitado(frase)
+        elif tipo == "mesa":
             bloque = " ".join(t for s, t in cues[n:n + 40] if s - seg <= ventana_mesa)
             texto = " · ".join(nombres(bloque)) or frase
         if len(texto) > largo:
@@ -287,38 +306,6 @@ def presentaciones(cues, duracion=None, separacion=60, largo=160, ventana_mesa=3
         marcas.append((seg, tipo, texto))
     return marcas
 
-
-def tramos(cues, patron=ELECCIONES, tam=60, minimo=2, largo_min=2, hueco=3):
-    """Tramos en que se habla de un tema: [(segundo inicial, segundo final)].
-
-    Cuenta las palabras clave de cada minuto. Entra el minuto con `minimo` o más; uno con
-    alguna mención no corta el tramo si el siguiente vuelve a entrar. Solo cuentan los de
-    `largo_min` minutos o más, y dos separados por `hueco` minutos o menos son uno (los
-    minutos sueltos se descartan antes de unir: si no, menciones aisladas encadenan tramos)."""
-    if not cues:
-        return []
-    cubos = [0] * (cues[-1][0] // tam + 1)
-    for seg, txt in cues:
-        cubos[seg // tam] += len(patron.findall(txt))
-    dentro = []
-    for i, c in enumerate(cubos):
-        sigue = (c > 0 and i and dentro[-1] and i + 1 < len(cubos) and cubos[i + 1] >= minimo)
-        dentro.append(c >= minimo or bool(sigue))
-    rachas, ini = [], None
-    for i, d in enumerate(dentro + [False]):
-        if d and ini is None:
-            ini = i
-        elif not d and ini is not None:
-            if i - ini >= largo_min:
-                if rachas and ini - rachas[-1][1] <= hueco:
-                    rachas[-1][1] = i
-                else:
-                    rachas.append([ini, i])
-            ini = None
-    return [(a * tam, min(b * tam, cues[-1][0])) for a, b in rachas]
-
-
-# --- RTVE ------------------------------------------------------------------------------
 
 def listar_videos(hasta, obtener=json_url, tam=60, max_paginas=20):
     """Vídeos del programa (completos y fragmentos) emitidos desde `hasta`, más recientes primero."""
@@ -333,15 +320,11 @@ def listar_videos(hasta, obtener=json_url, tam=60, max_paginas=20):
 
 
 def guardar_marcas(conn, episodio_id, cues, duracion):
-    """Rehace las marcas y los tramos de un episodio a partir de sus subtítulos."""
+    """Rehace las marcas de un episodio a partir de sus subtítulos."""
     conn.execute("DELETE FROM marcas WHERE episodio_id=?", (episodio_id,))
-    conn.execute("DELETE FROM tramos WHERE episodio_id=?", (episodio_id,))
     conn.executemany(
         "INSERT OR IGNORE INTO marcas VALUES(?,?,?,?)",
         [(episodio_id, seg, tipo, txt) for seg, tipo, txt in presentaciones(cues, duracion)])
-    conn.executemany(
-        "INSERT INTO tramos VALUES(?,?,?,?)",
-        [(episodio_id, "elecciones", ini, fin) for ini, fin in tramos(cues)])
 
 
 def paso_rtve(conn, momento, dias=DIAS_INICIALES, obtener=json_url, bajar=descargar):
@@ -514,11 +497,8 @@ def datos_pagina(conn):
                     entrevista["lugar"] = "plato"
             marcas.append(entrevista)
         marcas.sort(key=lambda m: (m["seg"], m["tipo"]))
-        tramos_ep = [{"tema": t, "seg": s, "seg_fin": f} for t, s, f in conn.execute(
-            "SELECT tema, seg, seg_fin FROM tramos WHERE episodio_id=? ORDER BY seg", (id_,))]
         episodios.append({"id": id_, "titulo": titulo, "inicio": inicio, "duracion_s": dur,
-                          "url": url, "subtitulos": subs, "estado": estado, "marcas": marcas,
-                          "tramos": tramos_ep})
+                          "url": url, "subtitulos": subs, "estado": estado, "marcas": marcas})
     directos = [dict(zip(("video_id", "titulo", "inicio", "primera_vez", "fin_detectado"), f))
                 for f in conn.execute("SELECT * FROM directos ORDER BY primera_vez DESC")]
     estado = {c: {"valor": v, "desde": d} for c, v, d in conn.execute("SELECT * FROM estado")}
