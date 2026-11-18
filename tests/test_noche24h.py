@@ -94,14 +94,21 @@ class TestSubtitulos(unittest.TestCase):
                  "Judicial. Paloma Esteban. Javier Casqueiro.")
         self.assertEqual(n.nombres(texto), ["Javier Casqueiro", "Paloma Esteban"])
 
-    def test_tramos(self):
-        cues = [(m * 60 + 5, "seguimos con la actualidad") for m in range(16)]
-        cues += [(m * 60 + 10, "la campaña electoral y las encuestas") for m in (2, 3, 5, 8, 9, 14)]
-        cues += [(4 * 60 + 20, "una mención a la campaña")]
-        # El minuto 4 (una mención) no corta; 2–5 y 8–9 están a dos minutos y se unen;
-        # el 14 queda a cuatro y, con un minuto, no llega a tramo.
-        self.assertEqual(n.tramos(sorted(cues)), [(120, 600)])
-        self.assertEqual(n.tramos([]), [])
+    def test_invitado_de_plato(self):
+        casos = {
+            "humano. Y como les decíamos, hoy nos acompaña Félix Bolaños, ministro de Presidencia":
+                "Félix Bolaños, ministro de Presidencia",
+            "Semana. Hoy nos acompaña en el plató de la noche Miguel Pardeza, que acaba de "
+            "publicar su última novela": "Miguel Pardeza, que acaba de publicar su última novela",
+            "Nos acompaña Miriam Jiménez, que es socióloga. Buenas noches, bienvenida":
+                "Miriam Jiménez, que es socióloga",
+            "pues nos acompaña juanjo fernández ingeniero": "Juanjo fernández ingeniero",
+            "Pablo Simón nos acompaña ya. Te voy a pedir": "Pablo Simón",
+            "Nos visita en la Noche Teresa Perales ¿qué tal? Buenas noches": "Teresa Perales",
+            "Pepón Nieto, bienvenido. Hola. Muchas gracias.": "Pepón Nieto",
+        }
+        for frase, esperado in casos.items():
+            self.assertEqual(n.invitado(frase), esperado)
 
 
 class TestRTVE(unittest.TestCase):
@@ -148,7 +155,7 @@ class TestRTVE(unittest.TestCase):
         marcas = n.datos_pagina(self.conn)["episodios"][0]["marcas"]
         self.assertEqual([(m["seg"], m["tipo"], m.get("lugar")) for m in marcas],
                          [(600, "entrevista", "plato"), (1300, "plato", None)])
-        self.assertTrue(marcas[0]["presenta"].startswith("Como les decía, nos acompaña Mengana"))
+        self.assertTrue(marcas[0]["presenta"].startswith("Mengana, ministra"))
 
     def test_cambio_de_version_rehace_las_marcas(self):
         api = self.api(con_fragmento=False)
@@ -163,14 +170,6 @@ class TestRTVE(unittest.TestCase):
         self.assertEqual(self.conn.execute("PRAGMA user_version").fetchone(),
                          (n.VERSION_MARCAS,))
         self.assertEqual(n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar), 0)
-
-    def test_tramos_en_la_pagina(self):
-        api = self.api(con_fragmento=False)
-        texto = "las encuestas de la campaña electoral"
-        api.subtitulos[2] = sorted(api.subtitulos[2] + [(m * 60 + 1, texto) for m in range(3, 6)])
-        n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar)
-        self.assertEqual(n.datos_pagina(self.conn)["episodios"][0]["tramos"],
-                         [{"tema": "elecciones", "seg": 180, "seg_fin": 360}])
 
     def test_segunda_pasada_no_escribe_ni_toca_el_fichero(self):
         api = self.api()
