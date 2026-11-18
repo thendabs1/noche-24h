@@ -179,8 +179,9 @@ class TestAnalistas(unittest.TestCase):
         ids = {a["id"] for a in tabla}
         for r in n.leer_revisiones():
             self.assertIsInstance(r["episodio"], int)
-            self.assertIn(r["decision"], {"confirmada", "descartada", "sin_identificar"})
-            if r["decision"] != "sin_identificar":
+            self.assertIn(r["decision"], {"confirmada", "descartada", "sin_identificar",
+                                          "no_es_mesa"})
+            if r["decision"] in ("confirmada", "descartada"):
                 self.assertIn(r["persona"], ids)
 
     def test_identificacion_del_corpus(self):
@@ -310,12 +311,43 @@ class TestRTVE(unittest.TestCase):
             {"episodio": 99, "forma": "Nadie", "decision": "sin_identificar"}]
         datos = n.datos_pagina(self.conn, TABLA, revisiones)
         mesa = [m for m in datos["episodios"][0]["marcas"] if m["tipo"] == "mesa"][0]
-        self.assertEqual([(p.get("id"), p["estado"]) for p in mesa["personas"]],
-                         [(None, None), ("marta-nebot", "automatica"),
-                          ("anton-losada", "revisada"), (None, "revisada")])
+        self.assertEqual([(p.get("id"), p["estado"], p.get("origen", "-")) for p in mesa["personas"]],
+                         [(None, None, "automatica"), ("marta-nebot", "automatica", "-"),
+                          ("anton-losada", "revisada", "candidata"), (None, "revisada", None)])
         # Lo revisado como «sin identificar» ya no está pendiente; lo descartado, sí.
         self.assertEqual([x["forma"] for x in datos["sin_ficha"]], ["Pedro Aballín"])
         self.assertEqual(datos["revisiones_huerfanas"], [revisiones[3]])
+
+    def test_no_es_mesa_y_una_persona_por_mesa(self):
+        api = self.mesa_de_prueba()
+        api.subtitulos[2] += [(6000, "y seguimos con la actualidad del día"),
+                              (6010, "Renovamos la mesa, se incorporan Antonio Sara, "
+                                     "Antón Lozada y Marta Nebot.")]
+        n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar, analistas=TABLA)
+        revisiones = [{"episodio": 2, "forma": "Marta Nebot", "decision": "no_es_mesa"}]
+        mesas = [m for m in n.datos_pagina(self.conn, TABLA, revisiones)["episodios"][0]["marcas"]
+                 if m["tipo"] == "mesa"]
+        # La segunda mesa: «Antonio Sara» (candidata) y «Antón Lozada» (segura) son la misma
+        # persona y queda la aparición más firme; «Marta Nebot» no era de la mesa.
+        self.assertEqual([(p.get("id"), p["estado"], p["forma"]) for p in mesas[1]["personas"]],
+                         [("anton-losada", "automatica", "Antón Lozada"),
+                          (None, "no_es_mesa", "Marta Nebot")])
+        self.assertEqual(mesas[1]["personas"][1]["origen"], "automatica")
+        self.assertEqual(mesas[1]["texto"], "Antón Losada")
+        self.assertNotIn("Marta Nebot", mesas[0]["texto"])
+
+    def test_recuento_que_falla_se_reintenta(self):
+        api = self.mesa_de_prueba()
+        n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar, analistas=TABLA)
+        otra = TABLA + [ficha("fulano", "Fulano Mengánez")]
+        guardados = api.subtitulos.pop(2)  # RTVE no da los subtítulos esta vez
+        self.assertEqual(n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar,
+                                     analistas=otra), 0)
+        api.subtitulos[2] = guardados
+        self.assertEqual(n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar,
+                                     analistas=otra), 1)
+        self.assertEqual(n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar,
+                                     analistas=otra), 0)
 
     def test_cambio_de_vocabulario_rehace_los_recuentos(self):
         api = self.mesa_de_prueba()

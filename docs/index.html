@@ -227,7 +227,7 @@ function pintarMarca(ep, m, consulta) {
   const t = Date.parse(ep.inicio) + m.seg * 1000;
   const yt = enlaceYoutube(t);
   const texto = m.tipo === "mesa" && m.personas ? nombresMesa(m, consulta) : resaltar(m.texto, consulta);
-  const dudosa = m.tipo === "mesa" && (m.personas || []).find(p => p.estado === "candidata" || (!p.id && p.estado !== "revisada"));
+  const dudosas = m.tipo === "mesa" ? (m.personas || []).filter(p => p.estado === "candidata" || p.estado === null) : [];
   const pos = duracion(m.seg) + (m.seg_fin ? `–${duracion(m.seg_fin)}` : "");
   return el("li", { class: m.tipo },
     el("span", { class: "hora" }, fmtHora.format(t)),
@@ -237,7 +237,7 @@ function pintarMarca(ep, m, consulta) {
       m.url ? enlace(m.url, texto) : el("span", { class: "texto" }, texto),
       ep.url && enlace(urlRtveEn(ep, m.seg), "RTVE Play ▶", "yt"),
       yt && enlace(yt.url, yt.texto, "yt"),
-      dudosa && enlace(urlCorregir(ep, m, dudosa), "Confirmar o corregir", "corregir"),
+      dudosas.map(p => enlace(urlCorregir(ep, m, p), dudosas.length > 1 ? `Confirmar «${p.forma}»` : "Confirmar o corregir", "corregir")),
       m.presenta && el("span", { class: "presenta" }, resaltar(m.presenta, consulta))));
 }
 
@@ -272,7 +272,7 @@ function nombrePersona(p, consulta) {
 
 function nombresMesa(m, consulta, sinId) {
   const personas = (m.personas || m.texto.split(" · ").map(forma => ({ forma, estado: null })))
-    .filter(p => !sinId || p.id !== sinId);
+    .filter(p => p.estado !== "no_es_mesa" && (!sinId || p.id !== sinId));
   return personas.flatMap((p, i) => i ? [" · ", nombrePersona(p, consulta)] : [nombrePersona(p, consulta)]);
 }
 
@@ -372,18 +372,30 @@ const resumen = f => [noches(f.firmes), f.revisadas && `${f.revisadas} revisada$
   f.porConfirmar && `${f.porConfirmar} por confirmar`].filter(Boolean).join(" · ");
 const urlWikipedia = titulo => `https://es.wikipedia.org/wiki/${encodeURIComponent(titulo.replace(/ /g, "_"))}`;
 
+// La muestra de control sale de las apariciones que las reglas daban por automáticas en
+// estas noches: así no cambia al llegar noches nuevas ni al revisar las suyas.
+const MUESTRA_DESDE = Date.parse("2026-08-31T00:00:00+02:00"), MUESTRA_HASTA = Date.parse("2026-11-19T00:00:00+01:00");
+
 function pendientes() {
   const candidatas = [], automaticas = [];
   for (const ep of datos.episodios || []) {
+    const t = Date.parse(ep.inicio);
     for (const m of ep.marcas) {
       if (m.tipo !== "mesa") continue;
       for (const p of m.personas || []) {
         if (p.estado === "candidata") candidatas.push({ ep, m, p });
-        else if (p.estado === "automatica") automaticas.push({ ep, m, p });
+        const reglas = "origen" in p ? p.origen : p.estado;
+        if (reglas === "automatica" && t >= MUESTRA_DESDE && t < MUESTRA_HASTA) automaticas.push({ ep, m, p });
       }
     }
   }
   return { candidatas, automaticas, sinFicha: datos.sin_ficha || [], huerfanas: datos.revisiones_huerfanas || [] };
+}
+
+// Resultado de revisar una aparición automática: acierto, error o sin revisar (null).
+function resultadoMuestra(p) {
+  if (!("origen" in p)) return null;
+  return p.estado === "revisada" && p.id && p.id === p.origen_id ? "acierto" : "error";
 }
 
 function pintarAnalistas() {
@@ -451,14 +463,18 @@ function resumenNumerico(texto) {
 
 function filaPendiente({ ep, m, p }, conNombre) {
   const t = Date.parse(ep.inicio) + m.seg * 1000;
+  const resultado = conNombre && resultadoMuestra(p);
+  const nombre = p.id ? p.nombre : (fichasPorId.get(p.origen_id) || {}).nombre;
+  const id = p.id || p.origen_id;
   return el("li", { class: "mesa" },
     el("span", { class: "hora" }, fmtFechaCorta.format(Date.parse(ep.inicio))),
     el("span", { class: "pos" }, fmtHora.format(t)),
     el("div", { class: "cuerpo" },
-      conNombre && p.id ? [el("a", { href: urlFicha(p.id) }, p.nombre), " "] : null,
+      conNombre && id ? [el("a", { href: urlFicha(id) }, nombre), " "] : null,
       el("span", { class: "texto" }, `sale como «${p.forma}»`),
       ep.url && enlace(urlRtveEn(ep, m.seg), "RTVE Play ▶", "yt"),
-      enlace(urlCorregir(ep, m, p), p.estado === "automatica" ? "Marcar error" : "Confirmar o corregir", "corregir"),
+      resultado ? el("strong", { class: "corregir" }, resultado === "acierto" ? "✓ revisada: acierto" : "✗ revisada: error")
+        : enlace(urlCorregir(ep, m, p), p.estado === "automatica" ? "Confirmar o marcar error" : "Confirmar o corregir", "corregir"),
       (p.apoyos || []).length > 0 && el("span", { class: "presenta" }, `A favor: ${p.apoyos.join("; ")}.`)));
 }
 
@@ -492,8 +508,12 @@ function pintarPendientes() {
       }))))
       : el("p", { class: "nota" }, "Ninguno."),
     el("h3", {}, `Muestra de control (${muestra.length})`),
-    el("p", { class: "nota" }, "Apariciones automáticas elegidas al azar (siempre las mismas) para medir cuánto acierta la identificación: ",
-      "comprueba el rótulo de cada una y marca las que fallen."),
+    el("p", { class: "nota" }, "Apariciones automáticas de las noches del 31/08 al 18/11/2026, elegidas al azar y siempre las mismas, ",
+      "para medir cuánto acierta la identificación: comprueba el rótulo de cada una y confírmala o marca el error. ",
+      (() => {
+        const r = muestra.map(x => resultadoMuestra(x.p)).filter(Boolean);
+        return r.length ? `Revisadas ${r.length} de ${muestra.length}: ${r.filter(x => x === "acierto").length} aciertos, ${r.filter(x => x === "error").length} errores.` : "Aún no hay ninguna revisada.";
+      })()),
     el("ol", { class: "marcas noches" }, muestra.map(f => filaPendiente(f, true))),
     huerfanas.length > 0 && [
       el("h3", {}, `Revisiones sin aparición (${huerfanas.length})`),

@@ -46,7 +46,7 @@ Solo hay commit cuando algo cambia. Para cargar noches antiguas: en Actions, «a
 La identificación es automática y se publica sin esperar a nadie; lo dudoso se marca y se corrige rápido. Hay dos ficheros que se editan a mano y se revisan en los PR:
 
 - **`analistas.json`**, la tabla curada: por tertuliano, `id`, `nombre`, `medio` (solo si está documentado), `wikipedia` (título del artículo, tomado de la lista del programa en Wikipedia o comprobado a mano; nunca buscado por el nombre), `fuentes` (URL) y las variantes de los subtítulos: `seguras` (diferencia obvia: «Pedro Ballín»), `probables` (ambiguas: «Antonio Sala») y `descartadas` (formas que no son esa persona).
-- **`revisiones.json`**, decisiones humanas sobre apariciones concretas: `episodio` (id RTVE), `forma` (el nombre tal como sale), `decision` (`confirmada`, `descartada` o `sin_identificar`), `persona` (id; en un descarte, a quién se descarta), `evidencia`, `issue`, `fecha`.
+- **`revisiones.json`**, decisiones humanas sobre apariciones concretas: `episodio` (id RTVE), `forma` (el nombre tal como sale), `decision` (`confirmada`, `descartada`, `sin_identificar` o `no_es_mesa`, que la quita de la mesa), `persona` (id; en un descarte, a quién se descarta), `evidencia`, `issue`, `fecha`.
 
 Al exportar, cada nombre de la mesa recibe un estado:
 
@@ -59,7 +59,9 @@ Al exportar, cada nombre de la mesa recibe un estado:
 
 A las candidatas se les añaden las señales de esa noche (otra forma de su nombre, o el presentador diciendo su nombre de pila), solo como información: nunca cambian el estado. Para calcularlas, de cada noche se guarda únicamente cuántas veces sale cada forma de la tabla y cada nombre de pila (tabla `vocabulario`), no la transcripción ni nombres de terceros: el repositorio es público. Si cambia ese vocabulario, se rehacen los recuentos de todos los episodios en la siguiente ejecución.
 
-Los tests fallan si una forma apunta a dos personas, si una forma segura es de una sola palabra o si una revisión cita a alguien que no está en la tabla. La exportación lista en `revisiones_huerfanas` las revisiones que ya no encuentran su nombre en la mesa.
+Los tests fallan si una forma apunta a dos personas, si una forma segura es de una sola palabra o si una revisión cita a alguien que no está en la tabla. La exportación lista en `revisiones_huerfanas` las revisiones que ya no encuentran su nombre en la mesa, y en cada aparición revisada guarda lo que decían las reglas (`origen`, `origen_id`). La muestra de control de Pendientes sale de las apariciones automáticas del 31/08 al 18/11/2026 (siempre las mismas 30) y cuenta aciertos y errores según se revisan.
+
+Cada cambio en las formas de `analistas.json` vuelve a contar todos los episodios (se descargan sus subtítulos otra vez); los que no se pueden contar se reintentan en la siguiente ejecución.
 
 ### Tablas
 
@@ -71,7 +73,7 @@ Los tests fallan si una forma apunta a dos personas, si una forma segura es de u
 | `directos` | sesiones del directo de YouTube: vídeo, inicio, primera vez visto, fin detectado |
 | `estado` | último estado de cada paso (`ok` o el error) y desde cuándo |
 | `vocabulario` | por episodio, cuántas veces salen las formas de `analistas.json` y los nombres de pila |
-| `meta` | firma del vocabulario con que se contó (si cambia, se recuenta) |
+| `recuentos` | por episodio, la firma del vocabulario con que se contó (si cambia, se recuenta) |
 
 ## Limitaciones
 

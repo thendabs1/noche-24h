@@ -69,7 +69,8 @@ CREATE TABLE IF NOT EXISTS estado(clave TEXT PRIMARY KEY, valor TEXT, desde TEXT
 DROP TABLE IF EXISTS tramos;
 CREATE TABLE IF NOT EXISTS vocabulario(
   episodio_id INTEGER, forma TEXT, veces INTEGER, PRIMARY KEY(episodio_id, forma));
-CREATE TABLE IF NOT EXISTS meta(clave TEXT PRIMARY KEY, valor TEXT);
+DROP TABLE IF EXISTS meta;
+CREATE TABLE IF NOT EXISTS recuentos(episodio_id INTEGER PRIMARY KEY, firma TEXT);
 """
 # Sube cuando cambia cómo se sacan las marcas: se rehacen las de todos los episodios.
 # Se guarda en PRAGMA user_version de la base.
@@ -433,6 +434,8 @@ def guardar_marcas(conn, episodio_id, cues, duracion, analistas=()):
     conn.execute("DELETE FROM vocabulario WHERE episodio_id=?", (episodio_id,))
     conn.executemany("INSERT INTO vocabulario VALUES(?,?,?)",
                      [(episodio_id, f, v) for f, v in contar_vocabulario(cues, analistas).items()])
+    conn.execute("INSERT OR REPLACE INTO recuentos VALUES(?,?)",
+                 (episodio_id, firma_vocabulario(analistas)))
 
 
 def paso_rtve(conn, momento, dias=DIAS_INICIALES, obtener=json_url, bajar=descargar,
@@ -440,7 +443,6 @@ def paso_rtve(conn, momento, dias=DIAS_INICIALES, obtener=json_url, bajar=descar
     """Añade episodios y fragmentos nuevos. Devuelve cuántas filas ha escrito."""
     analistas = leer_analistas() if analistas is None else analistas
     firma = firma_vocabulario(analistas)
-    guardada = conn.execute("SELECT valor FROM meta WHERE clave='vocabulario'").fetchone()
     hay = conn.execute("SELECT count(*) FROM episodios").fetchone()[0]
     # `historico` repasa más días aunque la base ya tenga episodios (carga de histórico).
     dias = historico or (dias if not hay else DIAS_HABITUALES)
@@ -453,19 +455,21 @@ def paso_rtve(conn, momento, dias=DIAS_INICIALES, obtener=json_url, bajar=descar
         return cache[video_id]
 
     escritas = 0
-    # Se rehace todo si cambia cómo se sacan las marcas o el vocabulario que se cuenta.
-    if (conn.execute("PRAGMA user_version").fetchone()[0] < VERSION_MARCAS
-            or (guardada or [None])[0] != firma):
+    # Se rehacen todos si cambia cómo se sacan las marcas, y los que se contaron con otro
+    # vocabulario (o no se pudieron contar: se reintentan en la siguiente ejecución).
+    todos = conn.execute("PRAGMA user_version").fetchone()[0] < VERSION_MARCAS
+    rehacer = conn.execute(
+        "SELECT e.id, e.duracion_s FROM episodios e LEFT JOIN recuentos r ON r.episodio_id=e.id "
+        "WHERE e.estado='ok' AND (? OR r.firma IS NOT ?)", (todos, firma)).fetchall()
+    for id_, dur in rehacer:
         # Si RTVE ya no da los subtítulos de un episodio, se quedan sus marcas de antes.
-        for id_, dur in conn.execute(
-                "SELECT id, duracion_s FROM episodios WHERE estado='ok'").fetchall():
-            cues = cues_de(id_)
-            if cues:
-                guardar_marcas(conn, id_, cues, dur, analistas)
-                escritas += 1
+        cues = cues_de(id_)
+        if cues:
+            guardar_marcas(conn, id_, cues, dur, analistas)
+            escritas += 1
+    if todos:
         conn.execute(f"PRAGMA user_version={VERSION_MARCAS}")
-        conn.execute("INSERT OR REPLACE INTO meta VALUES('vocabulario', ?)", (firma,))
-        conn.commit()
+    conn.commit()
 
     for item in (i for i in items if tipo_item(i) == "Completo"):
         fila = conn.execute("SELECT estado FROM episodios WHERE id=?", (item["id"],)).fetchone()
@@ -734,8 +738,10 @@ ORDEN_ESTADO = {"revisada": 0, "automatica": 1, "candidata": 2, None: 3}
 
 
 def personas_de_mesa(episodio_id, texto, analistas, indice, revisiones, vocab, usadas):
-    """Cada nombre de una mesa con su persona y su estado. Una revisión manda sobre las reglas;
-    si descarta a alguien, se busca otra persona sin él. Cada persona sale una vez por mesa."""
+    """Cada nombre de una mesa con su persona y su estado. Una revisión manda sobre las reglas:
+    confirma a una persona, la descarta (se busca otra sin ella), deja el nombre sin identificar
+    o lo quita de la mesa (no_es_mesa). Cada persona sale una vez por mesa, con su estado más
+    firme. Si hay revisión, «origen» guarda el estado que daban las reglas."""
     por_id = {a["id"]: a for a in analistas}
     personas = []
     for forma in texto.split(" · "):
@@ -743,6 +749,12 @@ def personas_de_mesa(episodio_id, texto, analistas, indice, revisiones, vocab, u
         r = revisiones.get(clave)
         if r:
             usadas.add(clave)
+        reglas = identificar(forma, analistas, indice)
+        if r and r["decision"] == "no_es_mesa":
+            # Error de detección: no se muestra en la mesa, pero se conserva (muestra de control).
+            personas.append({"forma": forma, "estado": "no_es_mesa", "origen": reglas[1],
+                             "origen_id": reglas[0]})
+            continue
         if r and r["decision"] == "confirmada" and r.get("persona") in por_id:
             pid, estado = r["persona"], "revisada"
         elif r and r["decision"] == "sin_identificar":
@@ -751,6 +763,8 @@ def personas_de_mesa(episodio_id, texto, analistas, indice, revisiones, vocab, u
             descartes = {r.get("persona")} if r and r["decision"] == "descartada" else ()
             pid, estado = identificar(forma, analistas, indice, descartes)
         entrada = {"forma": forma, "estado": estado}
+        if r:  # lo que decían las reglas antes de la revisión (para medir su acierto)
+            entrada.update(origen=reglas[1], origen_id=reglas[0])
         if pid:
             entrada.update(id=pid, nombre=por_id[pid]["nombre"])
             if estado == "candidata":
@@ -785,7 +799,9 @@ def datos_pagina(conn, analistas=None, revisiones=None):
                 continue
             m["personas"] = personas_de_mesa(id_, m["texto"], analistas, indice, por_clave,
                                              vocab, usadas)
-            m["texto"] = " · ".join(x.get("nombre", x["forma"]) for x in m["personas"])
+            m["texto"] = (" · ".join(x.get("nombre", x["forma"]) for x in m["personas"]
+                                     if x["estado"] != "no_es_mesa")
+                          or "Mesa de análisis (nombres no reconocidos)")
             for x in m["personas"]:
                 if "id" not in x and x["estado"] is None:
                     sin_ficha.setdefault(x["forma"], []).append({"episodio": id_, "seg": m["seg"]})
