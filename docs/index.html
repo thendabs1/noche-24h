@@ -120,8 +120,6 @@ footer .error { color: var(--acento); }
 </div>
 <script>
 "use strict";
-// Rebobinado máximo del directo de Canal 24h en YouTube: 4 h (lista HLS medida el 17/11/2026).
-const VENTANA_DVR_H = 4;
 const ZONA = "Europe/Madrid";
 const fmtHora = new Intl.DateTimeFormat("es-ES", { timeZone: ZONA, hour: "2-digit", minute: "2-digit" });
 const fmtDia = new Intl.DateTimeFormat("es-ES", { timeZone: ZONA, weekday: "long", day: "numeric", month: "long" });
@@ -174,24 +172,7 @@ function probablementeEnEmision(ahora) {
 function directoActual() {
   return (datos.directos || []).find(d => !d.fin_detectado) || null;
 }
-const urlYoutube = (id, t) => `https://www.youtube.com/watch?v=${encodeURIComponent(id)}${t ? `&t=${t}s` : ""}`;
-
-// Enlace de YouTube para una hora de reloj, si alguna sesión del directo aún la conserva.
-function enlaceYoutube(t) {
-  for (const d of datos.directos || []) {
-    const ini = d.inicio ? Date.parse(d.inicio) : Date.parse(d.primera_vez);
-    const fin = d.fin_detectado ? Date.parse(d.fin_detectado) : null;
-    if (t < ini || (fin !== null && t >= fin)) continue;
-    if (fin === null) {
-      return Date.now() - t < VENTANA_DVR_H * 3600e3
-        ? { url: urlYoutube(d.video_id), texto: `YouTube · rebobina a ${fmtHora.format(t)}` } : null;
-    }
-    // YouTube solo archiva los directos de menos de 12 h.
-    return d.inicio && fin - ini <= 12 * 3600e3
-      ? { url: urlYoutube(d.video_id, Math.floor((t - ini) / 1000)), texto: "YouTube (archivo)" } : null;
-  }
-  return null;
-}
+const urlYoutube = id => `https://www.youtube.com/watch?v=${encodeURIComponent(id)}`;
 
 function pintarDirecto() {
   const caja = document.getElementById("directo");
@@ -225,7 +206,6 @@ function urlRtveEn(ep, seg) {
 
 function pintarMarca(ep, m, consulta) {
   const t = Date.parse(ep.inicio) + m.seg * 1000;
-  const yt = enlaceYoutube(t);
   const texto = m.tipo === "mesa" && m.personas ? nombresMesa(m, consulta) : resaltar(m.texto, consulta);
   const dudosas = m.tipo === "mesa" ? (m.personas || []).filter(p => p.estado === "candidata" || p.estado === null) : [];
   const pos = duracion(m.seg) + (m.seg_fin ? `–${duracion(m.seg_fin)}` : "");
@@ -236,7 +216,6 @@ function pintarMarca(ep, m, consulta) {
       el("span", { class: "tipo" }, etiqueta(m)),
       m.url ? enlace(m.url, texto) : el("span", { class: "texto" }, texto),
       ep.url && enlace(urlRtveEn(ep, m.seg), "RTVE Play ▶", "yt"),
-      yt && enlace(yt.url, yt.texto, "yt"),
       dudosas.map(p => enlace(urlCorregir(ep, m, p), dudosas.length > 1 ? `Confirmar «${p.forma}»` : "Confirmar o corregir", "corregir")),
       m.presenta && el("span", { class: "presenta" }, resaltar(m.presenta, consulta))));
 }
@@ -302,7 +281,6 @@ function pintarLista() {
     const conSeguidos = [...new Set(ep.marcas.flatMap(m => (m.personas || [])
       .filter(p => p.id && FIRMES.has(p.estado) && seguidos.has(p.id)).map(p => p.id)))]
       .map(id => (fichasPorId.get(id) || { nombre: id }).nombre);
-    const ytInicio = enlaceYoutube(inicio);
     lista.append(el("article", { class: "ep" + (visto ? " visto" : "") + (ep === siguiente ? " siguiente" : "") },
       el("div", { class: "ep-cab" },
         el("h2", {}, mayuscula(fmtDia.format(inicio))),
@@ -313,7 +291,6 @@ function pintarLista() {
         el("label", {}, casilla, " visto")),
       el("div", { class: "enlaces" },
         enlace(ep.url, "Episodio en RTVE Play"),
-        ytInicio && enlace(ytInicio.url, ytInicio.texto),
         enlace(ep.subtitulos, "Subtítulos (API RTVE)")),
       ep.estado !== "ok" && el("p", { class: "aviso" }, "RTVE aún no ha publicado los subtítulos: las marcas llegarán con ellos."),
       marcas.length ? el("ol", { class: "marcas" }, marcas.map(m => pintarMarca(ep, m, consulta))) : null));
@@ -441,7 +418,6 @@ function pintarFicha(id) {
       companeros.flatMap(([c, n], i) => [i ? " · " : "", el("a", { href: urlFicha(c) }, (fichasPorId.get(c) || { nombre: c }).nombre), ` (${n})`])),
     el("ol", { class: "marcas noches" }, ficha.noches.map(({ ep, m, p }) => {
       const t = Date.parse(ep.inicio) + m.seg * 1000;
-      const yt = enlaceYoutube(t);
       const otros = (m.personas || []).filter(x => x.id !== id);
       const duda = p.estado === "candidata";
       return el("li", { class: "mesa" + (vistos.has(ep.id) ? " visto" : "") },
@@ -450,7 +426,6 @@ function pintarFicha(id) {
         el("div", { class: "cuerpo" },
           el("span", { class: "texto" }, otros.length ? ["Con ", ...nombresMesa(m, "", id)] : "Mesa"),
           ep.url && enlace(urlRtveEn(ep, m.seg), "RTVE Play ▶", "yt"),
-          yt && enlace(yt.url, yt.texto, "yt"),
           enlace(urlCorregir(ep, m, p), duda ? "Confirmar o corregir" : "¿Error?", "corregir"),
           duda && el("span", { class: "presenta" }, `? ${AVISO_CANDIDATA}: sale como «${p.forma}».`,
             (p.apoyos || []).length ? ` A favor: ${p.apoyos.join("; ")}.` : ""),

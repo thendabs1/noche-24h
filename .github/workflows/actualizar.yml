@@ -53,6 +53,7 @@ jobs:
             git -c user.name="github-actions[bot]" \
                 -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
                 commit -m "datos: actualización automática"
+            git pull --rebase --quiet  # por si main ha avanzado durante la ejecución
             git push
             echo "cambios=si" >> "$GITHUB_OUTPUT"
           fi
