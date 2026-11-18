@@ -8,7 +8,7 @@ Contenido de la página:
 
 - **Directo:** enlace al directo de Canal 24h en YouTube y en RTVE Play. Se destaca cuando el programa está probablemente en emisión.
 - **Episodios:** los de las últimas semanas, cada uno con lo que sale de los subtítulos:
-  - **mesa:** los tertulianos al empezar («Hoy nos acompañan en la mesa de análisis…») y al renovarla, con sus nombres;
+  - **mesa:** los tertulianos al empezar y al renovarla, con sus nombres. Se reconoce por la frase de entrada («Hoy nos acompañan en la mesa de análisis…», «se incorporan…») o, sin ella, por una ronda de nombres con su saludo («Irene Lozano, buenas noches. Marta Nebot, buenas noches…»). La ronda acaba en la primera pregunta («Empiezo por ti»);
   - **plató:** invitados en el estudio («nos acompaña X, cargo»), con solo el nombre y el cargo;
   - **conexión:** redacción, reporteros, corresponsales y entrevistas a distancia («cuéntanos», «volvemos en directo»);
   - **avance:** al empezar, quién vendrá luego («nos acompañará…»);
@@ -49,7 +49,7 @@ Todo va a `datos/noche24h.sqlite` y se exporta a `docs/datos.json`, que lee la p
 
 ## Limitaciones
 
-- Las presentaciones salen de subtítulos automáticos: hay ruido y los nombres pueden venir mal escritos («Feristeza» por Félix Tezanos). El tipo es aproximado: en una revisión a ojo de 14 episodios casi todas las mesas, platós y conexiones salían bien, pero alguna mesa trae un nombre de más o partido. Un saludo suelto puede ser una entrevista a distancia, un tertuliano nuevo o una despedida.
+- Las presentaciones salen de subtítulos automáticos: hay ruido y los nombres pueden venir mal escritos («Feristeza» por Félix Tezanos). El tipo es aproximado. En 59 noches (junio–noviembre de 2026) revisadas a mano, la mesa de apertura trae el 93 % de los tertulianos y 3 nombres de más. Los que faltan casi siempre llegan sin nombre completo en los subtítulos («Peral», «Elsa», «Malucas»). Un mismo tertuliano puede salir escrito de varias formas («Pedro Ballín / Vallín / Aballín»). Antes de diciembre de 2025 el programa tenía otro formato (unas 2,5 h, con la tertulia hacia la hora) y casi nunca se reconoce la mesa. Un saludo suelto puede ser una entrevista a distancia, un tertuliano nuevo o una despedida.
 - Solo hay marcas de entrevista cuando RTVE publica el fragmento, uno o dos por semana.
 - El directo de Canal 24h en YouTube solo deja rebobinar 4 horas (medido el 17/11/2026 en su lista HLS). Para noches anteriores, RTVE Play: cada marca enlaza al episodio en su segundo (`?t=`).
 - El fin de una sesión del directo es aproximado: como tarde, el inicio de la siguiente.
