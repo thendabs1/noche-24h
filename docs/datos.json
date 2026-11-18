@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-17T22:11:52+01:00",
+ "generado": "2026-11-18T03:53:01+01:00",
  "estado": {
   "rtve": {
    "valor": "ok",
@@ -20,6 +20,84 @@
   }
  ],
  "episodios": [
+  {
+   "id": 17319045,
+   "titulo": "La noche en 24 horas - 17/11/26",
+   "inicio": "2026-11-17T22:00:00+01:00",
+   "duracion_s": 9461,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/17-11-26/17319045/",
+   "subtitulos": "https://api.rtve.es/api/videos/17319045/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 68,
+     "tipo": "plato",
+     "texto": "Comenzamos. Hoy nos acompaña en la mesa de análisis May Marinho."
+    },
+    {
+     "seg": 1458,
+     "tipo": "plato",
+     "texto": "Hoy nos acompaña Ana PALACIO, abogada internacional, diplomática y exministra de Exteriores,"
+    },
+    {
+     "seg": 2686,
+     "tipo": "conexion",
+     "texto": "Vamos a conocer los detalles. Olivia Guillén, Redacción de Informativos."
+    },
+    {
+     "seg": 5702,
+     "tipo": "conexion",
+     "texto": "pacto es un riesgo para los derechos de los inmigrantes. Vamos a la redacción de informativos"
+    },
+    {
+     "seg": 7503,
+     "tipo": "conexion",
+     "texto": "Vamos ya con los detalles. Olivia Guillén, redacción de informativos."
+    }
+   ],
+   "tramos": [
+    {
+     "tema": "elecciones",
+     "seg": 60,
+     "seg_fin": 480
+    },
+    {
+     "tema": "elecciones",
+     "seg": 900,
+     "seg_fin": 1140
+    },
+    {
+     "tema": "elecciones",
+     "seg": 2220,
+     "seg_fin": 2340
+    },
+    {
+     "tema": "elecciones",
+     "seg": 2640,
+     "seg_fin": 2820
+    },
+    {
+     "tema": "elecciones",
+     "seg": 3780,
+     "seg_fin": 5220
+    },
+    {
+     "tema": "elecciones",
+     "seg": 5940,
+     "seg_fin": 6060
+    },
+    {
+     "tema": "elecciones",
+     "seg": 7500,
+     "seg_fin": 7860
+    },
+    {
+     "tema": "elecciones",
+     "seg": 8100,
+     "seg_fin": 8640
+    }
+   ]
+  },
   {
    "id": 17317229,
    "titulo": "La noche en 24 horas - 16/11/26",
