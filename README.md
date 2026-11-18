@@ -17,7 +17,8 @@ Contenido de la página:
 - **Horas:** cada marca lleva la hora de reloj (22:36) y el minuto del episodio (0:36:38).
 - **Enlace a YouTube:** aparece cuando alguna sesión del directo aún conserva ese momento.
 - **Buscador** de invitados y temas, y casilla de visto/pendiente (se guarda en tu navegador).
-- **Analistas** (otra pestaña): cada tertuliano con sus noches en la mesa, enlace al minuto, con quién coincide más y cuándo salió por última vez. Con la estrella lo sigues: sus noches se destacan en la lista de episodios (se guarda en tu navegador).
+- **Analistas** (otra pestaña): cada tertuliano con su medio, su artículo de Wikipedia si lo tiene, sus noches en la mesa con enlace al minuto, con quién coincide más y cuándo salió por última vez. Con la estrella lo sigues: sus noches se destacan en la lista de episodios (se guarda en tu navegador).
+- **Pendientes** (otra pestaña): lo que la identificación automática no asegura (noches «por confirmar» y nombres sin identificar), con enlace al minuto y un formulario de issue rellenado para confirmarlo o corregirlo, y una muestra de control de 30 apariciones automáticas para medir el acierto.
 
 No guarda transcripciones: enlaza a los subtítulos de la API oficial de RTVE.
 
@@ -38,9 +39,27 @@ No guarda transcripciones: enlaza a los subtítulos de la API oficial de RTVE.
 
 Todo va a `datos/noche24h.sqlite` y se exporta a `docs/datos.json`, que lee la página.
 
-Al exportar, los nombres de la mesa se cambian por los de `analistas.json` (nombre bien escrito → variantes de los subtítulos; también casan las variantes muy parecidas). Solo los de esa lista tienen ficha. Los que no casan se guardan en `sin_ficha` y salen al pie de la pestaña de analistas, para ir completando la lista. Al tocar `analistas.json` en `main` se vuelve a exportar sin reprocesar nada.
+Solo hay commit cuando algo cambia. Para cargar noches antiguas: en Actions, «actualizar» → *Run workflow* con el campo `historico` (días que repasar). Si un paso empieza a fallar, la ejecución sale en rojo una vez (aviso por correo de GitHub) y el fallo aparece al pie de la página hasta que se arregla.
 
-Para cargar noches antiguas: en Actions, «actualizar» → *Run workflow* con el campo `historico` (días que repasar). Solo hay commit cuando algo cambia. Si un paso empieza a fallar, la ejecución sale en rojo una vez (aviso por correo de GitHub) y el fallo aparece al pie de la página hasta que se arregla.
+### Tertulianos: identificación automática que se corrige
+
+La identificación es automática y se publica sin esperar a nadie; lo dudoso se marca y se corrige rápido. Hay dos ficheros que se editan a mano y se revisan en los PR:
+
+- **`analistas.json`**, la tabla curada: por tertuliano, `id`, `nombre`, `medio` (solo si está documentado), `wikipedia` (título del artículo, tomado de la lista del programa en Wikipedia o comprobado a mano; nunca buscado por el nombre), `fuentes` (URL) y las variantes de los subtítulos: `seguras` (diferencia obvia: «Pedro Ballín»), `probables` (ambiguas: «Antonio Sala») y `descartadas` (formas que no son esa persona).
+- **`revisiones.json`**, decisiones humanas sobre apariciones concretas: `episodio` (id RTVE), `forma` (el nombre tal como sale), `decision` (`confirmada`, `descartada` o `sin_identificar`), `persona` (id; en un descarte, a quién se descarta), `evidencia`, `issue`, `fecha`.
+
+Al exportar, cada nombre de la mesa recibe un estado:
+
+| Estado | Cuándo | En la web |
+|---|---|---|
+| `revisada` | hay una decisión en `revisiones.json` (manda sobre todo lo demás) | normal |
+| `automatica` | el nombre exacto o una variante segura de una sola persona | normal; cuenta en la ficha |
+| `candidata` | una variante probable o un parecido ≥ 0,85 sin empate con otra persona | con «?»; se cuenta aparte y no entra en las coincidencias |
+| sin estado | no casa con nadie | sin ficha; sale en Pendientes |
+
+A las candidatas se les añaden las señales de esa noche (otra forma de su nombre, o el presentador diciendo su nombre de pila), solo como información: nunca cambian el estado. Para calcularlas, de cada noche se guarda únicamente cuántas veces sale cada forma de la tabla y cada nombre de pila (tabla `vocabulario`), no la transcripción ni nombres de terceros: el repositorio es público. Si cambia ese vocabulario, se rehacen los recuentos de todos los episodios en la siguiente ejecución.
+
+Los tests fallan si una forma apunta a dos personas, si una forma segura es de una sola palabra o si una revisión cita a alguien que no está en la tabla. La exportación lista en `revisiones_huerfanas` las revisiones que ya no encuentran su nombre en la mesa.
 
 ### Tablas
 
@@ -51,6 +70,8 @@ Para cargar noches antiguas: en Actions, «actualizar» → *Run workflow* con e
 | `fragmentos` | entrevistas: episodio, segundo de inicio, líneas que casan, estado (`ok`, `sin_episodio`, `sin_casar`, `sin_subtitulos`) |
 | `directos` | sesiones del directo de YouTube: vídeo, inicio, primera vez visto, fin detectado |
 | `estado` | último estado de cada paso (`ok` o el error) y desde cuándo |
+| `vocabulario` | por episodio, cuántas veces salen las formas de `analistas.json` y los nombres de pila |
+| `meta` | firma del vocabulario con que se contó (si cambia, se recuenta) |
 
 ## Limitaciones
 

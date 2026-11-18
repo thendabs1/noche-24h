@@ -11,7 +11,7 @@ on:
         type: number
   push:
     branches: [main]
-    paths: ['docs/index.html', 'noche24h.py', 'analistas.json', '.github/workflows/actualizar.yml']
+    paths: ['docs/index.html', 'noche24h.py', 'analistas.json', 'revisiones.json', '.github/workflows/actualizar.yml']
 
 permissions:
   contents: write

@@ -16,7 +16,9 @@ Uso:
   python noche24h.py exportar
 """
 import argparse
+from collections import Counter
 from contextlib import closing
+import hashlib
 import json
 import re
 import sqlite3
@@ -42,8 +44,10 @@ UA = "noche-24h/1.0"
 RAIZ = Path(__file__).resolve().parent
 BD = RAIZ / "datos" / "noche24h.sqlite"
 SALIDA = RAIZ / "docs" / "datos.json"
-# Tertulianos con ficha en la página: nombre bien escrito → variantes de los subtítulos.
+# Tabla curada de tertulianos (identidad, fuentes y variantes de los subtítulos) y decisiones
+# humanas sobre apariciones concretas. Las dos se editan a mano y se revisan en los PR.
 ANALISTAS = RAIZ / "analistas.json"
+REVISIONES = RAIZ / "revisiones.json"
 DIAS_INICIALES = 28  # histórico en la primera ejecución
 DIAS_HABITUALES = 14  # lo que se repasa en cada ejecución
 REINTENTO = timedelta(days=3)  # cuánto se reintenta lo que aún no tiene subtítulos o episodio
@@ -63,6 +67,9 @@ CREATE TABLE IF NOT EXISTS directos(
   video_id TEXT PRIMARY KEY, titulo TEXT, inicio TEXT, primera_vez TEXT, fin_detectado TEXT);
 CREATE TABLE IF NOT EXISTS estado(clave TEXT PRIMARY KEY, valor TEXT, desde TEXT);
 DROP TABLE IF EXISTS tramos;
+CREATE TABLE IF NOT EXISTS vocabulario(
+  episodio_id INTEGER, forma TEXT, veces INTEGER, PRIMARY KEY(episodio_id, forma));
+CREATE TABLE IF NOT EXISTS meta(clave TEXT PRIMARY KEY, valor TEXT);
 """
 # Sube cuando cambia cómo se sacan las marcas: se rehacen las de todos los episodios.
 # Se guarda en PRAGMA user_version de la base.
@@ -416,17 +423,24 @@ def listar_videos(hasta, obtener=json_url, tam=60, max_paginas=20):
     return [i for i in items if fecha_item(i) >= hasta]
 
 
-def guardar_marcas(conn, episodio_id, cues, duracion):
-    """Rehace las marcas de un episodio a partir de sus subtítulos."""
+def guardar_marcas(conn, episodio_id, cues, duracion, analistas=()):
+    """Rehace las marcas de un episodio y el recuento del vocabulario de la tabla de
+    analistas a partir de sus subtítulos."""
     conn.execute("DELETE FROM marcas WHERE episodio_id=?", (episodio_id,))
     conn.executemany(
         "INSERT OR IGNORE INTO marcas VALUES(?,?,?,?)",
         [(episodio_id, seg, tipo, txt) for seg, tipo, txt in presentaciones(cues, duracion)])
+    conn.execute("DELETE FROM vocabulario WHERE episodio_id=?", (episodio_id,))
+    conn.executemany("INSERT INTO vocabulario VALUES(?,?,?)",
+                     [(episodio_id, f, v) for f, v in contar_vocabulario(cues, analistas).items()])
 
 
 def paso_rtve(conn, momento, dias=DIAS_INICIALES, obtener=json_url, bajar=descargar,
-              historico=None):
+              historico=None, analistas=None):
     """Añade episodios y fragmentos nuevos. Devuelve cuántas filas ha escrito."""
+    analistas = leer_analistas() if analistas is None else analistas
+    firma = firma_vocabulario(analistas)
+    guardada = conn.execute("SELECT valor FROM meta WHERE clave='vocabulario'").fetchone()
     hay = conn.execute("SELECT count(*) FROM episodios").fetchone()[0]
     # `historico` repasa más días aunque la base ya tenga episodios (carga de histórico).
     dias = historico or (dias if not hay else DIAS_HABITUALES)
@@ -439,15 +453,18 @@ def paso_rtve(conn, momento, dias=DIAS_INICIALES, obtener=json_url, bajar=descar
         return cache[video_id]
 
     escritas = 0
-    if conn.execute("PRAGMA user_version").fetchone()[0] < VERSION_MARCAS:
+    # Se rehace todo si cambia cómo se sacan las marcas o el vocabulario que se cuenta.
+    if (conn.execute("PRAGMA user_version").fetchone()[0] < VERSION_MARCAS
+            or (guardada or [None])[0] != firma):
         # Si RTVE ya no da los subtítulos de un episodio, se quedan sus marcas de antes.
         for id_, dur in conn.execute(
                 "SELECT id, duracion_s FROM episodios WHERE estado='ok'").fetchall():
             cues = cues_de(id_)
             if cues:
-                guardar_marcas(conn, id_, cues, dur)
+                guardar_marcas(conn, id_, cues, dur, analistas)
                 escritas += 1
         conn.execute(f"PRAGMA user_version={VERSION_MARCAS}")
+        conn.execute("INSERT OR REPLACE INTO meta VALUES('vocabulario', ?)", (firma,))
         conn.commit()
 
     for item in (i for i in items if tipo_item(i) == "Completo"):
@@ -463,7 +480,7 @@ def paso_rtve(conn, momento, dias=DIAS_INICIALES, obtener=json_url, bajar=descar
             "INSERT OR REPLACE INTO episodios VALUES(?,?,?,?,?,?,?,?)",
             (item["id"], item.get("title"), iso(fecha_item(item)), duracion,
              item.get("htmlUrl"), url_subtitulos(item["id"]), estado, iso(momento)))
-        guardar_marcas(conn, item["id"], cues or [], duracion)
+        guardar_marcas(conn, item["id"], cues or [], duracion, analistas)
         conn.commit()
         escritas += 1
 
@@ -581,48 +598,197 @@ def plano(texto):
                     .decode().lower().split())
 
 
-def leer_analistas(ruta=ANALISTAS):
-    """{variante en plano: nombre bien escrito}, de analistas.json (nombre → variantes)."""
+def leer_json(ruta, vacio):
     try:
-        lista = json.loads(Path(ruta).read_text(encoding="utf-8"))
+        return json.loads(Path(ruta).read_text(encoding="utf-8"))
     except FileNotFoundError:
+        return vacio
+
+
+def leer_analistas(ruta=ANALISTAS):
+    """Tabla curada de tertulianos (analistas.json, versión 1): fichas con id, nombre, medio,
+    wikipedia, fuentes y variantes de los subtítulos seguras, probables y descartadas."""
+    return leer_json(ruta, {"analistas": []})["analistas"]
+
+
+def leer_revisiones(ruta=REVISIONES):
+    """Decisiones humanas sobre apariciones concretas (revisiones.json, versión 1)."""
+    return leer_json(ruta, {"revisiones": []})["revisiones"]
+
+
+def formas(analistas):
+    """{forma en plano: {id: "segura" | "probable"}}. El nombre cuenta como forma segura."""
+    indice = {}
+    for a in analistas:
+        for nivel, lista in (("segura", [a["nombre"], *a["seguras"]]),
+                             ("probable", a["probables"])):
+            for f in lista:
+                indice.setdefault(plano(f), {}).setdefault(a["id"], nivel)
+    return indice
+
+
+def problemas_analistas(analistas):
+    """Errores de la tabla: ids repetidos, una forma en dos personas, formas seguras de una
+    sola palabra o formas repetidas. Los tests hacen fallar el PR con ellos; si aun así llegan
+    a la exportación, esas formas no se asignan con seguridad (ver identificar)."""
+    errores = []
+    ids = [a["id"] for a in analistas]
+    errores += [f"id repetido: {i}" for i in sorted({i for i in ids if ids.count(i) > 1})]
+    for f, personas in sorted(formas(analistas).items()):
+        if len(personas) > 1:
+            errores.append(f"«{f}» apunta a {', '.join(sorted(personas))}")
+    for a in analistas:
+        errores += [f"{a['id']}: forma segura de una sola palabra «{x}»"
+                    for x in a["seguras"] if len(x.split()) < 2]
+        propias = [plano(x) for x in [a["nombre"], *a["seguras"], *a["probables"]]]
+        errores += [f"{a['id']}: «{x}» repetida"
+                    for x in sorted({x for x in propias if propias.count(x) > 1})]
+        descartadas = {plano(x) for x in a["descartadas"]}
+        errores += [f"{a['id']}: «{x}» es a la vez variante y descartada"
+                    for x in sorted(descartadas & set(propias))]
+    return errores
+
+
+def identificar(forma, analistas, indice=None, descartes=(), parecido=0.85, margen=0.03):
+    """Persona y estado de un nombre de la mesa: (id, "automatica" | "candidata") o (None, None).
+
+    - automatica: el nombre o una variante segura de una sola persona.
+    - candidata: una variante probable, o un nombre que no está en la tabla pero se parece
+      (≥ `parecido`) a las formas de una persona, sin empate con otra por menos de `margen`.
+    - Una forma que la tabla da a dos personas no se asigna a ninguna (salvo que una revisión
+      haya descartado a una), y nunca se asigna a quien la tenga en «descartadas».
+    `descartes`: personas que una revisión ya rechazó para esta aparición."""
+    indice = formas(analistas) if indice is None else indice
+    p = plano(forma)
+    rechazadas = set(descartes) | {a["id"] for a in analistas
+                                   if p in {plano(x) for x in a["descartadas"]}}
+    todas = indice.get(p, {})
+    personas = {i: nivel for i, nivel in todas.items() if i not in rechazadas}
+    if len(personas) == 1:
+        (i, nivel), = personas.items()
+        return i, "automatica" if nivel == "segura" and len(todas) == 1 else "candidata"
+    if personas:  # colisión en la tabla: no se elige
+        return None, None
+    puntos = {}
+    for f, ps in indice.items():
+        r = SequenceMatcher(None, p, f).ratio()
+        for i in ps:
+            if i not in rechazadas and r > puntos.get(i, 0):
+                puntos[i] = r
+    orden = sorted(puntos.items(), key=lambda kv: -kv[1])
+    if orden and orden[0][1] >= parecido and (len(orden) < 2 or orden[0][1] - orden[1][1] >= margen):
+        return orden[0][0], "candidata"
+    return None, None
+
+
+def vocabulario(analistas):
+    """Lo único que se cuenta en los subtítulos de cada noche: las formas de la tabla y los
+    nombres de pila que no comparten dos personas. Así se apoyan las candidatas sin guardar
+    la transcripción ni nombres de terceros (el repositorio es público)."""
+    pilas = Counter(plano(a["nombre"].split()[0]) for a in analistas)
+    return sorted(formas(analistas)), sorted(p for p, c in pilas.items() if c == 1 and len(p) >= 3)
+
+
+def firma_vocabulario(analistas):
+    return hashlib.sha1(json.dumps(vocabulario(analistas)).encode()).hexdigest()[:12]
+
+
+def contar_vocabulario(cues, analistas):
+    """{forma en plano: veces} y {"pila:nombre": veces} en toda la noche, solo del vocabulario."""
+    if not analistas or not cues:
         return {}
-    return {plano(v): nombre for nombre, variantes in lista.items() for v in [nombre, *variantes]}
+    texto = sin_mayusculas(" ".join(t for _, t in cues))
+    lista_formas, pilas = vocabulario(analistas)
+    conjunto = set(lista_formas)
+    cuenta = Counter(plano(x) for x, _ in nombres_con_posicion(texto) if plano(x) in conjunto)
+    palabras = Counter(plano(w) for w in re.findall(r"\b[A-ZÁÉÍÓÚÑ][a-záéíóúñü]+\b", texto))
+    for p in pilas:
+        if palabras[p]:
+            cuenta[f"pila:{p}"] = palabras[p]
+    return dict(cuenta)
 
 
-def analista(nombre, variantes, parecido=0.85):
-    """El analista de la lista que corresponde a un nombre de mesa, o None. Vale una variante
-    de la lista o una parecida («Pedro Abellín» por «Pedro Aballín»)."""
-    p = plano(nombre)
-    if p in variantes:
-        return variantes[p]
-    mejor = max(variantes, key=lambda v: SequenceMatcher(None, p, v).ratio(), default=None)
-    if mejor and SequenceMatcher(None, p, mejor).ratio() >= parecido:
-        return variantes[mejor]
-    return None
+def apoyos(forma, ficha, vocab):
+    """Señales de esa noche a favor de una candidata. Solo se muestran: nunca cambian su estado
+    (dos menciones pueden repetir el mismo error del reconocimiento)."""
+    propia = plano(forma)
+    senales = []
+    otras = [x for x in [ficha["nombre"], *ficha["seguras"], *ficha["probables"]]
+             if plano(x) != propia and vocab.get(plano(x))]
+    if otras:
+        senales.append(f"esa noche también sale «{otras[0]}»")
+    # El nombre de pila suelto: sin contar las veces que va dentro de un nombre completo de
+    # esa persona (eso ya es la señal anterior) ni el de la propia presentación.
+    pila = ficha["nombre"].split()[0]
+    completas = {plano(x) for x in [ficha["nombre"], *ficha["seguras"], *ficha["probables"]]}
+    dentro = sum(vocab.get(f, 0) for f in completas if f.split()[0] == plano(pila))
+    if propia not in completas and propia.split()[0] == plano(pila):
+        dentro += 1
+    veces = vocab.get(f"pila:{plano(pila)}", 0) - dentro
+    if veces >= 2:
+        senales.append(f"le llaman «{pila}» {veces} veces")
+    return senales
 
 
-def datos_pagina(conn, variantes=None):
-    """Lo que lee la página. Los nombres de la mesa salen como en la lista de analistas, y
-    los que no están en ella se cuentan en «sin_ficha» para ir completándola."""
-    if variantes is None:
-        variantes = leer_analistas()
-    sin_ficha = {}
+ORDEN_ESTADO = {"revisada": 0, "automatica": 1, "candidata": 2, None: 3}
+
+
+def personas_de_mesa(episodio_id, texto, analistas, indice, revisiones, vocab, usadas):
+    """Cada nombre de una mesa con su persona y su estado. Una revisión manda sobre las reglas;
+    si descarta a alguien, se busca otra persona sin él. Cada persona sale una vez por mesa."""
+    por_id = {a["id"]: a for a in analistas}
+    personas = []
+    for forma in texto.split(" · "):
+        clave = (episodio_id, plano(forma))
+        r = revisiones.get(clave)
+        if r:
+            usadas.add(clave)
+        if r and r["decision"] == "confirmada" and r.get("persona") in por_id:
+            pid, estado = r["persona"], "revisada"
+        elif r and r["decision"] == "sin_identificar":
+            pid, estado = None, "revisada"
+        else:
+            descartes = {r.get("persona")} if r and r["decision"] == "descartada" else ()
+            pid, estado = identificar(forma, analistas, indice, descartes)
+        entrada = {"forma": forma, "estado": estado}
+        if pid:
+            entrada.update(id=pid, nombre=por_id[pid]["nombre"])
+            if estado == "candidata":
+                entrada["apoyos"] = apoyos(forma, por_id[pid], vocab)
+        repetida = next((x for x in personas if pid and x.get("id") == pid), None)
+        if repetida is None:
+            personas.append(entrada)
+        elif ORDEN_ESTADO[estado] < ORDEN_ESTADO[repetida["estado"]]:
+            personas[personas.index(repetida)] = entrada
+    return personas
+
+
+def datos_pagina(conn, analistas=None, revisiones=None):
+    """Lo que lee la página. Cada nombre de la mesa lleva su persona de la tabla y su estado
+    (automatica, candidata o revisada); los que no se asignan van a «sin_ficha» con sus noches
+    y las revisiones que ya no encuentran su aparición, a «revisiones_huerfanas»."""
+    analistas = leer_analistas() if analistas is None else analistas
+    revisiones = leer_revisiones() if revisiones is None else revisiones
+    indice = formas(analistas)
+    por_clave = {(r["episodio"], plano(r["forma"])): r for r in revisiones}
+    usadas, sin_ficha = set(), {}
     episodios = []
     for id_, titulo, inicio, dur, url, subs, estado in conn.execute(
             "SELECT id, titulo, inicio, duracion_s, url, subtitulos, estado FROM episodios "
             "ORDER BY inicio DESC"):
+        vocab = dict(conn.execute("SELECT forma, veces FROM vocabulario WHERE episodio_id=?",
+                                  (id_,)))
         marcas = [{"seg": s, "tipo": t, "texto": x} for s, t, x in conn.execute(
             "SELECT seg, tipo, texto FROM marcas WHERE episodio_id=?", (id_,))]
         for m in marcas:
             if m["tipo"] != "mesa" or "no reconocidos" in m["texto"]:
                 continue
-            nombres_ = [(x, analista(x, variantes)) for x in m["texto"].split(" · ")]
-            m["texto"] = " · ".join(a or x for x, a in nombres_)
-            m["analistas"] = [a for _, a in nombres_ if a]
-            for x, a in nombres_:
-                if not a:
-                    sin_ficha[x] = sin_ficha.get(x, 0) + 1
+            m["personas"] = personas_de_mesa(id_, m["texto"], analistas, indice, por_clave,
+                                             vocab, usadas)
+            m["texto"] = " · ".join(x.get("nombre", x["forma"]) for x in m["personas"])
+            for x in m["personas"]:
+                if "id" not in x and x["estado"] is None:
+                    sin_ficha.setdefault(x["forma"], []).append({"episodio": id_, "seg": m["seg"]})
         for s, d, x, u in conn.execute(
                 "SELECT seg, duracion_s, titulo, url FROM fragmentos "
                 "WHERE episodio_id=? AND estado='ok' ORDER BY seg", (id_,)):
@@ -643,9 +809,17 @@ def datos_pagina(conn, variantes=None):
     directos = [dict(zip(("video_id", "titulo", "inicio", "primera_vez", "fin_detectado"), f))
                 for f in conn.execute("SELECT * FROM directos ORDER BY primera_vez DESC")]
     estado = {c: {"valor": v, "desde": d} for c, v, d in conn.execute("SELECT * FROM estado")}
-    sin_ficha = [{"nombre": x, "veces": v}
-                 for x, v in sorted(sin_ficha.items(), key=lambda kv: (-kv[1], kv[0]))]
-    return {"estado": estado, "directos": directos, "episodios": episodios, "sin_ficha": sin_ficha}
+    fichas = [{k: a[k] for k in ("id", "nombre", "medio", "wikipedia", "fuentes")}
+              for a in analistas]
+    return {
+        "estado": estado, "directos": directos, "episodios": episodios, "analistas": fichas,
+        "sin_ficha": [{"forma": f, "veces": len(n), "noches": n} for f, n in
+                      sorted(sin_ficha.items(), key=lambda kv: (-len(kv[1]), kv[0]))],
+        "revisiones_huerfanas": [r for k, r in por_clave.items() if k not in usadas],
+        "reglas": {"version_marcas": VERSION_MARCAS, "vocabulario": firma_vocabulario(analistas),
+                   "analistas": hashlib.sha1(json.dumps(analistas, sort_keys=True).encode())
+                   .hexdigest()[:12]},
+    }
 
 
 def exportar(conn, destino, momento):

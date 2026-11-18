@@ -124,23 +124,75 @@ class TestSubtitulos(unittest.TestCase):
             self.assertEqual(n.invitado(frase), esperado)
 
 
-class TestAnalistas(unittest.TestCase):
-    def test_variante_exacta_parecida_o_ninguna(self):
-        variantes = {"pedro vallin": "Pedro Vallín", "pedro ballin": "Pedro Vallín",
-                     "marisa cruz": "Marisa Cruz"}
-        self.assertEqual(n.analista("Pedro Ballín", variantes), "Pedro Vallín")
-        self.assertEqual(n.analista("Pedro Avellín", variantes), "Pedro Vallín")
-        self.assertIsNone(n.analista("Juan Cruz", variantes))
-        self.assertIsNone(n.analista("Pedro Sánchez", variantes))
+def ficha(id_, nombre, seguras=(), probables=(), descartadas=()):
+    return {"id": id_, "nombre": nombre, "medio": None, "wikipedia": None, "fuentes": [],
+            "seguras": list(seguras), "probables": list(probables), "descartadas": list(descartadas)}
 
-    def test_lista_del_repo(self):
-        lista = json.loads(n.ANALISTAS.read_text(encoding="utf-8"))
-        variantes = n.leer_analistas()
-        # Cada variante lleva a un solo analista.
-        self.assertEqual(len(variantes), sum(1 + len(v) for v in lista.values()))
-        for nombre, otras in lista.items():
-            for v in [nombre, *otras]:
-                self.assertEqual(n.analista(v, variantes), nombre)
+
+TABLA = [ficha("pedro-vallin", "Pedro Vallín", ["Pedro Ballín", "Pedro Aballín"]),
+         ficha("marta-nebot", "Marta Nebot"),
+         ficha("anton-losada", "Antón Losada", ["Antón Lozada"], ["Antonio Sara"]),
+         ficha("marisa-cruz", "Marisa Cruz", probables=["María Cruz"])]
+
+
+class TestAnalistas(unittest.TestCase):
+    def test_identificar(self):
+        casos = {"Pedro Vallín": ("pedro-vallin", "automatica"),   # nombre exacto
+                 "Pedro Ballín": ("pedro-vallin", "automatica"),   # variante segura
+                 "pedro ballin": ("pedro-vallin", "automatica"),   # sin tildes ni mayúsculas
+                 "Antonio Sara": ("anton-losada", "candidata"),    # variante probable
+                 "Pedro Avellín": ("pedro-vallin", "candidata"),   # solo parecido
+                 "Juan Cruz": (None, None),                        # no se parece bastante
+                 "Pedro Sánchez": (None, None)}
+        for forma, esperado in casos.items():
+            self.assertEqual(n.identificar(forma, TABLA), esperado, forma)
+
+    def test_colision_empate_y_descartes(self):
+        tabla = TABLA + [ficha("otro-vallin", "Pablo Vallín", ["Pedro Ballín"])]
+        self.assertEqual(n.identificar("Pedro Ballín", tabla), (None, None))  # dos personas
+        self.assertEqual(n.identificar("Pedro Ballín", tabla, descartes={"otro-vallin"}),
+                         ("pedro-vallin", "candidata"))
+        gemelos = [ficha("a", "Ana Ruiz Gil"), ficha("b", "Ana Ruiz Gal")]
+        self.assertEqual(n.identificar("Ana Ruiz Gul", gemelos), (None, None))  # empate
+        tabla = [ficha("pedro-vallin", "Pedro Vallín", descartadas=["Pedro Avellín"])]
+        self.assertEqual(n.identificar("Pedro Avellín", tabla), (None, None))
+        self.assertEqual(n.identificar("Pedro Vallín", tabla, descartes={"pedro-vallin"}),
+                         (None, None))
+
+    def test_problemas_de_la_tabla(self):
+        mala = [ficha("a", "Ana Ruiz", ["Ruiz"]), ficha("a", "Eva Gil"),
+                ficha("b", "Eva Sanz", ["Ana Ruiz"], ["Eva Sanz"], ["Eva Sanz"])]
+        self.assertEqual(n.problemas_analistas(mala), [
+            "id repetido: a",
+            "«ana ruiz» apunta a a, b",
+            "a: forma segura de una sola palabra «Ruiz»",
+            "b: «eva sanz» repetida",
+            "b: «eva sanz» es a la vez variante y descartada"])
+
+    def test_tablas_del_repo(self):
+        tabla = n.leer_analistas()
+        self.assertEqual(n.problemas_analistas(tabla), [])
+        for a in tabla:
+            self.assertRegex(a["id"], r"^[a-z0-9]+(-[a-z0-9]+)*$")
+            self.assertTrue(all(u.startswith("https://") for u in a["fuentes"]), a["id"])
+            self.assertIn(type(a["wikipedia"]), (str, type(None)))
+        ids = {a["id"] for a in tabla}
+        for r in n.leer_revisiones():
+            self.assertIsInstance(r["episodio"], int)
+            self.assertIn(r["decision"], {"confirmada", "descartada", "sin_identificar"})
+            if r["decision"] != "sin_identificar":
+                self.assertIn(r["persona"], ids)
+
+    def test_identificacion_del_corpus(self):
+        # Formas detectadas en las mesas de 84 noches (12/2025–11/2026): solo los nombres.
+        # Si cambia una asignación, que sea a propósito: se regenera el fichero y se revisa.
+        tabla = n.leer_analistas()
+        indice = n.formas(tabla)
+        ruta = Path(__file__).resolve().parent / "identificacion.json"
+        for caso in json.loads(ruta.read_text(encoding="utf-8")):
+            with self.subTest(caso["forma"]):
+                self.assertEqual(n.identificar(caso["forma"], tabla, indice),
+                                 (caso["id"], caso["estado"]))
 
 
 class TestRTVE(unittest.TestCase):
@@ -213,19 +265,68 @@ class TestRTVE(unittest.TestCase):
         self.assertEqual(self.conn.execute("SELECT id FROM episodios ORDER BY id").fetchall(),
                          [(1,), (2,)])
 
-    def test_mesa_con_nombres_de_la_lista(self):
+    def mesa_de_prueba(self):
         api = self.api(con_fragmento=False)
-        api.subtitulos[2] += [(4990, "y seguimos con la actualidad del día"),
-                              (5000, "Renovamos la mesa, se incorporan Pedro Aballín, Marta "
-                                     "Nebot y Fulano Mengánez.")]
-        n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar)
-        variantes = {"pedro vallin": "Pedro Vallín", "pedro ballin": "Pedro Vallín",
-                     "marta nebot": "Marta Nebot"}
-        datos = n.datos_pagina(self.conn, variantes)
+        api.subtitulos[2] += [
+            (4990, "y seguimos con la actualidad del día"),
+            (5000, "Renovamos la mesa, se incorporan Pedro Aballín, Marta Nebot, Antonio Sara "
+                   "y Fulano Mengánez."),
+            (5100, "Antón, ¿cómo lo ves?"), (5200, "Antón, una última cosa"),
+            (5300, "como decía Anton Losada en su columna")]
+        return api
+
+    def test_mesa_con_personas_y_estados(self):
+        api = self.mesa_de_prueba()
+        n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar, analistas=TABLA)
+        datos = n.datos_pagina(self.conn, TABLA, [])
         mesa = [m for m in datos["episodios"][0]["marcas"] if m["tipo"] == "mesa"][0]
-        self.assertEqual(mesa["texto"], "Pedro Vallín · Marta Nebot · Fulano Mengánez")
-        self.assertEqual(mesa["analistas"], ["Pedro Vallín", "Marta Nebot"])
-        self.assertEqual(datos["sin_ficha"], [{"nombre": "Fulano Mengánez", "veces": 1}])
+        self.assertEqual(mesa["texto"], "Pedro Vallín · Marta Nebot · Antón Losada · Fulano Mengánez")
+        self.assertEqual([(p.get("id"), p["estado"]) for p in mesa["personas"]],
+                         [("pedro-vallin", "automatica"), ("marta-nebot", "automatica"),
+                          ("anton-losada", "candidata"), (None, None)])
+        # Las señales de esa noche apoyan a la candidata, pero no cambian su estado.
+        self.assertEqual(mesa["personas"][2]["apoyos"],
+                         ["esa noche también sale «Antón Losada»", "le llaman «Antón» 2 veces"])
+        self.assertEqual(datos["sin_ficha"],
+                         [{"forma": "Fulano Mengánez", "veces": 1,
+                           "noches": [{"episodio": 2, "seg": 4990}]}])
+        self.assertEqual(datos["revisiones_huerfanas"], [])
+        # El vocabulario guardado solo tiene formas de la tabla y nombres de pila.
+        vocabulario = dict(self.conn.execute("SELECT forma, veces FROM vocabulario"))
+        self.assertEqual(vocabulario["pila:anton"], 3)
+        self.assertEqual(vocabulario["anton losada"], 1)
+        self.assertTrue(all(f.startswith("pila:") or f in n.formas(TABLA) for f in vocabulario))
+        self.assertNotIn("fulano menganez", vocabulario)
+
+    def test_revisiones_mandan_sobre_las_reglas(self):
+        api = self.mesa_de_prueba()
+        n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar, analistas=TABLA)
+        revisiones = [
+            {"episodio": 2, "forma": "antonio sara", "decision": "confirmada",
+             "persona": "anton-losada"},
+            {"episodio": 2, "forma": "Pedro Aballín", "decision": "descartada",
+             "persona": "pedro-vallin"},
+            {"episodio": 2, "forma": "Fulano Mengánez", "decision": "sin_identificar"},
+            {"episodio": 99, "forma": "Nadie", "decision": "sin_identificar"}]
+        datos = n.datos_pagina(self.conn, TABLA, revisiones)
+        mesa = [m for m in datos["episodios"][0]["marcas"] if m["tipo"] == "mesa"][0]
+        self.assertEqual([(p.get("id"), p["estado"]) for p in mesa["personas"]],
+                         [(None, None), ("marta-nebot", "automatica"),
+                          ("anton-losada", "revisada"), (None, "revisada")])
+        # Lo revisado como «sin identificar» ya no está pendiente; lo descartado, sí.
+        self.assertEqual([x["forma"] for x in datos["sin_ficha"]], ["Pedro Aballín"])
+        self.assertEqual(datos["revisiones_huerfanas"], [revisiones[3]])
+
+    def test_cambio_de_vocabulario_rehace_los_recuentos(self):
+        api = self.mesa_de_prueba()
+        n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar, analistas=TABLA)
+        self.assertEqual(n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar,
+                                     analistas=TABLA), 0)
+        otra = TABLA + [ficha("fulano", "Fulano Mengánez")]
+        self.assertEqual(n.paso_rtve(self.conn, AHORA, 28, api.obtener, api.bajar,
+                                     analistas=otra), 1)
+        self.assertIn(("fulano menganez", 1),
+                      self.conn.execute("SELECT forma, veces FROM vocabulario").fetchall())
 
     def test_segunda_pasada_no_escribe_ni_toca_el_fichero(self):
         api = self.api()
@@ -343,8 +444,9 @@ class TestDatosPublicados(unittest.TestCase):
         if not ruta.exists():
             self.skipTest("sin datos.json todavía")
         datos = json.loads(ruta.read_text(encoding="utf-8"))
-        # «sin_ficha» llega con la primera exportación tras añadir la lista de analistas.
-        self.assertEqual(set(datos) - {"sin_ficha"}, {"generado", "estado", "directos", "episodios"})
+        # Las claves de los analistas llegan con la primera exportación tras añadirlos.
+        self.assertEqual(set(datos) - {"sin_ficha", "analistas", "revisiones_huerfanas", "reglas"},
+                         {"generado", "estado", "directos", "episodios"})
         for ep in datos["episodios"]:
             self.assertTrue(ep["url"] and ep["inicio"])
             for m in ep["marcas"]:
