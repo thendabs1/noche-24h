@@ -95,13 +95,28 @@ class TestSubtitulos(unittest.TestCase):
         self.assertEqual(n.nombres(texto), ["Javier Casqueiro", "Paloma Esteban"])
 
     def test_mesa_en_aperturas_reales(self):
-        # Trozos de 70 s de subtítulos reales (junio–noviembre de 2026), uno por caso difícil.
+        # Trozos de 70 s de subtítulos reales (enero–noviembre de 2026), uno por caso difícil.
         ruta = Path(__file__).resolve().parent / "aperturas.json"
         for caso in json.loads(ruta.read_text(encoding="utf-8")):
             with self.subTest(caso["fecha"], prueba=caso["prueba"]):
                 cues = [tuple(c) for c in caso["cues"]]
                 mesas = [x for _, t, x in n.presentaciones(cues, caso["duracion"]) if t == "mesa"]
                 self.assertEqual(mesas, caso["mesa"])
+
+    def test_mesa_casos_limite(self):
+        # Casos construidos en la revisión del PR (no salen en el corpus de 158 noches).
+        def mesa(*cues):
+            return n.tertulianos(list(cues), 0, n.MESA.search(f"{cues[0][1]} {cues[1][1]}"))
+        # Un nombre compuesto cortado entre líneas tras «de la» no se parte.
+        self.assertEqual(mesa((73, "Hoy nos acompañan en la mesa de análisis Ana María de la"),
+                              (75, "Fuente López. Buenas noches.")), ["Ana María de la Fuente López"])
+        # «corresponsal de la Casa Blanca» es parte de la presentación.
+        self.assertEqual(mesa((73, "Hoy nos acompañan en la mesa de análisis Rosa Molló,"),
+                              (76, "corresponsal de la Casa Blanca. Buenas noches.")), ["Rosa Molló"])
+        # «buenas noticias» no es un saludo.
+        self.assertEqual(mesa((60, "Comenzamos. Hoy nos acompañan en la mesa de análisis Ana Pérez."),
+                              (63, "Buenas noches."),
+                              (68, "Ha intervenido Donald Trump con buenas noticias.")), ["Ana Pérez"])
 
     def test_sin_mayusculas(self):
         self.assertEqual(n.sin_mayusculas("Chema CRESPO y Ana MARTINEZ HOYOS, del PSOE"),
