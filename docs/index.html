@@ -68,6 +68,32 @@ ol.marcas li { display: grid; grid-template-columns: 3.4rem 1fr; gap: 0 10px; pa
 .yt { display: inline-block; margin-left: 6px; font-size: .85rem; white-space: nowrap; }
 .aviso { color: var(--suave); font-size: .9rem; margin: 6px 0 0; }
 mark { background: var(--resalte); color: inherit; }
+.pestanas { display: flex; gap: 4px; margin: 14px 0 0; border-bottom: 1px solid var(--borde); }
+.pestanas a { padding: 8px 14px; margin-bottom: -1px; text-decoration: none; color: var(--suave);
+  font-weight: 600; border-bottom: 2px solid transparent; }
+.pestanas a[aria-current="page"] { color: var(--texto); border-bottom-color: var(--acento); }
+.etiqueta.seguido { background: var(--resalte); color: var(--texto); }
+a.nombre-mesa { color: inherit; text-decoration: underline dotted; text-underline-offset: 3px; }
+.nombre-mesa.seguido { font-weight: 700; }
+a.nombre-mesa.candidata { text-decoration-style: dashed; }
+.duda { font-size: .72em; font-weight: 700; color: var(--acento); margin-left: 1px; }
+.nota { color: var(--suave); font-size: .85rem; }
+.corregir { display: inline-block; margin-left: 6px; font-size: .8rem; white-space: nowrap; }
+.pendientes h3, h3.subtitulo { font-size: 1.05rem; margin: 22px 0 4px; }
+.pendientes h4 { font-size: .95rem; margin: 12px 0 2px; }
+.estrella { background: none; border: 0; padding: 0 2px; font: inherit; font-size: 1.15rem; line-height: 1;
+  cursor: pointer; color: var(--suave); }
+.estrella[aria-pressed="true"] { color: var(--acento); }
+ol.analistas { list-style: none; margin: 10px 0 0; padding: 0; }
+ol.analistas li { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; padding: 8px 0;
+  border-top: 1px solid var(--borde); }
+ol.analistas .meta, .ficha .meta { color: var(--suave); font-size: .9rem; }
+.ficha { background: var(--tarjeta); border: 1px solid var(--borde); border-radius: 10px; padding: 12px; margin: 12px 0; }
+.ficha h2 { display: flex; gap: 6px; align-items: baseline; margin: 0; font-size: 1.3rem; }
+.ficha p { margin: 6px 0; }
+ol.marcas.noches li { grid-template-columns: 5.2rem 1fr; }
+ol.marcas.noches li.visto { opacity: .6; }
+.sin-ficha { color: var(--suave); font-size: .85rem; margin: 20px 0 0; }
 footer { color: var(--suave); font-size: .85rem; margin: 24px 0 8px; }
 footer .error { color: var(--acento); }
 </style>
@@ -77,11 +103,19 @@ footer .error { color: var(--acento); }
   <h1>La noche en 24h</h1>
   <p class="sub">Mesa de análisis, entrevistas y conexiones de cada noche con su hora, para verla a tu ritmo. Lunes a jueves, hacia las 22:00–00:30 en Canal 24h.</p>
   <div id="directo" class="directo">Cargando…</div>
-  <div class="herramientas">
-    <input id="buscar" type="search" placeholder="Buscar invitado o tema…" aria-label="Buscar invitado o tema">
-    <label><input type="checkbox" id="solo-pendientes"> Solo pendientes</label>
-  </div>
-  <main id="lista"></main>
+  <nav class="pestanas" aria-label="Vistas">
+    <a href="#" id="pestana-episodios">Episodios</a>
+    <a href="#analistas" id="pestana-analistas">Analistas</a>
+    <a href="#pendientes" id="pestana-pendientes">Pendientes</a>
+  </nav>
+  <section id="vista-episodios">
+    <div class="herramientas">
+      <input id="buscar" type="search" placeholder="Buscar invitado o tema…" aria-label="Buscar invitado o tema">
+      <label><input type="checkbox" id="solo-pendientes"> Solo pendientes</label>
+    </div>
+    <main id="lista"></main>
+  </section>
+  <section id="vista-analistas" hidden></section>
   <footer id="pie"></footer>
 </div>
 <script>
@@ -100,7 +134,7 @@ function el(etiqueta, attrs, ...hijos) {
     if (v === null || v === undefined || v === false) continue;
     if (k === "class") n.className = v; else n.setAttribute(k, v === true ? "" : v);
   }
-  for (const h of hijos.flat()) if (h !== null && h !== undefined && h !== false) n.append(h);
+  for (const h of hijos.flat(Infinity)) if (h !== null && h !== undefined && h !== false) n.append(h);
   return n;
 }
 const enlace = (url, texto, clase) => el("a", { href: url, target: "_blank", rel: "noopener", class: clase }, texto);
@@ -111,6 +145,19 @@ const sinAcentos = t => t.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase()
 function leerVistos() { try { return new Set(JSON.parse(localStorage.getItem("noche24h:vistos") || "[]")); } catch { return new Set(); } }
 function guardarVistos(s) { try { localStorage.setItem("noche24h:vistos", JSON.stringify([...s])); } catch { /* sin almacenamiento */ } }
 let vistos = leerVistos();
+// Analistas seguidos: sus noches se destacan en la lista de episodios.
+function leerSeguidos() { try { return new Set(JSON.parse(localStorage.getItem("noche24h:seguidos") || "[]")); } catch { return new Set(); } }
+function guardarSeguidos(s) { try { localStorage.setItem("noche24h:seguidos", JSON.stringify([...s])); } catch { /* sin almacenamiento */ } }
+let seguidos = leerSeguidos();
+const fmtFechaCorta = new Intl.DateTimeFormat("es-ES", { timeZone: ZONA, day: "numeric", month: "short", year: "2-digit" });
+const urlFicha = id => `#analista/${encodeURIComponent(id)}`;
+const REPO = "https://github.com/thendabs1/noche-24h";
+// Estados de cada nombre de la mesa (los pone noche24h.py): «automatica» (nombre exacto o
+// variante segura), «revisada» (decisión humana) y «candidata» (sin verificar: se cuenta aparte).
+const FIRMES = new Set(["automatica", "revisada"]);
+const ORDEN_ESTADO = { revisada: 0, automatica: 1, candidata: 2 };
+const AVISO_CANDIDATA = "Identificación automática sin verificar";
+let fichasPorId = new Map();
 
 // Día de la semana y minuto del día en hora de Madrid.
 function relojMadrid(fecha) {
@@ -179,7 +226,8 @@ function urlRtveEn(ep, seg) {
 function pintarMarca(ep, m, consulta) {
   const t = Date.parse(ep.inicio) + m.seg * 1000;
   const yt = enlaceYoutube(t);
-  const texto = resaltar(m.texto, consulta);
+  const texto = m.tipo === "mesa" && m.personas ? nombresMesa(m, consulta) : resaltar(m.texto, consulta);
+  const dudosas = m.tipo === "mesa" ? (m.personas || []).filter(p => p.estado === "candidata" || p.estado === null) : [];
   const pos = duracion(m.seg) + (m.seg_fin ? `–${duracion(m.seg_fin)}` : "");
   return el("li", { class: m.tipo },
     el("span", { class: "hora" }, fmtHora.format(t)),
@@ -189,7 +237,43 @@ function pintarMarca(ep, m, consulta) {
       m.url ? enlace(m.url, texto) : el("span", { class: "texto" }, texto),
       ep.url && enlace(urlRtveEn(ep, m.seg), "RTVE Play ▶", "yt"),
       yt && enlace(yt.url, yt.texto, "yt"),
+      dudosas.map(p => enlace(urlCorregir(ep, m, p), dudosas.length > 1 ? `Confirmar «${p.forma}»` : "Confirmar o corregir", "corregir")),
       m.presenta && el("span", { class: "presenta" }, resaltar(m.presenta, consulta))));
+}
+
+// Formulario de issue rellenado para confirmar o corregir una aparición de la mesa.
+function urlCorregir(ep, m, p) {
+  const fecha = fmtFechaCorta.format(Date.parse(ep.inicio));
+  const campos = {
+    template: "corregir-aparicion.yml",
+    title: `[Mesa] ${p ? p.forma : "nombre"} · ${fecha}`,
+    episodio: String(ep.id), fecha, minuto: duracion(m.seg),
+    forma: p ? p.forma : "", propuesta: p && p.nombre ? p.nombre : "",
+    enlace: ep.url ? urlRtveEn(ep, m.seg) : "",
+  };
+  const u = new URL(`${REPO}/issues/new`);
+  for (const [k, v] of Object.entries(campos)) if (v) u.searchParams.set(k, v);
+  return u.href;
+}
+
+// Un nombre de la mesa: con ficha enlaza a ella (en negrita si lo sigues); una candidata
+// lleva «?» y, al pasar por encima, cómo sale en los subtítulos y las señales de esa noche.
+function nombrePersona(p, consulta) {
+  const texto = resaltar(p.nombre || p.forma, consulta);
+  if (!p.id) return el("span", { title: p.estado === "revisada" ? "Revisado: sin identificar" : "Sin ficha" }, texto);
+  const sigue = seguidos.has(p.id), duda = p.estado === "candidata";
+  const titulo = duda ? [`${AVISO_CANDIDATA}: sale como «${p.forma}»`, ...(p.apoyos || [])].join(". ")
+    : p.estado === "revisada" ? `Revisado (sale como «${p.forma}»)`
+    : p.forma !== p.nombre ? `Sale como «${p.forma}»` : null;
+  return el("a", { href: urlFicha(p.id), title: titulo,
+    class: "nombre-mesa" + (sigue ? " seguido" : "") + (duda ? " candidata" : "") },
+    sigue ? "★ " : "", texto, duda && el("sup", { class: "duda", "aria-label": AVISO_CANDIDATA }, "?"));
+}
+
+function nombresMesa(m, consulta, sinId) {
+  const personas = (m.personas || m.texto.split(" · ").map(forma => ({ forma, estado: null })))
+    .filter(p => p.estado !== "no_es_mesa" && (!sinId || p.id !== sinId));
+  return personas.flatMap((p, i) => i ? [" · ", nombrePersona(p, consulta)] : [nombrePersona(p, consulta)]);
 }
 
 function pintarLista() {
@@ -215,12 +299,16 @@ function pintarLista() {
       pintarLista();
     });
     const titulo = /^La noche en 24 horas/i.test(ep.titulo || "") ? null : el("span", { class: "meta" }, ep.titulo);
+    const conSeguidos = [...new Set(ep.marcas.flatMap(m => (m.personas || [])
+      .filter(p => p.id && FIRMES.has(p.estado) && seguidos.has(p.id)).map(p => p.id)))]
+      .map(id => (fichasPorId.get(id) || { nombre: id }).nombre);
     const ytInicio = enlaceYoutube(inicio);
     lista.append(el("article", { class: "ep" + (visto ? " visto" : "") + (ep === siguiente ? " siguiente" : "") },
       el("div", { class: "ep-cab" },
         el("h2", {}, mayuscula(fmtDia.format(inicio))),
         el("span", { class: "meta" }, `${fmtHora.format(inicio)} · ${duracion(ep.duracion_s)}`),
         ep === siguiente && el("span", { class: "etiqueta" }, "Siguiente"),
+        conSeguidos.length > 0 && el("span", { class: "etiqueta seguido" }, `★ ${conSeguidos.join(", ")}`),
         titulo,
         el("label", {}, casilla, " visto")),
       el("div", { class: "enlaces" },
@@ -233,15 +321,241 @@ function pintarLista() {
   if (!mostrados) lista.append(el("p", { class: "aviso" }, consulta ? "Nada coincide con la búsqueda." : "No hay episodios que mostrar."));
 }
 
+// Noches de cada analista: por noche se queda su aparición más firme. Las coincidencias
+// solo cuentan apariciones firmes, para que una candidata errónea no ensucie otras fichas.
+function indiceAnalistas() {
+  const indice = new Map();
+  for (const ep of datos.episodios || []) {
+    const mejor = new Map();
+    for (const m of ep.marcas) {
+      if (m.tipo !== "mesa") continue;
+      for (const p of m.personas || []) {
+        if (!p.id) continue;
+        const previa = mejor.get(p.id);
+        if (!previa || ORDEN_ESTADO[p.estado] < ORDEN_ESTADO[previa.p.estado]) mejor.set(p.id, { ep, m, p });
+      }
+    }
+    const firmes = [...mejor.values()].filter(x => FIRMES.has(x.p.estado)).map(x => x.p.id);
+    for (const [id, noche] of mejor) {
+      if (!indice.has(id)) {
+        indice.set(id, { id, nombre: (fichasPorId.get(id) || noche.p).nombre, noches: [], companeros: new Map() });
+      }
+      const ficha = indice.get(id);
+      ficha.noches.push(noche);
+      if (!FIRMES.has(noche.p.estado)) continue;
+      for (const otro of firmes) if (otro !== id) ficha.companeros.set(otro, (ficha.companeros.get(otro) || 0) + 1);
+    }
+  }
+  for (const ficha of indice.values()) {
+    ficha.firmes = ficha.noches.filter(n => FIRMES.has(n.p.estado)).length;
+    ficha.revisadas = ficha.noches.filter(n => n.p.estado === "revisada").length;
+    ficha.porConfirmar = ficha.noches.length - ficha.firmes;
+  }
+  return indice;
+}
+
+function botonSeguir(id, nombre) {
+  const sigue = seguidos.has(id);
+  const accion = `${sigue ? "Dejar de seguir" : "Seguir"} a ${nombre}`;
+  const boton = el("button", { type: "button", class: "estrella", "aria-pressed": String(sigue),
+    title: accion, "aria-label": accion }, sigue ? "★" : "☆");
+  boton.addEventListener("click", () => {
+    sigue ? seguidos.delete(id) : seguidos.add(id);
+    guardarSeguidos(seguidos);
+    mostrar();
+  });
+  return boton;
+}
+
+const noches = n => `${n} ${n === 1 ? "noche" : "noches"}`;
+const resumen = f => [noches(f.firmes), f.revisadas && `${f.revisadas} revisada${f.revisadas === 1 ? "" : "s"}`,
+  f.porConfirmar && `${f.porConfirmar} por confirmar`].filter(Boolean).join(" · ");
+const urlWikipedia = titulo => `https://es.wikipedia.org/wiki/${encodeURIComponent(titulo.replace(/ /g, "_"))}`;
+
+// La muestra de control sale de las apariciones que las reglas daban por automáticas en
+// estas noches: así no cambia al llegar noches nuevas ni al revisar las suyas.
+const MUESTRA_DESDE = Date.parse("2026-08-31T00:00:00+02:00"), MUESTRA_HASTA = Date.parse("2026-11-19T00:00:00+01:00");
+
+function pendientes() {
+  const candidatas = [], automaticas = [];
+  for (const ep of datos.episodios || []) {
+    const t = Date.parse(ep.inicio);
+    for (const m of ep.marcas) {
+      if (m.tipo !== "mesa") continue;
+      for (const p of m.personas || []) {
+        if (p.estado === "candidata") candidatas.push({ ep, m, p });
+        const reglas = "origen" in p ? p.origen : p.estado;
+        if (reglas === "automatica" && t >= MUESTRA_DESDE && t < MUESTRA_HASTA) automaticas.push({ ep, m, p });
+      }
+    }
+  }
+  return { candidatas, automaticas, sinFicha: datos.sin_ficha || [], huerfanas: datos.revisiones_huerfanas || [] };
+}
+
+// Resultado de revisar una aparición automática: acierto, error o sin revisar (null).
+function resultadoMuestra(p) {
+  if (!("origen" in p)) return null;
+  return p.estado === "revisada" && p.id && p.id === p.origen_id ? "acierto" : "error";
+}
+
+function pintarAnalistas() {
+  const fichas = [...indiceAnalistas().values()].sort((a, b) =>
+    seguidos.has(b.id) - seguidos.has(a.id) || b.firmes - a.firmes || b.porConfirmar - a.porConfirmar
+    || a.nombre.localeCompare(b.nombre, "es"));
+  const episodios = datos.episodios || [];
+  const desde = episodios.length ? fmtFechaCorta.format(Date.parse(episodios[episodios.length - 1].inicio)) : "";
+  const lista = grupo => el("ol", { class: "analistas" }, grupo.map(f => el("li", {},
+    botonSeguir(f.id, f.nombre),
+    el("a", { href: urlFicha(f.id) }, f.nombre),
+    el("span", { class: "meta" }, `${resumen(f)} · última: ${fmtFechaCorta.format(Date.parse(f.noches[0].ep.inicio))}`))));
+  const esInvitado = f => (fichasPorId.get(f.id) || {}).tipo === "invitado";
+  const tertulianos = fichas.filter(f => !esInvitado(f)), invitados = fichas.filter(esInvitado);
+  document.getElementById("vista-analistas").replaceChildren(
+    el("p", { class: "aviso" }, `Tertulianos de la mesa de análisis desde el ${desde}. `,
+      "Se identifican solos con una tabla curada; las noches dudosas (?) se cuentan aparte y se revisan en ",
+      el("a", { href: "#pendientes" }, "Pendientes"), ". Sigue a quien te interese con la estrella."),
+    tertulianos.length ? lista(tertulianos) : el("p", { class: "aviso" }, "Aún no hay mesas con analistas reconocidos."),
+    ...(invitados.length ? [
+      el("h3", { class: "subtitulo" }, "Invitados en la mesa"),
+      el("p", { class: "nota" }, "Especialistas o invitados de una o pocas noches que se sentaron en la mesa: no son tertulianos habituales."),
+      lista(invitados)] : []));
+}
+
+function pintarFicha(id) {
+  const ficha = indiceAnalistas().get(id), info = fichasPorId.get(id);
+  const vista = document.getElementById("vista-analistas");
+  const volver = el("p", {}, el("a", { href: "#analistas" }, "← Todos los analistas"));
+  if (!ficha) {
+    vista.replaceChildren(volver, el("p", { class: "aviso" }, info ? `Aún no hay noches de ${info.nombre}.` : "No hay ficha con ese nombre."));
+    return;
+  }
+  const primera = ficha.noches[ficha.noches.length - 1].ep, ultima = ficha.noches[0].ep;
+  const companeros = [...ficha.companeros].sort((a, b) => b[1] - a[1]).slice(0, 8);
+  const datosFicha = [info && info.tipo === "invitado" && "Invitado en la mesa", info && info.medio, info && info.wikipedia && enlace(urlWikipedia(info.wikipedia), "Wikipedia"),
+    ...(info ? info.fuentes : []).map((u, i) => enlace(u, i ? `fuente ${i + 1}` : "fuente"))].filter(Boolean);
+  vista.replaceChildren(volver, el("article", { class: "ficha" },
+    el("h2", {}, botonSeguir(id, ficha.nombre), ficha.nombre),
+    datosFicha.length > 0 && el("p", { class: "meta" }, datosFicha.flatMap((x, i) => i ? [" · ", x] : [x])),
+    el("p", { class: "meta" }, `${resumen(ficha)}, del ${fmtFechaCorta.format(Date.parse(primera.inicio))} al ${fmtFechaCorta.format(Date.parse(ultima.inicio))}.`),
+    companeros.length > 0 && el("p", {}, "Coincide más con: ",
+      companeros.flatMap(([c, n], i) => [i ? " · " : "", el("a", { href: urlFicha(c) }, (fichasPorId.get(c) || { nombre: c }).nombre), ` (${n})`])),
+    el("ol", { class: "marcas noches" }, ficha.noches.map(({ ep, m, p }) => {
+      const t = Date.parse(ep.inicio) + m.seg * 1000;
+      const yt = enlaceYoutube(t);
+      const otros = (m.personas || []).filter(x => x.id !== id);
+      const duda = p.estado === "candidata";
+      return el("li", { class: "mesa" + (vistos.has(ep.id) ? " visto" : "") },
+        el("span", { class: "hora" }, fmtFechaCorta.format(Date.parse(ep.inicio))),
+        el("span", { class: "pos" }, fmtHora.format(t)),
+        el("div", { class: "cuerpo" },
+          el("span", { class: "texto" }, otros.length ? ["Con ", ...nombresMesa(m, "", id)] : "Mesa"),
+          ep.url && enlace(urlRtveEn(ep, m.seg), "RTVE Play ▶", "yt"),
+          yt && enlace(yt.url, yt.texto, "yt"),
+          enlace(urlCorregir(ep, m, p), duda ? "Confirmar o corregir" : "¿Error?", "corregir"),
+          duda && el("span", { class: "presenta" }, `? ${AVISO_CANDIDATA}: sale como «${p.forma}».`,
+            (p.apoyos || []).length ? ` A favor: ${p.apoyos.join("; ")}.` : ""),
+          p.estado === "revisada" && el("span", { class: "presenta" }, "Revisado.")));
+    }))));
+}
+
+// Muestra fija para medir el acierto de lo automático: se ordena por un resumen de cada
+// aparición, así no cambia de una visita a otra (solo al llegar noches nuevas).
+function resumenNumerico(texto) {
+  let h = 2166136261;
+  for (const c of texto) h = Math.imul(h ^ c.codePointAt(0), 16777619) >>> 0;
+  return h;
+}
+
+function filaPendiente({ ep, m, p }, conNombre) {
+  const t = Date.parse(ep.inicio) + m.seg * 1000;
+  const resultado = conNombre && resultadoMuestra(p);
+  const nombre = p.id ? p.nombre : (fichasPorId.get(p.origen_id) || {}).nombre;
+  const id = p.id || p.origen_id;
+  return el("li", { class: "mesa" },
+    el("span", { class: "hora" }, fmtFechaCorta.format(Date.parse(ep.inicio))),
+    el("span", { class: "pos" }, fmtHora.format(t)),
+    el("div", { class: "cuerpo" },
+      conNombre && id ? [el("a", { href: urlFicha(id) }, nombre), " "] : null,
+      el("span", { class: "texto" }, `sale como «${p.forma}»`),
+      ep.url && enlace(urlRtveEn(ep, m.seg), "RTVE Play ▶", "yt"),
+      resultado ? el("strong", { class: "corregir" }, resultado === "acierto" ? "✓ revisada: acierto" : "✗ revisada: error")
+        : enlace(urlCorregir(ep, m, p), p.estado === "automatica" ? "Confirmar o marcar error" : "Confirmar o corregir", "corregir"),
+      (p.apoyos || []).length > 0 && el("span", { class: "presenta" }, `A favor: ${p.apoyos.join("; ")}.`)));
+}
+
+function pintarPendientes() {
+  const { candidatas, automaticas, sinFicha, huerfanas } = pendientes();
+  const porPersona = new Map();
+  for (const c of candidatas) porPersona.set(c.p.id, [...(porPersona.get(c.p.id) || []), c]);
+  const grupos = [...porPersona].sort((a, b) => b[1].length - a[1].length);
+  const episodioPorId = new Map((datos.episodios || []).map(e => [e.id, e]));
+  const muestra = automaticas.map(x => [resumenNumerico(`${x.ep.id}|${x.p.forma}`), x])
+    .sort((a, b) => a[0] - b[0]).slice(0, 30).map(x => x[1])
+    .sort((a, b) => Date.parse(b.ep.inicio) - Date.parse(a.ep.inicio));
+  document.getElementById("vista-analistas").replaceChildren(el("div", { class: "pendientes" },
+    el("p", { class: "aviso" }, "Lo que la identificación automática no puede asegurar. Para revisarlo, abre el minuto en RTVE Play, ",
+      "lee el rótulo con el nombre y usa «Confirmar o corregir»: abre una issue rellenada. ",
+      "Las decisiones se guardan en ", enlace(`${REPO}/blob/main/revisiones.json`, "revisiones.json"),
+      " y las variantes, en ", enlace(`${REPO}/blob/main/analistas.json`, "analistas.json"), "."),
+    el("h3", {}, `Por confirmar (${candidatas.length})`),
+    candidatas.length ? grupos.map(([id, filas]) => [
+      el("h4", {}, el("a", { href: urlFicha(id) }, (fichasPorId.get(id) || { nombre: id }).nombre), ` · ${noches(filas.length)}`),
+      el("ol", { class: "marcas noches" }, filas.map(f => filaPendiente(f, false)))])
+      : el("p", { class: "nota" }, "Nada por confirmar."),
+    el("h3", {}, `Sin identificar (${sinFicha.length})`),
+    el("p", { class: "nota" }, "Nombres de la mesa que no casan con nadie de la tabla: invitados de una noche o nombres mal reconocidos. No tienen ficha."),
+    sinFicha.length ? el("ol", { class: "analistas" }, sinFicha.map(x => el("li", {},
+      el("strong", {}, x.forma), el("span", { class: "meta" }, noches(x.veces)),
+      x.noches.flatMap(n => {
+        const ep = episodioPorId.get(n.episodio);
+        return ep ? [enlace(ep.url ? urlRtveEn(ep, n.seg) : ep.subtitulos, `${fmtFechaCorta.format(Date.parse(ep.inicio))} ▶`, "yt"),
+          enlace(urlCorregir(ep, { seg: n.seg }, { forma: x.forma }), "Identificar", "corregir")] : [];
+      }))))
+      : el("p", { class: "nota" }, "Ninguno."),
+    el("h3", {}, `Muestra de control (${muestra.length})`),
+    el("p", { class: "nota" }, "Apariciones automáticas de las noches del 31/08 al 18/11/2026, elegidas al azar y siempre las mismas, ",
+      "para medir cuánto acierta la identificación: comprueba el rótulo de cada una y confírmala o marca el error. ",
+      (() => {
+        const r = muestra.map(x => resultadoMuestra(x.p)).filter(Boolean);
+        return r.length ? `Revisadas ${r.length} de ${muestra.length}: ${r.filter(x => x === "acierto").length} aciertos, ${r.filter(x => x === "error").length} errores.` : "Aún no hay ninguna revisada.";
+      })()),
+    el("ol", { class: "marcas noches" }, muestra.map(f => filaPendiente(f, true))),
+    huerfanas.length > 0 && [
+      el("h3", {}, `Revisiones sin aparición (${huerfanas.length})`),
+      el("p", { class: "nota" }, "Decisiones de revisiones.json que ya no encuentran su nombre en la mesa (puede haber cambiado la extracción):"),
+      el("ul", {}, huerfanas.map(r => el("li", {}, `${r.episodio} · «${r.forma}» → ${r.decision}${r.persona ? ` (${r.persona})` : ""}`)))]));
+}
+
+// Vista según el ancla: #analistas (lista), #analista/id (ficha), #pendientes o nada (episodios).
+function mostrar() {
+  let ancla = location.hash.slice(1);
+  try { ancla = decodeURIComponent(ancla); } catch { /* ancla mal formada: se queda tal cual */ }
+  const vista = ancla === "pendientes" ? "pendientes"
+    : ancla === "analistas" || ancla.startsWith("analista/") ? "analistas" : "episodios";
+  document.getElementById("vista-episodios").hidden = vista !== "episodios";
+  document.getElementById("vista-analistas").hidden = vista === "episodios";
+  for (const nombre of ["episodios", "analistas", "pendientes"]) {
+    const pestana = document.getElementById(`pestana-${nombre}`);
+    if (nombre === vista) pestana.setAttribute("aria-current", "page"); else pestana.removeAttribute("aria-current");
+  }
+  const { candidatas, sinFicha } = pendientes();
+  document.getElementById("pestana-pendientes").textContent = `Pendientes (${candidatas.length + sinFicha.length})`;
+  if (vista === "episodios") pintarLista();
+  else if (vista === "pendientes") pintarPendientes();
+  else if (ancla.startsWith("analista/")) pintarFicha(ancla.slice("analista/".length));
+  else pintarAnalistas();
+}
+
 function pintarPie() {
   const errores = Object.entries(datos.estado || {}).filter(([, e]) => e.valor !== "ok");
   document.getElementById("pie").replaceChildren(
     el("p", {}, `Datos actualizados el ${fmtFecha.format(Date.parse(datos.generado))}. `,
       "Fuentes: API pública de RTVE y directo de RTVE Noticias en YouTube. ",
       "Mesa, plató y conexiones se deducen de los subtítulos automáticos: puede haber errores y nombres mal escritos. ",
-      "Lo marcado como visto se guarda solo en este navegador. ",
+      "Los tertulianos se identifican solos con una tabla curada; lo dudoso lleva «?» y se corrige desde ", el("a", { href: "#pendientes" }, "Pendientes"), ". ",
+      "Lo marcado como visto y los analistas que sigues se guardan solo en este navegador. ",
       enlace("https://github.com/thendabs1/noche-24h", "Código")),
-    errores.map(([paso, e]) => el("p", { class: "error" },
+    ...errores.map(([paso, e]) => el("p", { class: "error" },
       `Fallo en ${paso} desde el ${fmtFecha.format(Date.parse(e.desde))}: ${e.valor}`)));
 }
 
@@ -254,9 +568,14 @@ async function iniciar() {
     document.getElementById("directo").textContent = `No se han podido cargar los datos (${e.message}).`;
     return;
   }
+  fichasPorId = new Map((datos.analistas || []).map(a => [a.id, a]));
   pintarDirecto();
-  pintarLista();
+  mostrar();
   pintarPie();
+  window.addEventListener("hashchange", () => {
+    mostrar();
+    if (location.hash.startsWith("#analista")) document.querySelector(".pestanas").scrollIntoView();
+  });
   document.getElementById("buscar").addEventListener("input", pintarLista);
   document.getElementById("solo-pendientes").addEventListener("change", pintarLista);
   setInterval(pintarDirecto, 60e3);

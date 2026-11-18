@@ -4,9 +4,14 @@ on:
   schedule:
     - cron: '17 * * * *'  # cada hora (UTC); GitHub puede retrasarlo unos minutos
   workflow_dispatch:
+    inputs:
+      historico:
+        description: 'Días que repasar aunque la base ya tenga episodios (para cargar histórico)'
+        required: false
+        type: number
   push:
     branches: [main]
-    paths: ['docs/index.html', 'noche24h.py', '.github/workflows/actualizar.yml']
+    paths: ['docs/index.html', 'noche24h.py', 'analistas.json', 'revisiones.json', '.github/workflows/actualizar.yml']
 
 permissions:
   contents: write
@@ -35,7 +40,9 @@ jobs:
       - name: Actualizar índice
         id: script
         continue-on-error: true
-        run: python noche24h.py actualizar
+        env:
+          HISTORICO: ${{ inputs.historico }}
+        run: python noche24h.py actualizar ${HISTORICO:+--historico "$HISTORICO"}
       - name: Guardar cambios
         id: guardar
         run: |

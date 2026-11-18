@@ -1,0 +1,57 @@
+name: Confirmar o corregir un tertuliano
+description: Confirma, corrige o identifica a alguien de la mesa de análisis de una noche.
+title: "[Mesa] "
+labels: ["tertulianos"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Los tertulianos se identifican solos a partir de los subtítulos automáticos de RTVE. Para comprobarlo, abre el enlace al minuto en RTVE Play y **lee el rótulo** con el nombre en pantalla.
+        Si llegas desde la web, los primeros campos vienen rellenados.
+  - type: input
+    id: episodio
+    attributes:
+      label: Episodio (id de RTVE)
+    validations:
+      required: true
+  - type: input
+    id: fecha
+    attributes:
+      label: Fecha de la emisión
+  - type: input
+    id: minuto
+    attributes:
+      label: Minuto en el episodio
+  - type: input
+    id: forma
+    attributes:
+      label: Nombre tal como sale en los subtítulos
+    validations:
+      required: true
+  - type: input
+    id: propuesta
+    attributes:
+      label: Quién es (nombre correcto)
+      description: Déjalo vacío si no se puede saber.
+  - type: dropdown
+    id: decision
+    attributes:
+      label: Qué has comprobado
+      options:
+        - Es la persona indicada (confirmar)
+        - Es otra persona (corregir)
+        - No se puede identificar
+        - No es de la mesa (error de detección)
+    validations:
+      required: true
+  - type: input
+    id: enlace
+    attributes:
+      label: Enlace al minuto en RTVE Play
+  - type: textarea
+    id: evidencia
+    attributes:
+      label: Cómo lo has comprobado
+      description: Rótulo en pantalla, cómo le presenta el presentador, una fuente externa (URL)…
+    validations:
+      required: true
