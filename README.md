@@ -22,7 +22,7 @@ No guarda transcripciones: enlaza a los subtítulos de la API oficial de RTVE.
 
 ## Cómo funciona
 
-`noche24h.py actualizar` corre cada hora en GitHub Actions y hace dos pasos:
+`noche24h.py actualizar` corre en GitHub Actions cada hora y, de lunes a jueves de 21:00 a 05:00, cada 10 minutos (para que las marcas lleguen mientras YouTube aún deja rebobinar). Hace dos pasos:
 
 1. **RTVE:**
    - Pide los vídeos del programa (`api.rtve.es/api/programas/25970/videos.json`).

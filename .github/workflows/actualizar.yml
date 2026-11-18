@@ -2,7 +2,11 @@ name: actualizar
 
 on:
   schedule:
-    - cron: '17 * * * *'  # cada hora (UTC); GitHub puede retrasarlo unos minutos
+    - cron: '17 * * * *'  # cada hora (UTC); GitHub retrasa o se salta muchas
+    # De noche, cada 10 min para que las marcas lleguen mientras YouTube aún deja rebobinar
+    # (4 h): de lunes a jueves de 21:00 a 05:00 en Madrid en invierno (22:00–06:00 en verano).
+    - cron: '*/10 20-23 * * 1-4'
+    - cron: '*/10 0-3 * * 2-5'
   workflow_dispatch:
   push:
     branches: [main]
@@ -46,6 +50,7 @@ jobs:
             git -c user.name="github-actions[bot]" \
                 -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
                 commit -m "datos: actualización automática"
+            git pull --rebase --quiet  # por si main ha avanzado durante la ejecución
             git push
             echo "cambios=si" >> "$GITHUB_OUTPUT"
           fi
