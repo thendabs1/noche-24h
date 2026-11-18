@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-18T03:53:01+01:00",
+ "generado": "2026-11-18T09:01:09+01:00",
  "estado": {
   "rtve": {
    "valor": "ok",
@@ -30,14 +30,14 @@
    "estado": "ok",
    "marcas": [
     {
-     "seg": 68,
-     "tipo": "plato",
-     "texto": "Comenzamos. Hoy nos acompaña en la mesa de análisis May Marinho."
+     "seg": 65,
+     "tipo": "mesa",
+     "texto": "May Marinho · Carlos Elordi Cue · Paloma Esteban"
     },
     {
      "seg": 1458,
      "tipo": "plato",
-     "texto": "Hoy nos acompaña Ana PALACIO, abogada internacional, diplomática y exministra de Exteriores,"
+     "texto": "Ana Palacio, abogada internacional, diplomática y exministra de Exteriores"
     },
     {
      "seg": 2686,
@@ -54,48 +54,6 @@
      "tipo": "conexion",
      "texto": "Vamos ya con los detalles. Olivia Guillén, redacción de informativos."
     }
-   ],
-   "tramos": [
-    {
-     "tema": "elecciones",
-     "seg": 60,
-     "seg_fin": 480
-    },
-    {
-     "tema": "elecciones",
-     "seg": 900,
-     "seg_fin": 1140
-    },
-    {
-     "tema": "elecciones",
-     "seg": 2220,
-     "seg_fin": 2340
-    },
-    {
-     "tema": "elecciones",
-     "seg": 2640,
-     "seg_fin": 2820
-    },
-    {
-     "tema": "elecciones",
-     "seg": 3780,
-     "seg_fin": 5220
-    },
-    {
-     "tema": "elecciones",
-     "seg": 5940,
-     "seg_fin": 6060
-    },
-    {
-     "tema": "elecciones",
-     "seg": 7500,
-     "seg_fin": 7860
-    },
-    {
-     "tema": "elecciones",
-     "seg": 8100,
-     "seg_fin": 8640
-    }
    ]
   },
   {
@@ -110,12 +68,12 @@
     {
      "seg": 69,
      "tipo": "mesa",
-     "texto": "Lourdes Pérez · Javier Casqueiro · Martínez Hoyos · Manuel Rico"
+     "texto": "Lourdes Pérez · Javier Casqueiro · Martínez Hoyos"
     },
     {
      "seg": 2362,
      "tipo": "plato",
-     "texto": "Como les decía, nos acompaña Nicolás Artorius, cofundador de Comisiones Obreras, presidente del Consejo"
+     "texto": "Nicolás Artorius, cofundador de Comisiones Obreras, presidente del Consejo"
     },
     {
      "seg": 5852,
@@ -130,44 +88,12 @@
     {
      "seg": 8235,
      "tipo": "plato",
-     "texto": "pues nos acompaña juanjo fernández ingeniero escritor y analista de defensa que acaba de publicar este libro muy recomendable"
+     "texto": "Juanjo fernández ingeniero escritor y analista de defensa que acaba de publicar este libro muy recomendable"
     },
     {
      "seg": 9405,
      "tipo": "presentacion",
      "texto": "Manuel Rico, buenas noches. Buenas noches. Gabón."
-    }
-   ],
-   "tramos": [
-    {
-     "tema": "elecciones",
-     "seg": 0,
-     "seg_fin": 300
-    },
-    {
-     "tema": "elecciones",
-     "seg": 1080,
-     "seg_fin": 1980
-    },
-    {
-     "tema": "elecciones",
-     "seg": 2280,
-     "seg_fin": 2700
-    },
-    {
-     "tema": "elecciones",
-     "seg": 4680,
-     "seg_fin": 4920
-    },
-    {
-     "tema": "elecciones",
-     "seg": 5160,
-     "seg_fin": 5460
-    },
-    {
-     "tema": "elecciones",
-     "seg": 5760,
-     "seg_fin": 7200
     }
    ]
   },
@@ -179,14 +105,7 @@
    "url": "https://www.rtve.es/play/videos/la-noche-en-24h/elecciones-generales-29n-comienza-campana-electoral/17311874/",
    "subtitulos": "https://api.rtve.es/api/videos/17311874/subtitulos.json",
    "estado": "ok",
-   "marcas": [],
-   "tramos": [
-    {
-     "tema": "elecciones",
-     "seg": 0,
-     "seg_fin": 995
-    }
-   ]
+   "marcas": []
   },
   {
    "id": 17311880,
@@ -224,33 +143,6 @@
      "tipo": "conexion",
      "texto": "Marcos Fernández, buenas noches, cuéntanos. ¿Qué tal?"
     }
-   ],
-   "tramos": [
-    {
-     "tema": "elecciones",
-     "seg": 0,
-     "seg_fin": 720
-    },
-    {
-     "tema": "elecciones",
-     "seg": 1020,
-     "seg_fin": 1200
-    },
-    {
-     "tema": "elecciones",
-     "seg": 2160,
-     "seg_fin": 4080
-    },
-    {
-     "tema": "elecciones",
-     "seg": 5400,
-     "seg_fin": 5580
-    },
-    {
-     "tema": "elecciones",
-     "seg": 6540,
-     "seg_fin": 9081
-    }
    ]
   },
   {
@@ -264,8 +156,8 @@
    "marcas": [
     {
      "seg": 191,
-     "tipo": "plato",
-     "texto": "Nos acompaña Anche Chema Crespo. Buenas noches."
+     "tipo": "mesa",
+     "texto": "Anche Chema Crespo · Juan Fernández Miranda"
     },
     {
      "seg": 474,
@@ -287,33 +179,6 @@
      "tipo": "conexion",
      "texto": "en Madrid, y anuncian que irán a los tribunales. Olivia Guillén, redacción de informativos, ¿qué balance deja esta"
     }
-   ],
-   "tramos": [
-    {
-     "tema": "elecciones",
-     "seg": 3480,
-     "seg_fin": 3780
-    },
-    {
-     "tema": "elecciones",
-     "seg": 7020,
-     "seg_fin": 7140
-    },
-    {
-     "tema": "elecciones",
-     "seg": 7620,
-     "seg_fin": 7800
-    },
-    {
-     "tema": "elecciones",
-     "seg": 8340,
-     "seg_fin": 8460
-    },
-    {
-     "tema": "elecciones",
-     "seg": 9180,
-     "seg_fin": 9300
-    }
    ]
   },
   {
@@ -326,6 +191,11 @@
    "estado": "ok",
    "marcas": [
     {
+     "seg": 54,
+     "tipo": "mesa",
+     "texto": "Isaias Lafuente · Paloma Esteban · Jesús Maraña · Lucía Méndez"
+    },
+    {
      "seg": 2388,
      "tipo": "conexion",
      "texto": "Pero vamos antes.. de repasar la prensa y ir con el ministro, vamos hasta Cáceres para"
@@ -336,35 +206,13 @@
      "tipo": "entrevista",
      "texto": "Bolaños, ministro de Justicia: \"La derecha no cree en que haya políticas para la vivienda\"",
      "url": "https://www.rtve.es/play/videos/la-noche-en-24h/bolanos-derecha-no-cree-haya-politicas-vivienda/17308895/",
-     "presenta": "humano. Y como les decíamos, hoy nos acompaña Félix Bolaños, ministro de Presidencia",
+     "presenta": "Félix Bolaños, ministro de Presidencia",
      "lugar": "plato"
     },
     {
      "seg": 4612,
      "tipo": "presentacion",
      "texto": "Álvaro Jiménez, buenas noches. ¿Cómo está ahora mismo ahí el"
-    }
-   ],
-   "tramos": [
-    {
-     "tema": "elecciones",
-     "seg": 60,
-     "seg_fin": 180
-    },
-    {
-     "tema": "elecciones",
-     "seg": 3780,
-     "seg_fin": 3900
-    },
-    {
-     "tema": "elecciones",
-     "seg": 6960,
-     "seg_fin": 7200
-    },
-    {
-     "tema": "elecciones",
-     "seg": 8400,
-     "seg_fin": 9360
     }
    ]
   },
@@ -385,7 +233,7 @@
     {
      "seg": 1459,
      "tipo": "plato",
-     "texto": "Semana. Hoy nos acompaña en el plató de la noche Miguel Pardeza, que acaba de publicar su última novela"
+     "texto": "Miguel Pardeza, que acaba de publicar su última novela"
     },
     {
      "seg": 2055,
@@ -395,7 +243,7 @@
     {
      "seg": 3245,
      "tipo": "plato",
-     "texto": "Nos acompaña su director, el director de esta película, Daniel Manzomi."
+     "texto": "Su director, el director de esta película, Daniel Manzomi"
     },
     {
      "seg": 5436,
@@ -417,38 +265,6 @@
      "tipo": "presentacion",
      "texto": "Estefanía Molina, muy buenas noches. Carlos de los Riquem, muy buenas noches."
     }
-   ],
-   "tramos": [
-    {
-     "tema": "elecciones",
-     "seg": 0,
-     "seg_fin": 180
-    },
-    {
-     "tema": "elecciones",
-     "seg": 4500,
-     "seg_fin": 5580
-    },
-    {
-     "tema": "elecciones",
-     "seg": 5880,
-     "seg_fin": 6420
-    },
-    {
-     "tema": "elecciones",
-     "seg": 6720,
-     "seg_fin": 7020
-    },
-    {
-     "tema": "elecciones",
-     "seg": 7920,
-     "seg_fin": 8040
-    },
-    {
-     "tema": "elecciones",
-     "seg": 8280,
-     "seg_fin": 8400
-    }
    ]
   },
   {
@@ -463,7 +279,7 @@
     {
      "seg": 122,
      "tipo": "mesa",
-     "texto": "Raquel Ejerique · May Marinho · Alejandro Recaijo"
+     "texto": "Raquel Ejerique · May Marinho"
     },
     {
      "seg": 544,
@@ -485,44 +301,7 @@
     {
      "seg": 3100,
      "tipo": "plato",
-     "texto": "Hoy nos acompaña el periodista José María Izquierdo, acaba de publicar, está calentito de la imprenta, el libro Los 300"
-    }
-   ],
-   "tramos": [
-    {
-     "tema": "elecciones",
-     "seg": 120,
-     "seg_fin": 480
-    },
-    {
-     "tema": "elecciones",
-     "seg": 1080,
-     "seg_fin": 1260
-    },
-    {
-     "tema": "elecciones",
-     "seg": 2040,
-     "seg_fin": 2160
-    },
-    {
-     "tema": "elecciones",
-     "seg": 4560,
-     "seg_fin": 4680
-    },
-    {
-     "tema": "elecciones",
-     "seg": 6060,
-     "seg_fin": 6240
-    },
-    {
-     "tema": "elecciones",
-     "seg": 7200,
-     "seg_fin": 7560
-    },
-    {
-     "tema": "elecciones",
-     "seg": 8280,
-     "seg_fin": 8520
+     "texto": "El periodista José María Izquierdo, acaba de publicar, está calentito de la imprenta, el libro Los 300"
     }
    ]
   },
@@ -543,7 +322,7 @@
     {
      "seg": 2243,
      "tipo": "plato",
-     "texto": "Nos acompaña Alejandro Pérez Polo, que es politólogo y acaba de publicar este libro."
+     "texto": "Alejandro Pérez Polo, que es politólogo y acaba de publicar este libro"
     },
     {
      "seg": 2564,
@@ -553,7 +332,7 @@
     {
      "seg": 3209,
      "tipo": "plato",
-     "texto": "Pues nos acompaña Raul Incertis, médico de la Organización Médicos Sin Frontera, que acaba de publicar este libro, Ojalá"
+     "texto": "Raul Incertis, médico de la Organización Médicos Sin Frontera, que acaba de publicar este libro, Ojalá"
     },
     {
      "seg": 4038,
@@ -575,53 +354,6 @@
      "tipo": "presentacion",
      "texto": "Cristina Olea, buenas noches, frente a quienes como su vicepresidente atribuyen la derrota a"
     }
-   ],
-   "tramos": [
-    {
-     "tema": "elecciones",
-     "seg": 60,
-     "seg_fin": 420
-    },
-    {
-     "tema": "elecciones",
-     "seg": 660,
-     "seg_fin": 840
-    },
-    {
-     "tema": "elecciones",
-     "seg": 1080,
-     "seg_fin": 1740
-    },
-    {
-     "tema": "elecciones",
-     "seg": 2100,
-     "seg_fin": 2280
-    },
-    {
-     "tema": "elecciones",
-     "seg": 5100,
-     "seg_fin": 5340
-    },
-    {
-     "tema": "elecciones",
-     "seg": 6600,
-     "seg_fin": 6720
-    },
-    {
-     "tema": "elecciones",
-     "seg": 7020,
-     "seg_fin": 7260
-    },
-    {
-     "tema": "elecciones",
-     "seg": 7500,
-     "seg_fin": 7680
-    },
-    {
-     "tema": "elecciones",
-     "seg": 8280,
-     "seg_fin": 8640
-    }
    ]
   },
   {
@@ -641,7 +373,7 @@
     {
      "seg": 1675,
      "tipo": "mesa",
-     "texto": "Almudena Guerrero · Carlos Cue"
+     "texto": "Carlos Cue"
     },
     {
      "seg": 1957,
@@ -695,43 +427,6 @@
      "tipo": "presentacion",
      "texto": "Buenas noches. Eima Lucas, buenas noches. Hacemos antes de ir ya con el programa especial"
     }
-   ],
-   "tramos": [
-    {
-     "tema": "elecciones",
-     "seg": 180,
-     "seg_fin": 420
-    },
-    {
-     "tema": "elecciones",
-     "seg": 2100,
-     "seg_fin": 2220
-    },
-    {
-     "tema": "elecciones",
-     "seg": 3240,
-     "seg_fin": 4080
-    },
-    {
-     "tema": "elecciones",
-     "seg": 4620,
-     "seg_fin": 5040
-    },
-    {
-     "tema": "elecciones",
-     "seg": 6180,
-     "seg_fin": 6900
-    },
-    {
-     "tema": "elecciones",
-     "seg": 7500,
-     "seg_fin": 7680
-    },
-    {
-     "tema": "elecciones",
-     "seg": 8640,
-     "seg_fin": 9600
-    }
    ]
   },
   {
@@ -761,34 +456,12 @@
     {
      "seg": 5169,
      "tipo": "plato",
-     "texto": "Nos acompaña Miriam Jiménez, que es socióloga. Buenas noches, bienvenida"
+     "texto": "Miriam Jiménez, que es socióloga"
     },
     {
      "seg": 6151,
      "tipo": "presentacion",
      "texto": "Sonia López, buenas noches Son horas decisivas para saber su evolución"
-    }
-   ],
-   "tramos": [
-    {
-     "tema": "elecciones",
-     "seg": 1620,
-     "seg_fin": 1980
-    },
-    {
-     "tema": "elecciones",
-     "seg": 4020,
-     "seg_fin": 4200
-    },
-    {
-     "tema": "elecciones",
-     "seg": 5580,
-     "seg_fin": 5700
-    },
-    {
-     "tema": "elecciones",
-     "seg": 6600,
-     "seg_fin": 7140
     }
    ]
   },
@@ -801,6 +474,11 @@
    "subtitulos": "https://api.rtve.es/api/videos/17286509/subtitulos.json",
    "estado": "ok",
    "marcas": [
+    {
+     "seg": 102,
+     "tipo": "mesa",
+     "texto": "Marta Nebot · Martínez Hoyos · Pedro Cuartango"
+    },
     {
      "seg": 998,
      "tipo": "mesa",
@@ -824,49 +502,7 @@
     {
      "seg": 8670,
      "tipo": "plato",
-     "texto": "Como les decía, nos acompaña Rubén Sánchez, portavoz de FACUA, que esta tarde ha presentado en Madrid el libro."
-    }
-   ],
-   "tramos": [
-    {
-     "tema": "elecciones",
-     "seg": 0,
-     "seg_fin": 120
-    },
-    {
-     "tema": "elecciones",
-     "seg": 420,
-     "seg_fin": 720
-    },
-    {
-     "tema": "elecciones",
-     "seg": 1560,
-     "seg_fin": 1860
-    },
-    {
-     "tema": "elecciones",
-     "seg": 2220,
-     "seg_fin": 2460
-    },
-    {
-     "tema": "elecciones",
-     "seg": 2760,
-     "seg_fin": 3000
-    },
-    {
-     "tema": "elecciones",
-     "seg": 3480,
-     "seg_fin": 3600
-    },
-    {
-     "tema": "elecciones",
-     "seg": 7320,
-     "seg_fin": 7560
-    },
-    {
-     "tema": "elecciones",
-     "seg": 7980,
-     "seg_fin": 8340
+     "texto": "Rubén Sánchez, portavoz de FACUA, que esta tarde ha presentado en Madrid el libro"
     }
    ]
   },
@@ -892,7 +528,7 @@
     {
      "seg": 1482,
      "tipo": "plato",
-     "texto": "Pepón Nieto, bienvenido. Hola. Muchas gracias."
+     "texto": "Pepón Nieto"
     },
     {
      "seg": 3450,
@@ -905,7 +541,7 @@
      "tipo": "entrevista",
      "texto": "Arcadi España: \"Hoy PP y Vox han decidido casarse, ha nacido un nuevo partido\"",
      "url": "https://www.rtve.es/play/videos/la-noche-en-24h/arcadi-espana-hoy-pp-vox-han-decidido-casarse-nacido-nuevo-partido/17284560/",
-     "presenta": "Como les decíamos, nos acompaña Arcadi España, ministro de Hacienda.",
+     "presenta": "Arcadi España, ministro de Hacienda",
      "lugar": "plato"
     },
     {
@@ -917,48 +553,6 @@
      "seg": 6738,
      "tipo": "conexion",
      "texto": "decisión judicial. Olivia Guillén, Redacción de Informativos,"
-    }
-   ],
-   "tramos": [
-    {
-     "tema": "elecciones",
-     "seg": 180,
-     "seg_fin": 600
-    },
-    {
-     "tema": "elecciones",
-     "seg": 900,
-     "seg_fin": 1140
-    },
-    {
-     "tema": "elecciones",
-     "seg": 2880,
-     "seg_fin": 4080
-    },
-    {
-     "tema": "elecciones",
-     "seg": 4620,
-     "seg_fin": 4740
-    },
-    {
-     "tema": "elecciones",
-     "seg": 5220,
-     "seg_fin": 5820
-    },
-    {
-     "tema": "elecciones",
-     "seg": 6060,
-     "seg_fin": 6300
-    },
-    {
-     "tema": "elecciones",
-     "seg": 8400,
-     "seg_fin": 8700
-    },
-    {
-     "tema": "elecciones",
-     "seg": 8940,
-     "seg_fin": 9120
     }
    ]
   },
@@ -974,54 +568,17 @@
     {
      "seg": 77,
      "tipo": "mesa",
-     "texto": "Chema Crespo · Pedro Cuartango · Marta Nebot · Borja Semper"
+     "texto": "Chema Crespo · Pedro Cuartango · Marta Nebot"
     },
     {
      "seg": 5001,
      "tipo": "mesa",
-     "texto": "Antonio Papel · Pablo Montesinos · Irene Lozano · José María Brunetti · Borja Semper"
+     "texto": "Antonio Papel · Pablo Montesinos · Irene Lozano · José María Brunetti"
     },
     {
      "seg": 7848,
      "tipo": "conexion",
      "texto": "estamos en el periodo de tiria floja. Estel Moreno, buenas noches, cuéntanos cómo están ahora"
-    }
-   ],
-   "tramos": [
-    {
-     "tema": "elecciones",
-     "seg": 120,
-     "seg_fin": 540
-    },
-    {
-     "tema": "elecciones",
-     "seg": 1020,
-     "seg_fin": 1740
-    },
-    {
-     "tema": "elecciones",
-     "seg": 4620,
-     "seg_fin": 4740
-    },
-    {
-     "tema": "elecciones",
-     "seg": 5160,
-     "seg_fin": 5580
-    },
-    {
-     "tema": "elecciones",
-     "seg": 6180,
-     "seg_fin": 6300
-    },
-    {
-     "tema": "elecciones",
-     "seg": 6900,
-     "seg_fin": 7260
-    },
-    {
-     "tema": "elecciones",
-     "seg": 7800,
-     "seg_fin": 8520
     }
    ]
   },
@@ -1042,54 +599,12 @@
     {
      "seg": 3342,
      "tipo": "plato",
-     "texto": "Pues ahora sí, nos acompaña José Mota, que debuta como director en largometrajes con esta película,"
+     "texto": "José Mota, que debuta como director en largometrajes con esta película"
     },
     {
      "seg": 5110,
      "tipo": "mesa",
      "texto": "Gerardo Lorenzo · Carmelo Encinas · Juan Romero · Estefanía Molina"
-    }
-   ],
-   "tramos": [
-    {
-     "tema": "elecciones",
-     "seg": 780,
-     "seg_fin": 1260
-    },
-    {
-     "tema": "elecciones",
-     "seg": 1500,
-     "seg_fin": 1680
-    },
-    {
-     "tema": "elecciones",
-     "seg": 2580,
-     "seg_fin": 2760
-    },
-    {
-     "tema": "elecciones",
-     "seg": 5220,
-     "seg_fin": 6000
-    },
-    {
-     "tema": "elecciones",
-     "seg": 7380,
-     "seg_fin": 7500
-    },
-    {
-     "tema": "elecciones",
-     "seg": 7800,
-     "seg_fin": 8040
-    },
-    {
-     "tema": "elecciones",
-     "seg": 8400,
-     "seg_fin": 8520
-    },
-    {
-     "tema": "elecciones",
-     "seg": 10080,
-     "seg_fin": 10200
     }
    ]
   },
@@ -1113,45 +628,13 @@
      "tipo": "entrevista",
      "texto": "Delgado pide salir del \"culebrón\" con Podemos y unir a la gente contra la \"involución democrática\"",
      "url": "https://www.rtve.es/play/videos/la-noche-en-24h/delgado-culebron-podemos-unir-involucion-democratica/17275865/",
-     "presenta": "Nos acompaña ahora Emilio Delgado, número uno del Frente Amplio por Madrid.",
+     "presenta": "Emilio Delgado, número uno del Frente Amplio por Madrid",
      "lugar": "plato"
     },
     {
      "seg": 5265,
      "tipo": "mesa",
-     "texto": "delante. Y es que lo que ha caído es mucho. He emorronado a la mesa de análisis, nos acompañan a los centros de quejo"
-    }
-   ],
-   "tramos": [
-    {
-     "tema": "elecciones",
-     "seg": 4740,
-     "seg_fin": 4920
-    },
-    {
-     "tema": "elecciones",
-     "seg": 5940,
-     "seg_fin": 6480
-    },
-    {
-     "tema": "elecciones",
-     "seg": 6780,
-     "seg_fin": 7020
-    },
-    {
-     "tema": "elecciones",
-     "seg": 7440,
-     "seg_fin": 8100
-    },
-    {
-     "tema": "elecciones",
-     "seg": 8460,
-     "seg_fin": 8580
-    },
-    {
-     "tema": "elecciones",
-     "seg": 9660,
-     "seg_fin": 10140
+     "texto": "Mesa de análisis (nombres no reconocidos)"
     }
    ]
   }
