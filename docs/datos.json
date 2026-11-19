@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-18T10:14:48+01:00",
+ "generado": "2026-11-19T03:31:11+01:00",
  "estado": {
   "rtve": {
    "valor": "ok",
@@ -20,6 +20,71 @@
   }
  ],
  "episodios": [
+  {
+   "id": 17320851,
+   "titulo": "La noche en 24 horas - 18/11/26",
+   "inicio": "2026-11-18T22:00:00+01:00",
+   "duracion_s": 9547,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/18-11-26/17320851/",
+   "subtitulos": "https://api.rtve.es/api/videos/17320851/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 16,
+     "tipo": "mesa",
+     "texto": "Olivia Guillén · Pedro Sánchez · Alberto Núñez Feijóo",
+     "personas": [
+      {
+       "forma": "Olivia Guillén",
+       "estado": null
+      },
+      {
+       "forma": "Pedro Sánchez",
+       "estado": null
+      },
+      {
+       "forma": "Alberto Núñez Feijóo",
+       "estado": null
+      }
+     ]
+    },
+    {
+     "seg": 77,
+     "tipo": "mesa",
+     "texto": "Gerardo Lorenzo · Javier García Vila · Carmelo Encinas",
+     "personas": [
+      {
+       "forma": "Gerardo Lorenzo",
+       "estado": "automatica",
+       "id": "gerardo-lorenzo",
+       "nombre": "Gerardo Lorenzo"
+      },
+      {
+       "forma": "Javier García Vila",
+       "estado": "automatica",
+       "id": "javier-garcia-vila",
+       "nombre": "Javier García Vila"
+      },
+      {
+       "forma": "Carmen Encinas",
+       "estado": "automatica",
+       "id": "carmelo-encinas",
+       "nombre": "Carmelo Encinas"
+      }
+     ]
+    },
+    {
+     "seg": 2091,
+     "tipo": "plato",
+     "texto": "José Antonio Martín Pallín"
+    },
+    {
+     "seg": 9500,
+     "tipo": "presentacion",
+     "texto": "Buenas noches. Buenas noches, Eduardo Lorenzo. Buenas noches, Sentidiño."
+    }
+   ]
+  },
   {
    "id": 17319045,
    "titulo": "La noche en 24 horas - 17/11/26",
@@ -3405,12 +3470,42 @@
  ],
  "sin_ficha": [
   {
+   "forma": "Alberto Núñez Feijóo",
+   "veces": 1,
+   "noches": [
+    {
+     "episodio": 17320851,
+     "seg": 16
+    }
+   ]
+  },
+  {
    "forma": "Chema Crespo Lucía Méndez",
    "veces": 1,
    "noches": [
     {
      "episodio": 17237861,
      "seg": 187
+    }
+   ]
+  },
+  {
+   "forma": "Olivia Guillén",
+   "veces": 1,
+   "noches": [
+    {
+     "episodio": 17320851,
+     "seg": 16
+    }
+   ]
+  },
+  {
+   "forma": "Pedro Sánchez",
+   "veces": 1,
+   "noches": [
+    {
+     "episodio": 17320851,
+     "seg": 16
     }
    ]
   },
