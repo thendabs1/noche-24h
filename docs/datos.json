@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-19T03:31:11+01:00",
+ "generado": "2026-11-25T01:39:02+01:00",
  "estado": {
   "rtve": {
    "valor": "ok",
@@ -20,6 +20,66 @@
   }
  ],
  "episodios": [
+  {
+   "id": 17329636,
+   "titulo": "La noche en 24 horas - 24/11/26",
+   "inicio": "2026-11-24T21:55:00+01:00",
+   "duracion_s": 9631,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/24-11-26/17329636/",
+   "subtitulos": "https://api.rtve.es/api/videos/17329636/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 54,
+     "tipo": "mesa",
+     "texto": "Marisa Cruz · Elsa García de Blas · Paloma Esteban · Jesús Maraña",
+     "personas": [
+      {
+       "forma": "Marisa Cruz",
+       "estado": "automatica",
+       "id": "marisa-cruz",
+       "nombre": "Marisa Cruz"
+      },
+      {
+       "forma": "Elsa García Blas",
+       "estado": "candidata",
+       "id": "elsa-garcia-de-blas",
+       "nombre": "Elsa García de Blas",
+       "apoyos": [
+        "le llaman «Elsa» 9 veces"
+       ]
+      },
+      {
+       "forma": "Paloma Esteban",
+       "estado": "automatica",
+       "id": "paloma-esteban",
+       "nombre": "Paloma Esteban"
+      },
+      {
+       "forma": "Jesús Maraña",
+       "estado": "automatica",
+       "id": "jesus-marana",
+       "nombre": "Jesús Maraña"
+      }
+     ]
+    },
+    {
+     "seg": 2166,
+     "tipo": "plato",
+     "texto": "Iván Redondo, analista político al que habíamos citado para estos días ya"
+    },
+    {
+     "seg": 5621,
+     "tipo": "conexion",
+     "texto": "El director de RTVE defiende el trabajo de la redacción de informativos y también"
+    },
+    {
+     "seg": 8254,
+     "tipo": "conexion",
+     "texto": "de los permisos laborales redacción de informativos."
+    }
+   ]
+  },
   {
    "id": 17320851,
    "titulo": "La noche en 24 horas - 18/11/26",
