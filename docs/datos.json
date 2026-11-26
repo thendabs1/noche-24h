@@ -1,5 +1,5 @@
 {
- "generado": "2026-11-25T01:39:02+01:00",
+ "generado": "2026-11-26T03:48:36+01:00",
  "estado": {
   "rtve": {
    "valor": "ok",
@@ -20,6 +20,55 @@
   }
  ],
  "episodios": [
+  {
+   "id": 17331453,
+   "titulo": "La noche en 24 horas - 25/11/26",
+   "inicio": "2026-11-25T21:55:00+01:00",
+   "duracion_s": 9526,
+   "url": "https://www.rtve.es/play/videos/la-noche-en-24h/25-11-26/17331453/",
+   "subtitulos": "https://api.rtve.es/api/videos/17331453/subtitulos.json",
+   "estado": "ok",
+   "marcas": [
+    {
+     "seg": 56,
+     "tipo": "mesa",
+     "texto": "Irene Lozano · Pedro Vallín",
+     "personas": [
+      {
+       "forma": "Irene Lozano",
+       "estado": "automatica",
+       "id": "irene-lozano",
+       "nombre": "Irene Lozano"
+      },
+      {
+       "forma": "Pedro Aballín",
+       "estado": "automatica",
+       "id": "pedro-vallin",
+       "nombre": "Pedro Vallín"
+      }
+     ]
+    },
+    {
+     "seg": 1515,
+     "seg_fin": 2659,
+     "tipo": "entrevista",
+     "texto": "David Jiménez, sobre la película 'El director': \"En este país sigue habiendo un ambiente de censura\"",
+     "url": "https://www.rtve.es/play/videos/la-noche-en-24h/david-jimenez-pelicula-director-ambiente-censura/17331420/",
+     "presenta": "Y acompaña el padre de la criatura, o si lo prefieren, el autor del libro en el que se basa esta película, David Jiménez",
+     "lugar": "plato"
+    },
+    {
+     "seg": 1918,
+     "tipo": "presentacion",
+     "texto": "San Juan, muy buenas noches. Buenas noches, ¿qué tal?"
+    },
+    {
+     "seg": 2683,
+     "tipo": "presentacion",
+     "texto": "Alba Coloret, buenas noches. Hoy han seguido llegando,"
+    }
+   ]
+  },
   {
    "id": 17329636,
    "titulo": "La noche en 24 horas - 24/11/26",
